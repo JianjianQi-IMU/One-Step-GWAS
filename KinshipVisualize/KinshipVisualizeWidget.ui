@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KinshipVisualizeWidget</class>
+ <widget class="QMainWindow" name="KinshipVisualizeWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExportPlot"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionCluster"/>
+    <addaction name="separator"/>
+    <addaction name="actionSetRangeLabel"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSettings"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionCluster">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/clusterIcon1.png</normaloff>:/icon/clusterIcon1.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cluster</string>
+   </property>
+  </action>
+  <action name="actionSetRangeLabel">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/chooseColorIcon2.png</normaloff>:/icon/chooseColorIcon2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set Range Label</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Range Label</string>
+   </property>
+  </action>
+  <action name="actionExportPlot">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/saveIcon.png</normaloff>:/icon/saveIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Plot</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../Res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

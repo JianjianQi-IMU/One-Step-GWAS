@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StructureVisualizeWidget</class>
+ <widget class="QMainWindow" name="StructureVisualizeWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExportPlot"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionSort"/>
+    <addaction name="actionChangeOrientation"/>
+    <addaction name="separator"/>
+    <addaction name="actionSetDisplayMainFrame"/>
+    <addaction name="actionSetDisplayBarMargin"/>
+   </widget>
+   <widget class="QMenu" name="menuColor">
+    <property name="title">
+     <string>Color</string>
+    </property>
+    <addaction name="actionSetPopColor"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuColor"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionSetDisplayMainFrame">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/mainFrameIcon.png</normaloff>:/icon/mainFrameIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Main Frame</string>
+   </property>
+   <property name="toolTip">
+    <string>set display main frame</string>
+   </property>
+  </action>
+  <action name="actionSetDisplayBarMargin">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/barFrame.png</normaloff>:/icon/barFrame.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bar Margin</string>
+   </property>
+   <property name="toolTip">
+    <string>set display bar margin</string>
+   </property>
+  </action>
+  <action name="actionChangeOrientation">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/setOrienIcon.png</normaloff>:/icon/setOrienIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Switch Orientation</string>
+   </property>
+   <property name="toolTip">
+    <string>change orientation</string>
+   </property>
+  </action>
+  <action name="actionSetPopColor">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/chooseColorIcon.png</normaloff>:/icon/chooseColorIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Populaton Color</string>
+   </property>
+   <property name="toolTip">
+    <string>set population color</string>
+   </property>
+  </action>
+  <action name="actionSort">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/sortIcon1.png</normaloff>:/icon/sortIcon1.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sort</string>
+   </property>
+   <property name="toolTip">
+    <string>sort</string>
+   </property>
+  </action>
+  <action name="actionExportPlot">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/saveIcon.png</normaloff>:/icon/saveIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Plot</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../Res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

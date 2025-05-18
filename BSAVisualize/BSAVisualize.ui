@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BSAVisualize</class>
+ <widget class="QMainWindow" name="BSAVisualize">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionLoadGenomeSeq"/>
+   <addaction name="separator"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
+   <addaction name="separator"/>
+   <addaction name="actionGridDisplay2"/>
+   <addaction name="actionGridDisplay1"/>
+   <addaction name="separator"/>
+   <addaction name="actionSwichGeneModel"/>
+   <addaction name="actionDisplayGene"/>
+   <addaction name="actionDisplayGeneModel"/>
+   <addaction name="actionDisplayGenome"/>
+  </widget>
+  <action name="actionLoadGenomeSeq">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/openSeqIcon.png</normaloff>:/icon/openSeqIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>LoadGenomeSeq</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;load genome sequence file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/zoomInIcon.png</normaloff>:/icon/zoomInIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>zoomIn</string>
+   </property>
+   <property name="toolTip">
+    <string>zoom in</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/zoomOutIcon.png</normaloff>:/icon/zoomOutIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>zoomOut</string>
+   </property>
+   <property name="toolTip">
+    <string>zoom out</string>
+   </property>
+  </action>
+  <action name="actionGridDisplay1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/gridIcon1.png</normaloff>:/icon/gridIcon1.png</iconset>
+   </property>
+   <property name="text">
+    <string>gridDisplay1</string>
+   </property>
+   <property name="toolTip">
+    <string>display minor grid</string>
+   </property>
+  </action>
+  <action name="actionGridDisplay2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/gridIcon2.png</normaloff>:/icon/gridIcon2.png</iconset>
+   </property>
+   <property name="text">
+    <string>gridDisplay2</string>
+   </property>
+   <property name="toolTip">
+    <string>display major grid</string>
+   </property>
+  </action>
+  <action name="actionSwichGeneModel">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/switchGeneModel.png</normaloff>:/icon/switchGeneModel.png</iconset>
+   </property>
+   <property name="text">
+    <string>swichGeneModel</string>
+   </property>
+   <property name="toolTip">
+    <string>swich gene model</string>
+   </property>
+  </action>
+  <action name="actionDisplayGene">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/geneDisplayIcon.png</normaloff>:/icon/geneDisplayIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>displayGene</string>
+   </property>
+   <property name="toolTip">
+    <string>display gene</string>
+   </property>
+  </action>
+  <action name="actionDisplayGeneModel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/geneModelDisplayIcon.png</normaloff>:/icon/geneModelDisplayIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>displayGeneModel</string>
+   </property>
+   <property name="toolTip">
+    <string>display gene model</string>
+   </property>
+  </action>
+  <action name="actionDisplayGenome">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/genomeDisplayIcon.png</normaloff>:/icon/genomeDisplayIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>displayGenome</string>
+   </property>
+   <property name="toolTip">
+    <string>display genome</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../Res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

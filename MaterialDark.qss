@@ -1,0 +1,18 @@
+QMainWindow {
+        background-color:#353b48;
+        color:#ffffff;
+}
+QDialog {
+        background-color:#353b48;
+        color:#ffffff;
+}
+QColorDialog {
+        background-color:#353b48;
+        color:#ffffff;
+}
+QSplitter::handle:vertical{
+        background-color:#353b48;
+}
+QSplitter::handle:horizontal{
+        background-color:#353b48;
+}
