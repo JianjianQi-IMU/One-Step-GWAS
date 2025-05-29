@@ -10,25 +10,25 @@ bool ProjectFilesRecordReader::getGWASProject(QDomElement &elm, QQueue<BaseProje
     QDomNodeList fileList = elm.elementsByTagName("File");
     int fileLen = fileList.size();
     GWASProjectFilesSet tSet;
-    if(fileLen == 0) {
+    if (fileLen == 0) {
         return false;
     }
-    for(int i = 0;i < fileLen; ++i)
+    for (int i = 0; i < fileLen; ++i)
     {
         QDomElement tElm = fileList.at(i).toElement();
-        if(tElm.attribute("TypeID") == GWASProjectFilesSet::genoName) {
-            if(!tElm.attribute("FormID").isEmpty()) {
+        if (tElm.attribute("TypeID") == GWASProjectFilesSet::genoName) {
+            if (!tElm.attribute("FormID").isEmpty()) {
                 FileFormClass tForm = FileFormClass(tElm.attribute("FormID").toInt());
                 tSet.setGenoFileForm(tForm);
             }
             tSet.setGenoFile(tElm.text());
-        } else if(tElm.attribute("TypeID") == GWASProjectFilesSet::bimName) {
+        } else if (tElm.attribute("TypeID") == GWASProjectFilesSet::bimName) {
             tSet.setBimFile(tElm.text());
-        } else if(tElm.attribute("TypeID") == GWASProjectFilesSet::pheName) {
+        } else if (tElm.attribute("TypeID") == GWASProjectFilesSet::pheName) {
             tSet.setPheFile(tElm.text());
-        } else if(tElm.attribute("TypeID") == GWASProjectFilesSet::covName) {
+        } else if (tElm.attribute("TypeID") == GWASProjectFilesSet::covName) {
             tSet.setCovFile(tElm.text());
-        } else if(tElm.attribute("TypeID") == GWASProjectFilesSet::kinName) {
+        } else if (tElm.attribute("TypeID") == GWASProjectFilesSet::kinName) {
             tSet.setKinFile(tElm.text());
         }
     }
@@ -51,25 +51,21 @@ ProjectFilesRecordReader::ProjectFilesRecordReader()
 bool ProjectFilesRecordReader::getProjects(const QString &hisFile, QQueue<BaseProjectFilesSet *> &outQueue)
 {
     QFile his(hisFile);
-    if(!his.open(QIODevice::ReadOnly))
-    {
+    if (!his.open(QIODevice::ReadOnly)) {
         return false;
     }
     QDomDocument doc;
-    if(!doc.setContent(&his))
-    {
+    if (!doc.setContent(&his)) {
         his.close();
         return false;
     }
     QDomElement root = doc.documentElement();
     QDomNodeList proList = root.elementsByTagName("Project");
     int proLen = proList.size();
-    for(int i = 0;i < proLen;i++)
-    {
+    for (int i = 0; i < proLen; i++) {
         QDomElement tElm = proList.at(i).toElement();
         QString proTypeID = tElm.attribute("TypeID");
-        if(proTypeID == GWASProjectFilesSet::GWASName)
-        {
+        if (proTypeID == GWASProjectFilesSet::GWASName) {
             getGWASProject(tElm,outQueue);
         }
     }
@@ -148,8 +144,7 @@ FD::ProjectFilesRecordWriter::ProjectFilesRecordWriter()
 void ProjectFilesRecordWriter::write(const QString &outputFile)
 {
     QFile outFile(outputFile);
-    if(!outFile.open(QIODevice::WriteOnly))
-    {
+    if (!outFile.open(QIODevice::WriteOnly)) {
         return;
     }
     QTextStream outStream(&outFile);
@@ -158,8 +153,7 @@ void ProjectFilesRecordWriter::write(const QString &outputFile)
 
 void ProjectFilesRecordWriter::addProjects(const QQueue<BaseProjectFilesSet*> &inProjects)
 {
-    foreach(const BaseProjectFilesSet* project, inProjects)
-    {
+    foreach (const BaseProjectFilesSet* project, inProjects) {
         addProject(project);
     }
 }

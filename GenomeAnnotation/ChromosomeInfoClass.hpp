@@ -22,15 +22,12 @@ private:
     int currentMaxChri;
 
 public:
-    ChromosomeInfoClass():
-        chrLen(nullptr),
-        cumChrLen(nullptr),
-        chrName(nullptr),
-        nChr(0),
-        maxCumPos(0),
-        currentMinChri(0),
-        currentMaxChri(0)
-    {}
+    ChromosomeInfoClass()
+        : chrLen(nullptr), cumChrLen(nullptr), chrName(nullptr), nChr(0),
+        maxCumPos(0), currentMinChri(0), currentMaxChri(0)
+    {
+
+    }
     ~ChromosomeInfoClass()
     {
         if (chrLen) {
@@ -60,10 +57,16 @@ public:
         if (!inChrLen || !inChrName || !inNChr) return false;
         int i;
         if (nChr != inNChr) {
-            if (chrLen) delete [] chrLen;
-            if (cumChrLen) delete [] cumChrLen;
+            if (chrLen) {
+                delete [] chrLen;
+            }
+            if (cumChrLen) {
+                delete [] cumChrLen;
+            }
             if (chrName) {
-                for (i = 0; i < nChr; ++i) delete [] chrName[i];
+                for (i = 0; i < nChr; ++i) {
+                    delete [] chrName[i];
+                }
                 delete [] chrName;
             }
             chrLen = new long long[inNChr];
@@ -75,8 +78,11 @@ public:
             chrLen[i] = inChrLen[i];
             chrName[i] = new char[chrNameMaxLen];
             FD::charCopy(chrName[i], inChrName[i]);
-            if (i == 0) cumChrLen[i] = 0;
-            else cumChrLen[i] = cumChrLen[i - 1] + chrLen[i - 1];
+            if (i == 0) {
+                cumChrLen[i] = 0;
+            } else {
+                cumChrLen[i] = cumChrLen[i - 1] + chrLen[i - 1];
+            }
         }
         maxCumPos = cumChrLen[nChr - 1] + chrLen[nChr - 1];
         cumChrLen[nChr] = maxCumPos;
@@ -84,8 +90,8 @@ public:
         currentMinChri = nChr - 1;
         return true;
     }
-    bool loadChromosome(const std::vector<long long>& inChrLen,
-                        const std::vector<std::string>& inChrName){
+    bool loadChromosome(const std::vector<long long>& inChrLen, const std::vector<std::string>& inChrName)
+    {
         if (inChrLen.empty() || inChrName.empty() ||
            inChrName.size() != inChrLen.size()) {
             return false;
@@ -93,10 +99,16 @@ public:
         int i;
         int inNChr = inChrName.size();
         if (nChr != inNChr) {
-            if (chrLen) delete [] chrLen;
-            if (cumChrLen) delete [] cumChrLen;
+            if (chrLen) {
+                delete [] chrLen;
+            }
+            if (cumChrLen) {
+                delete [] cumChrLen;
+            }
             if (chrName) {
-                for (i = 0; i < nChr; ++i) delete [] chrName[i];
+                for (i = 0; i < nChr; ++i) {
+                    delete [] chrName[i];
+                }
                 delete [] chrName;
             }
             chrLen = new long long[inNChr];
@@ -108,8 +120,11 @@ public:
             chrLen[i] = inChrLen[i];
             chrName[i] = new char[chrNameMaxLen];
             FD::charCopy(chrName[i], inChrName[i].c_str());
-            if (i == 0) cumChrLen[i] = 0;
-            else cumChrLen[i] = cumChrLen[i - 1] + chrLen[i - 1];
+            if (i == 0) {
+                cumChrLen[i] = 0;
+            } else {
+                cumChrLen[i] = cumChrLen[i - 1] + chrLen[i - 1];
+            }
         }
         maxCumPos = cumChrLen[nChr - 1] + chrLen[nChr - 1];
         cumChrLen[nChr] = maxCumPos;
@@ -122,15 +137,21 @@ public:
         int a = 0, b = nChr, m = 0;
         while (a <= b) {
             m = (a + b) / 2;
-            if ((long double)(cumChrLen[m]) >= leftPosF) b = m - 1;
-            else a = m + 1;
+            if ((long double)(cumChrLen[m]) >= leftPosF) {
+                b = m - 1;
+            } else {
+                a = m + 1;
+            }
         }
         currentMinChri = b;
         a = 0, b = nChr;
         while (a <= b) {
             m = (a + b) / 2;
-            if ((long double)cumChrLen[m] >= rightPosF) b = m - 1;
-            else a = m + 1;
+            if ((long double)cumChrLen[m] >= rightPosF) {
+                b = m - 1;
+            } else {
+                a = m + 1;
+            }
         }
         currentMaxChri = b;
     }

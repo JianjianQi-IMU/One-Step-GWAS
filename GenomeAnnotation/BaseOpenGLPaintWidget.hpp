@@ -7,7 +7,7 @@
 #include <QOpenGLShaderProgram>
 #include <QList>
 
-class BaseOpenGLPaintWidget : public QOpenGLWidget,public QOpenGLFunctions_4_5_Core
+class BaseOpenGLPaintWidget : public QOpenGLWidget, public QOpenGLFunctions_4_5_Core
 {
     Q_OBJECT
 public:
@@ -23,7 +23,7 @@ public:
     }
     virtual ~BaseOpenGLPaintWidget()
     {
-        for(QOpenGLShaderProgram* pointer : shaderProgramList){
+        for (QOpenGLShaderProgram* pointer : shaderProgramList) {
             if (pointer) {
                 delete pointer;
             }
@@ -54,39 +54,37 @@ public:
         if (id < 0 || id >= shaderProgramList.size()) {
             return ;
         }
-        shaderProgramList[id]->setUniformValue(name,color);
+        shaderProgramList[id]->setUniformValue(name, color);
     }
     inline void setUniformValue(const char *name, GLfloat value, int id = 0)
     {
         if (id < 0 || id >= shaderProgramList.size()) {
             return ;
         }
-        shaderProgramList[id]->setUniformValue(name,value);
+        shaderProgramList[id]->setUniformValue(name, value);
     }
     inline void setUniformValue(const char *name, const QVector3D &value, int id = 0)
     {
         if (id < 0 || id >= shaderProgramList.size()) {
             return ;
         }
-        shaderProgramList[id]->setUniformValue(name,value);
+        shaderProgramList[id]->setUniformValue(name, value);
     }
     inline void setUniformValue(const char *name, const QMatrix4x4 &value, int id = 0)
     {
         if (id < 0 || id >= shaderProgramList.size()) {
             return ;
         }
-        shaderProgramList[id]->setUniformValue(name,value);
+        shaderProgramList[id]->setUniformValue(name, value);
     }
-    inline void setUniformValueArray(const char *name, const QVector3D* values,int count, int id = 0)
+    inline void setUniformValueArray(const char *name, const QVector3D* values, int count, int id = 0)
     {
         if (id < 0 || id >= shaderProgramList.size()) {
             return ;
         }
-        shaderProgramList[id]->setUniformValueArray(name,values,count);
+        shaderProgramList[id]->setUniformValueArray(name, values, count);
     }
-    inline void setGLShaderProgram(const QString &vertShaderFile,
-                                   const QString &fragShaderFile,
-                                   int id = 0)
+    inline void setGLShaderProgram(const QString &vertShaderFile, const QString &fragShaderFile, int id = 0)
     {
         if (id < 0 || id >= shaderProgramList.size()) {
             return ;
@@ -154,8 +152,7 @@ protected:
             rightMousePressEvent(e, isNeedUpdate);
         }
         QOpenGLWidget::mousePressEvent(e);
-        if (isNeedUpdate)
-        {
+        if (isNeedUpdate) {
             update();
         }
     } // basic
@@ -170,8 +167,7 @@ protected:
             rightMouseReleaseEvent(e, isNeedUpdate);
         }
         QOpenGLWidget::mouseReleaseEvent(e);
-        if (isNeedUpdate)
-        {
+        if (isNeedUpdate) {
             update();
         }
     } // basic
@@ -182,8 +178,7 @@ protected:
         middleMouseMoveEvent(e, isNeedUpdate);
         rightMouseMoveEvent(e, isNeedUpdate);
         QOpenGLWidget::mouseMoveEvent(e);
-        if (isNeedUpdate)
-        {
+        if (isNeedUpdate) {
             update();
         }
     } // basic

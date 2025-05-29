@@ -42,14 +42,14 @@ ViewFileFormatWidget::ViewFileFormatWidget(QWidget *parent) : QWidget(parent)
 }
 
 ViewFileFormatWidget::ViewFileFormatWidget(const FD::BaseFileFormat &inFormat, QWidget *parent)
-    :ViewFileFormatWidget(parent)
+    : ViewFileFormatWidget(parent)
 {
     load(inFormat);
 }
 
 void ViewFileFormatWidget::load(const FD::BaseFileFormat &inFormat)
 {
-    setWindowTitle("File Format - "+inFormat.name);
+    setWindowTitle("File Format - " + inFormat.name);
     format = inFormat;
     nameBox->setTitle(inFormat.name);
     QString htmlStr;
@@ -114,7 +114,7 @@ ViewFileFormatTable::ViewFileFormatTable(const QVector<FD::FileFormClass> &inVec
 void ViewFileFormatTable::load(const QVector<FD::FileFormClass> &inVec)
 {
     int iFile;
-    for(iFile = 0; iFile < inVec.size(); ++iFile) {
+    for (iFile = 0; iFile < inVec.size(); ++iFile) {
         pri_addNewTab(inVec[iFile]);
     }
 }

@@ -5,9 +5,11 @@
 #include <cmath>
 //#include "FastPCA.hpp"
 
-namespace EMMAX{
+namespace EMMAX
+{
 
-class REML{
+class REML
+{
 public:
     double eps;
     double pi;
@@ -19,13 +21,11 @@ public:
     size_t factorN;
     bool isValid;
     REML();
-    REML(const MML::Kinship& inKin,
-         const MML::Covariates& inCov);
+    REML(const MML::Kinship& inKin, const MML::Covariates& inCov);
     ~REML();
     bool sortEigen(size_t* outIndex, size_t inNum);
     void qSortEigen(size_t a, size_t b, size_t* outIndex);
-    bool read(const MML::Kinship& inKin,
-              const MML::Covariates& inCov);
+    bool read(const MML::Kinship& inKin, const MML::Covariates& inCov);
     bool getDelta(const MML::Phenotype& inPhe, double& outDelta, double& outLLD);
     bool dLikelihood(const MML::Mat& etas, double delta, double& outVal);
     bool likelihood(const MML::Mat& etas, double delta, double& outVal);

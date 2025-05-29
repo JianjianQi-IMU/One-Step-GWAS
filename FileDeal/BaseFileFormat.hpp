@@ -8,7 +8,8 @@
 
 #include "FileFormClass.hpp"
 
-namespace FD {
+namespace FD
+{
 
 class BaseFileFormat
 {

@@ -5,7 +5,6 @@
 #include <QLayout>
 #include <QFont>
 #include <QTextBrowser>
-//#include <QTextDocument>
 #include <QPushButton>
 #include <QWidget>
 #include <QTabWidget>

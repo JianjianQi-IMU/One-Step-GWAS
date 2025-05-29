@@ -8,15 +8,12 @@ DataInteractTableModel::DataInteractTableModel(QObject *parent)
 
 QVariant DataInteractTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal)
-    {
+    if (orientation == Qt::Horizontal) {
         if (section > 0 && section < colName.size() && role == Qt::DisplayRole && colRole == Qt::DisplayRole)
         {
            return colName.at(section);
         }
-    }
-    else if(orientation == Qt::Vertical)
-    {
+    } else if(orientation == Qt::Vertical) {
         if (section > 0 && section < rowName.size() && role == Qt::DisplayRole && rowRole == Qt::DisplayRole)
         {
            return rowName.at(section);
@@ -65,7 +62,7 @@ QVariant DataInteractTableModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
     if (index.row() < rowName.size() && index.column() < colName.size()) {
-        if(role == Qt::DisplayRole) {
+        if (role == Qt::DisplayRole) {
             if (mainData[index.row()][index.column()] == MML::DATA_NA) {
                 return QString("NA");
             } else {
@@ -206,7 +203,7 @@ bool DataInteractTableModel::output(double *outMainData, int outNRow, int outNCo
     if (!outMainData || outNRow != rowName.size() || outNCol != colName.size()) {
         return false;
     }
-    int i,j;
+    int i, j;
     for (i = 0; i < outNRow; ++i) {
         for (j = 0; j < outNCol; ++j) {
             outMainData[i * outNCol + j] = mainData[i][j];
@@ -220,7 +217,7 @@ bool DataInteractTableModel::output(double *outMainData, int outNRow, int outNCo
             outRowName[i][j] = '\0';
         }
     }
-    if(outColName) {
+    if (outColName) {
         for (i = 0; i < outNCol; ++i) {
             for (j = 0; j < colName[i].length(); ++j) {
                 outColName[i][j] = (colName[i].toLatin1().data())[j];
@@ -251,7 +248,6 @@ DataInteractTableView::DataInteractTableView(QWidget *parent) : QTableView(paren
     pMenu = new QMenu(this);
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &DataInteractTableView::customContextMenuRequested, this, &DataInteractTableView::menuExec);
-
 
     QAction* actCopy = new QAction("Copy", this);
     QAction* actPaste = new QAction("Paste", this);

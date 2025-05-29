@@ -15,7 +15,7 @@ class ViewFileFormatWidget : public QWidget
 {
     Q_OBJECT
 private:
-    QGroupBox*   nameBox;
+    QGroupBox* nameBox;
     QTextBrowser* browser;
     QTextDocument* doc;
     FD::BaseFileFormat format;

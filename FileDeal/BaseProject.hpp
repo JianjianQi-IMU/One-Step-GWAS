@@ -12,7 +12,8 @@
 
 #include "DataManager/DataManager.hpp"
 
-namespace FD {
+namespace FD
+{
 
 const long long MAXLINELEN = 1 << 20;
 const long long MAXELEMLEN = 1 << 10;

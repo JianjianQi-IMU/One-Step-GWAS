@@ -1,9 +1,9 @@
 #include "BaseFileFormat.hpp"
 
 #include <QFile>
-#include <QDebug>
 
-namespace FD {
+namespace FD
+{
 
 BaseFileFormat::BaseFileFormat()
 {
@@ -31,10 +31,10 @@ FileFormatSet::FileFormatSet()
 
 BaseFileFormat FileFormatSet::getFileFormat(FileFormClass id)
 {
-    if(formFileVec.empty() || formFileMap.empty()){
+    if (formFileVec.empty() || formFileMap.empty()) {
         initInstance();
     }
-    if(formFileMap.find(id) == formFileMap.end()){
+    if (formFileMap.find(id) == formFileMap.end()) {
         return BaseFileFormat();
     }
     return formFileVec[formFileMap[id]];
@@ -49,15 +49,15 @@ void FileFormatSet::initInstance()
     int iFile;
 
     QFile xmlFile(":/FileFormatInfo/FileFormatInfo.xml");
-    if(!xmlFile.exists()){
+    if (!xmlFile.exists()) {
         return;
     }
-    if(!xmlFile.open(QIODevice::ReadOnly))
+    if (!xmlFile.open(QIODevice::ReadOnly))
     {
         return ;
     }
     QDomDocument doc;
-    if(!doc.setContent(&xmlFile))
+    if (!doc.setContent(&xmlFile))
     {
         xmlFile.close();
         return ;
@@ -66,7 +66,6 @@ void FileFormatSet::initInstance()
     if (root.tagName() != "FileFormatInfo") {
         return ;
     }
-    qDebug() << "FileFormatInfo";
     QDomNodeList listFileFormat = root.elementsByTagName("FileFormat");
     for (iFile = 0; iFile < listFileFormat.size(); ++iFile) {
         QDomNode tmpNode = listFileFormat.at(iFile);
@@ -74,7 +73,6 @@ void FileFormatSet::initInstance()
         if (tmpFile.idType != FILEFORM_NONE) {
             formFileMap[tmpFile.idType] = formFileVec.size();
             formFileVec.append(tmpFile);
-            qDebug() << tmpFile.idType << tmpFile.name;
         }
     }
 }

@@ -3,85 +3,79 @@
 bool FD::compare(const char *s1, const char *s2)
 {
     size_t i=0;
-    while(s1[i]!='\0'&&s2[i]!='\0')
-    {
-        if(s1[i]!=s2[i]) return false;
+    while (s1[i] != '\0' && s2[i] != '\0') {
+        if (s1[i] != s2[i]) return false;
         ++i;
     }
-    if(s1[i]!=s2[i]) return false;
+    if (s1[i] != s2[i]) return false;
     return true;
 }
 
 bool FD::pstrip(char *str)
 {
-    size_t i,pi,len;
-    bool f=true;
-    for(i=0,pi=0;str[i]!='\0';++i)
-    {
-        if(
-            (str[i]==' '||
-            str[i]=='\t'||
-            str[i]=='\n'||
-            str[i]=='\r')&&f
-        ) ++pi;
-        else f=false;
+    size_t i, pi, len;
+    bool f = true;
+    for (i = 0, pi = 0; str[i] != '\0'; ++i) {
+        if ((str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r') && f) {
+            ++pi;
+        } else {
+            f = false;
+        }
     }
-    len=i;
-    if(pi==0) return true;
-    for(i=0;i+pi<=len;++i)
-    {
-        str[i]=str[pi+i];
+    len = i;
+    if (pi == 0) return true;
+    for (i = 0; i + pi <= len; ++i) {
+        str[i] = str[pi + i];
     }
     return true;
 }
 
 bool FD::strip(std::string &line)
 {
-    while((!line.empty())&&(line.back()=='\r'||line.back()=='\t'||line.back()==' '||line.back()=='\n')) line.pop_back();
+    while ((!line.empty()) && (line.back() == '\r' || line.back() == '\t' || line.back() == ' ' || line.back() == '\n')) {
+        line.pop_back();
+    }
     return true;
 }
 
 
 bool FD::strip(char *str)
 {
-    long long i=0;
-    for(;str[i];++i) ;
+    long long i = 0;
+    for (; str[i]; ++i) {
+        ;
+    }
     --i;
-    while(i>=0&&(str[i]=='\r'||str[i]=='\t'||str[i]==' '||str[i]=='\n')) --i;
-    str[i+1]='\0';
+    while (i >= 0 && (str[i] == '\r' || str[i] == '\t' || str[i] == ' ' || str[i] == '\n')) {
+        --i;
+    }
+    str[i + 1] = '\0';
     return true;
 }
 
 long long FD::split(const char *str, char **outList, char sep, long long max = 0)
 {
-    long long i=0,pi=0,ni=0,j=0;
-    bool f=false;
-    for(i=0;i<MAXLINELEN&&str[i]!='\0';++i)
-    {
-        if(max!=0&&ni>=max) break;
-        if(f&&str[i]==sep)
-        {
-            f=false;
-            for(j=pi;j<i&&j-pi<MAXELEMLEN;++j)
-            {
-                outList[ni][j-pi]=str[j];
+    long long i = 0, pi = 0, ni = 0, j = 0;
+    bool f = false;
+    for (i = 0; i < MAXLINELEN && str[i] != '\0'; ++i) {
+        if (max != 0 && ni >= max) break;
+        if (f && str[i] == sep) {
+            f = false;
+            for (j = pi; j < i && j - pi < MAXELEMLEN; ++j) {
+                outList[ni][j - pi] = str[j];
             }
-            outList[ni][j-pi]='\0';
+            outList[ni][j - pi] = '\0';
             ++ni;
-        }
-        else if((!f)&&str[i]!=sep)
-        {
-            pi=i;
-            f=true;
+        } else if ((!f) && str[i] != sep) {
+            pi = i;
+            f = true;
         }
     }
-    if((max==0||ni<max)&&f)
-    {
-        for(j=pi;j<i&&j-pi<MAXELEMLEN;++j)
-        {
-            outList[ni][j-pi]=str[j];
+    if ((max == 0 || ni < max) && f) {
+        for (j = pi; j < i && j - pi < MAXELEMLEN; ++j) {
+            outList[ni][j - pi] = str[j];
         }
-        outList[ni][j-pi]='\0';
+        outList[ni][j - pi] = '\0';
         ni++;
     }
     return ni;
@@ -89,40 +83,33 @@ long long FD::split(const char *str, char **outList, char sep, long long max = 0
 
 long long FD::split(const char *str, char **outList, const char *sep, long long max)
 {
-    long long i=0,pi=0,ni=0,j=0,si=0;
-    bool f=false,ff=false;
-    for(i=0;i<MAXLINELEN&&str[i]!='\0';++i)
-    {
-        if(max!=0&&ni>=max) break;
-        si=0;
-        ff=false;
-        while(sep[si]){
-            if(sep[si]==str[i]) ff=true;
+    long long i = 0, pi = 0, ni = 0, j = 0, si = 0;
+    bool f = false, ff = false;
+    for (i = 0; i < MAXLINELEN && str[i] != '\0'; ++i) {
+        if (max != 0 && ni >= max) break;
+        si = 0;
+        ff = false;
+        while (sep[si]) {
+            if (sep[si] == str[i]) ff = true;
             ++si;
         }
-        if(f&&ff)
-        {
-            f=false;
-            for(j=pi;j<i&&j-pi<MAXELEMLEN;++j)
-            {
-                outList[ni][j-pi]=str[j];
+        if (f && ff) {
+            f = false;
+            for (j = pi; j < i && j - pi < MAXELEMLEN; ++j) {
+                outList[ni][j - pi] = str[j];
             }
-            outList[ni][j-pi]='\0';
+            outList[ni][j - pi] = '\0';
             ++ni;
-        }
-        else if((!f)&&(!ff))
-        {
-            pi=i;
-            f=true;
+        } else if ((!f) && (!ff)) {
+            pi = i;
+            f = true;
         }
     }
-    if((max==0||ni<max)&&f)
-    {
-        for(j=pi;j<i&&j-pi<MAXELEMLEN;++j)
-        {
-            outList[ni][j-pi]=str[j];
+    if ((max == 0 || ni < max) && f) {
+        for (j = pi; j < i && j - pi < MAXELEMLEN; ++j) {
+            outList[ni][j - pi] = str[j];
         }
-        outList[ni][j-pi]='\0';
+        outList[ni][j - pi] = '\0';
         ni++;
     }
     return ni;
@@ -131,92 +118,95 @@ long long FD::split(const char *str, char **outList, const char *sep, long long 
 bool FD::split(std::vector<std::string> &list, const std::string &line, char sep)
 {
     list.clear();
-    int i=0,pi=0,len=line.length();
-    bool f=false;
-    for(i=0;i<len;i++){
-        if(f&&line[i]==sep){
-            f=false;
-            list.emplace_back(line.substr(pi,i-pi));
-        }
-        else if((!f)&&line[i]!=sep){
-            f=true;
-            pi=i;
+    int i = 0, pi = 0, len = line.length();
+    bool f = false;
+    for (i = 0; i < len; i++) {
+        if (f && line[i] == sep) {
+            f = false;
+            list.emplace_back(line.substr(pi, i - pi));
+        } else if ((!f) && line[i] != sep) {
+            f = true;
+            pi = i;
         }
     }
-    if(f) list.emplace_back(line.substr(pi,i-pi));
+    if (f) list.emplace_back(line.substr(pi, i - pi));
     return true;
 }
 
 bool FD::split(std::vector<std::string> &list, const std::string &line, const std::string &sep)
 {
     list.clear();
-    int i=0,pi=0,len=line.length();
-    bool f=false,ff=false;
-    for(i=0;i<len;i++){
-        ff=false;
-        for(char ty:sep) ff=(ff||ty==line[i]);
-        if(f&&ff){
-            f=false;
-            list.emplace_back(line.substr(pi,i-pi));
+    int i = 0, pi = 0, len = line.length();
+    bool f = false, ff = false;
+    for (i = 0; i < len; i++) {
+        ff = false;
+        for (char ty : sep) {
+            ff = (ff || ty == line[i]);
         }
-        else if((!f)&&(!ff)){
-            f=true;
-            pi=i;
+        if (f && ff) {
+            f = false;
+            list.emplace_back(line.substr(pi, i - pi));
+        } else if ((!f) && (!ff)) {
+            f = true;
+            pi = i;
         }
     }
-    if(f) list.emplace_back(line.substr(pi,i-pi));
+    if (f) list.emplace_back(line.substr(pi, i - pi));
     return true;
 }
 
 bool FD::split(std::vector<std::string> &list, const std::string &line, char sep, long long max)
 {
     list.clear();
-    int i=0,pi=0,len=line.length();
-    bool f=false;
-    for(i=0;i<len;i++){
-        if(f&&line[i]==sep){
-            f=false;
-            list.emplace_back(line.substr(pi,i-pi));
+    int i = 0, pi = 0, len = line.length();
+    bool f = false;
+    for (i = 0; i < len; i++) {
+        if (f && line[i] == sep) {
+            f = false;
+            list.emplace_back(line.substr(pi, i - pi));
+        } else if ((!f) && line[i] != sep) {
+            f = true;
+            pi = i;
         }
-        else if((!f)&&line[i]!=sep){
-            f=true;
-            pi=i;
-        }
-        if(max>0&&list.size()>=max) break;
+        if (max > 0 && list.size() >= max) break;
     }
-    if(f&&!(max>0&&list.size()>=max)) list.emplace_back(line.substr(pi,i-pi));
+    if (f && !(max > 0 && list.size() >= max)) {
+        list.emplace_back(line.substr(pi, i - pi));
+    }
     return true;
 }
 
 bool FD::split(std::vector<std::string> &list, const std::string &line, const std::string &sep, long long max)
 {
     list.clear();
-    int i=0,pi=0,len=line.length();
-    bool f=false,ff=false;
-    for(i=0;i<len;i++){
-        ff=false;
-        for(char ty:sep) ff=(ff||ty==line[i]);
-        if(f&&ff){
-            f=false;
-            list.emplace_back(line.substr(pi,i-pi));
+    int i = 0, pi = 0, len = line.length();
+    bool f = false, ff = false;
+    for (i = 0; i < len; i++) {
+        ff = false;
+        for (char ty : sep) {
+            ff = (ff || ty == line[i]);
         }
-        else if((!f)&&(!ff)){
-            f=true;
-            pi=i;
+        if (f && ff) {
+            f = false;
+            list.emplace_back(line.substr(pi, i - pi));
+        } else if ((!f) && (!ff)) {
+            f = true;
+            pi = i;
         }
-        if(max>0&&list.size()>=max) break;
+        if (max > 0 && list.size() >= max) break;
     }
-    if(f&&!(max>0&&list.size()>=max)) list.emplace_back(line.substr(pi,i-pi));
+    if (f && !(max > 0 && list.size() >= max)) {
+        list.emplace_back(line.substr(pi, i - pi));
+    }
     return true;
 }
 
 bool FD::charLess(const char *s1, const char *s2)
 {
-    size_t i=0;
-    while(s1[i]!='\0'||s2[i]!='\0')
-    {
-        if(s1[i]>s2[i]) return false;
-        else if(s1[i]<s2[i]) return true;
+    size_t i = 0;
+    while (s1[i] != '\0' || s2[i] != '\0') {
+        if (s1[i] > s2[i]) return false;
+        else if (s1[i] < s2[i]) return true;
         ++i;
     }
     return false;
@@ -231,8 +221,8 @@ FD::BasePopGenoData::~BasePopGenoData(){}
 
 bool FD::BasePopGenoData::resetReadPoint()
 {
-    if(!isValid) return false;
-    readPoint=0;
+    if (!isValid) return false;
+    readPoint = 0;
     return true;
 }
 
@@ -248,18 +238,18 @@ FD::BaseFileRead::~BaseFileRead()
 
 bool FD::BaseFileRead::load(const char *inFile)
 {
-    if(!clear()) return false;
-    file.open(inFile,std::ios::in);
-    if(file.is_open()) isValid=true;
-    else isValid=false;
+    if (!clear()) return false;
+    file.open(inFile, std::ios::in);
+    if (file.is_open()) isValid = true;
+    else isValid = false;
     return isValid;
 }
 
 bool FD::BaseFileRead::close()
 {
-    if(file.is_open()){
+    if (file.is_open()) {
         file.close();
-        if(file.is_open()) return false;
+        if (file.is_open()) return false;
     }
     return true;
 }
@@ -272,10 +262,10 @@ bool FD::BaseFileRead::clear()
 FD::BedData::BedData()
 {
     data = nullptr;
-    nSample=0;
-    readPoint=0;
-    dataSize=0;
-    nMarker=0;
+    nSample = 0;
+    readPoint = 0;
+    dataSize = 0;
+    nMarker = 0;
     isValid = false;
 }
 
@@ -398,11 +388,11 @@ bool FD::BedData::read2(double *out, size_t nMarkers)
 
 void FD::BedData::clear()
 {
-    nSample=0;
-    readPoint=0;
-    if(data) delete [] data;
-    dataSize=0;
-    nMarker=0;
+    nSample = 0;
+    readPoint = 0;
+    if (data) delete [] data;
+    dataSize = 0;
+    nMarker = 0;
     isValid = false;
     data = nullptr;
 }
@@ -419,7 +409,7 @@ FD::PolyPedData::PolyPedData()
 
 FD::PolyPedData::~PolyPedData()
 {
-    if(data) delete [] data;
+    if (data) delete [] data;
 }
 
 bool FD::PolyPedData::read(short *out, size_t outNMarkers)
@@ -468,7 +458,7 @@ bool FD::PolyPedData::read2(double *out, size_t outNMarkers)
 
 void FD::PolyPedData::clear()
 {
-    if(data) delete [] data;
+    if (data) delete [] data;
     data = nullptr;
     nPloid = 0;
     nSample = 0;
@@ -477,22 +467,30 @@ void FD::PolyPedData::clear()
     isValid = false;
 }
 
-void FD::charCopy(char* object,const char* source){
-    size_t i=0;
-    while(source[i]) {object[i]=source[i];++i;}
-    object[i]='\0';
+void FD::charCopy(char* object, const char* source){
+    size_t i = 0;
+    while (source[i]) {
+        object[i] = source[i];
+        ++i;
+    }
+    object[i] = '\0';
 }
 
 void FD::charCopy(char *object, const char *source, size_t len)
 {
-    size_t i=0;
-    while(i<len) {object[i]=source[i];++i;}
+    size_t i = 0;
+    while (i < len) {
+        object[i] = source[i];
+        ++i;
+    }
 }
 
 size_t FD::charLen(const char *str)
 {
-    size_t i=0;
-    while(str[i]) ++i;
+    size_t i = 0;
+    while (str[i]) {
+        ++i;
+    }
     return i;
 }
 

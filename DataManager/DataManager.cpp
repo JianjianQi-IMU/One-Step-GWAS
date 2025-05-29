@@ -284,13 +284,13 @@ void MML::Kinship::copy(const Kinship &object)
     for (size_t i = 0; i < filterN; ++i) {
         filterIndex[i] = (object.filterIndex)[i];
     }
-    rawMat    = object.rawMat;
+    rawMat = object.rawMat;
     filterMat = object.filterMat;
-    rawN      = object.rawN;
-    eigenVec  = object.eigenVec;
-    eigenVal  = object.eigenVal;
-    isValid   = object.isValid;
-    isEigen   = object.isEigen;
+    rawN = object.rawN;
+    eigenVec = object.eigenVec;
+    eigenVal = object.eigenVal;
+    isValid = object.isValid;
+    isEigen = object.isEigen;
 }
 
 void MML::Kinship::operator=(const Kinship &object)
@@ -321,7 +321,7 @@ MML::Covariates::Covariates()
 }
 
 MML::Covariates::Covariates(const Covariates &object)
-    :Covariates()
+    : Covariates()
 {
     copy(object);
 }
@@ -407,11 +407,11 @@ void MML::Covariates::copy(const Covariates &object)
     for (size_t i = 0; i < filterN; ++i) {
         filterIndex[i] = (object.filterIndex)[i];
     }
-    rawMat    = object.rawMat;
+    rawMat = object.rawMat;
     filterMat = object.filterMat;
-    rawN      = object.rawN ;
-    factorN   = object.factorN;
-    isValid   = object.isValid;
+    rawN = object.rawN ;
+    factorN = object.factorN;
+    isValid = object.isValid;
 }
 
 void MML::Covariates::operator=(const Covariates &object)
@@ -620,8 +620,6 @@ const MML::Distribution& MML::Distribution::operator=(const Distribution &object
     copy(object);
     return *this;
 }
-
-
 
 bool MML::CopyDataIMatToMat(const IMat &inMat, Mat &outMat)
 {

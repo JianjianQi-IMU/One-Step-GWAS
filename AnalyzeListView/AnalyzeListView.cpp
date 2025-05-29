@@ -447,7 +447,7 @@ void AnalyzeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         painter->fillPath(ppath1, QBrush(QColor(230, 230, 255)));
         ppath1.clear();
         ppath1.addRect(QRect(x0 + 1, y0 + 1, 10, height0 - 2));
-        painter->fillPath(ppath1,QBrush(QColor("#5e5d53")));
+        painter->fillPath(ppath1, QBrush(QColor("#5e5d53")));
     }
 
     // paint framework
@@ -469,12 +469,12 @@ void AnalyzeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         tmpNumText = (pUnitList->at(id)).getINumberName(iNumber) + " " + QString::number(tmpNumberVal);
         tmpNumPixmap = QPixmap((pUnitList->at(id)).getINumberIcon(iNumber));
         painter->drawPixmap(runningBarx0 + iNumber * numberInfoLength, numberInfocy0 - 8, tmpNumPixmap);
-        painter->drawText(runningBarx0 + iNumber * numberInfoLength + 20,numberInfocy0 - 20, numberInfoLength - 20, 40, Qt::AlignVCenter, tmpNumText);
+        painter->drawText(runningBarx0 + iNumber * numberInfoLength + 20, numberInfocy0 - 20, numberInfoLength - 20, 40, Qt::AlignVCenter, tmpNumText);
 
     }
 
     // paint widget
-    if((pUnitList->at(id)).state == RUN_PAUSE || (pUnitList->at(id)).state == RUN_RUNNING)
+    if ((pUnitList->at(id)).state == RUN_PAUSE || (pUnitList->at(id)).state == RUN_RUNNING)
     {
         (*pWidgetList)[id]->startButton->setHidden(false);
         (*pWidgetList)[id]->startButton->move(startBtnx0, startBtncy0 - startBtnSize / 2);
@@ -488,15 +488,13 @@ void AnalyzeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
             (*pWidgetList)[id]->runningBar->setHidden(false);
             (*pWidgetList)[id]->runningBar->resize(runningBarWid, AnalyzeWidget::runningBarHeight);
             (*pWidgetList)[id]->runningBar->move(runningBarx0, runningBarcy0 - AnalyzeWidget::runningBarHeight / 2);
-            if((*pThreadList)[id]) {
-                if((*pThreadList)[id]->info==ThreadRun::PCA_FASTPCA  ||
-                   (*pThreadList)[id]->info==ThreadRun::PCA_PCA      ||
-                   (*pThreadList)[id]->info==ThreadRun::STR_STRUCTURE||
-                   (*pThreadList)[id]->info==ThreadRun::KIN_KINSHIP  ||
-                   (*pThreadList)[id]->info==ThreadRun::BSA_NORMALBSA) {
+            if ((*pThreadList)[id]) {
+                if((*pThreadList)[id]->info == ThreadRun::PCA_FASTPCA || (*pThreadList)[id]->info == ThreadRun::PCA_PCA ||
+                    (*pThreadList)[id]->info == ThreadRun::STR_STRUCTURE || (*pThreadList)[id]->info == ThreadRun::KIN_KINSHIP ||
+                    (*pThreadList)[id]->info == ThreadRun::BSA_NORMALBSA) {
                     (*pWidgetList)[id]->runningBar->setValue(int((*pThreadList)[id]->getDealedNum()));
-                } else if((*pThreadList)[id]->info==ThreadRun::GLM_GEMMA || (*pThreadList)[id]->info==ThreadRun::MLM_GEMMA ||
-                        (*pThreadList)[id]->info==ThreadRun::MLM_EMMAX) {
+                } else if ((*pThreadList)[id]->info == ThreadRun::GLM_GEMMA || (*pThreadList)[id]->info == ThreadRun::MLM_GEMMA ||
+                    (*pThreadList)[id]->info == ThreadRun::MLM_EMMAX) {
                     (*pWidgetList)[id]->runningBar->setValue(int(double((*pThreadList)[id]->getDealedNum()) / (pUnitList->at(id)).getINumber(1) * 100));
                 }
             }
@@ -612,7 +610,7 @@ bool AnalyzeListModel::setData(const QModelIndex &index, const QVariant &value, 
     if (data(index, role) != value) {
         // FIXME: Implement me!
 
-        if (index.row()<pUnitList->size()) {
+        if (index.row() < pUnitList->size()) {
             (*pUnitList)[index.row()] = value.value<AnalyzeUnitInfo>();
             emit dataChanged(index, index, QVector<int>() << role);
             return true;
@@ -625,7 +623,9 @@ bool AnalyzeListModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     beginInsertRows(parent, row, row + count - 1);
     // FIXME: Implement me!
-    for (int i = 0; i < count; ++i) pUnitList->insert(row, AnalyzeUnitInfo());
+    for (int i = 0; i < count; ++i) {
+        pUnitList->insert(row, AnalyzeUnitInfo());
+    }
     endInsertRows();
     return true;
 }
@@ -635,7 +635,9 @@ bool AnalyzeListModel::removeRows(int row, int count, const QModelIndex &parent)
     if (row + count - 1 >= pUnitList->size()) return false;
     beginRemoveRows(parent, row, row + count - 1);
     // FIXME: Implement me!
-    for (int i = 0; i < count; ++i) pUnitList->removeAt(row);
+    for (int i = 0; i < count; ++i) {
+        pUnitList->removeAt(row);
+    }
     endRemoveRows();
     return true;
 }
@@ -805,7 +807,7 @@ bool AnalyzeListView::pro_loadFileAt(int id, FD::ProjectInfo info)
                 QMessageBox::Yes, QMessageBox::No) == QMessageBox::No) return false;
     }
     if (((*pUnitList)[id]).state == RUN_PAUSE || ((*pUnitList)[id]).state == RUN_RUNNING) {
-        if(QMessageBox::warning(this, "remove", "This project is incomplete. Will you continue?",
+        if (QMessageBox::warning(this, "remove", "This project is incomplete. Will you continue?",
             QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Cancel) return false;
     }
     if (((*pUnitList)[id]).state != RUN_UNKNOWN) {
@@ -817,7 +819,6 @@ bool AnalyzeListView::pro_loadFileAt(int id, FD::ProjectInfo info)
         connect(loadWidget, &LoadGWASFileWidget::loadOK, this, &AnalyzeListView::projectChanged);
     } else if (info == FD::PROJECT_BSA) {
         LoadBSAFileWidget* loadWidget = new LoadBSAFileWidget(&((*pUnitList)[id]), pProjectList, id);
-        // loadWidget->setAttribute(Qt::WA_ShowModal,true);
         loadWidget->show();
         connect(loadWidget, &LoadBSAFileWidget::loadOK, this, &AnalyzeListView::projectChanged);
     }

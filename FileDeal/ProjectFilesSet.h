@@ -14,7 +14,8 @@ protected:
 public:
     BaseProjectFilesSet();
     virtual ~BaseProjectFilesSet();
-    virtual QString getName() const {
+    virtual QString getName() const
+    {
         return QString();
     };
 

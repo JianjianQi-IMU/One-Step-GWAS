@@ -10,9 +10,11 @@
 //#define EPS     1e-6
 //#define PI      3.1415926535898
 
-namespace MML{
+namespace MML
+{
 
-class Phenotype{
+class Phenotype
+{
 public:
     double dataNA;
     double eps;

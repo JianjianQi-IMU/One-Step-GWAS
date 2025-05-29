@@ -22,16 +22,16 @@ BaseMarkerIterator::~BaseMarkerIterator()
 
 bool BaseMarkerIterator::next()
 {
-    if(!isValid) return false;
-    if(readPoint == readNum) return false;
+    if (!isValid) return false;
+    if (readPoint == readNum) return false;
     ++readPoint;
     return true;
 }
 
 bool BaseMarkerIterator::isEnd()
 {
-    if(!isValid) return false;
-    if(readPoint == readNum) return true;
+    if (!isValid) return false;
+    if (readPoint == readNum) return true;
     return false;
 }
 
@@ -58,22 +58,22 @@ BedDataIterator::BedDataIterator() : BaseMarkerIterator()
     data = nullptr;
 }
 
-BedDataIterator::BedDataIterator(BedData &inBedData, size_t start,size_t stop)
+BedDataIterator::BedDataIterator(BedData &inBedData, size_t start, size_t stop)
     :BedDataIterator()
 {
     loadData(inBedData,start,stop);
 }
 
-bool BedDataIterator::loadData(BedData &inBedData, size_t start,size_t stop)
+bool BedDataIterator::loadData(BedData &inBedData, size_t start, size_t stop)
 {
-    if(!inBedData.isValid) return false;
-    if(!stop) stop = inBedData.nMarker;
-    if(start>=stop) return false;
-    size_t nByte=0;
+    if (!inBedData.isValid) return false;
+    if (!stop) stop = inBedData.nMarker;
+    if (start >= stop) return false;
+    size_t nByte = 0;
     nSample = inBedData.nSample;
-    nByte=(nSample+3)/4;
-    readNum = stop-start;
-    data = (inBedData.data + start*nByte);
+    nByte = (nSample + 3) / 4;
+    readNum = stop - start;
+    data = (inBedData.data + start * nByte);
     readPoint = 0;
     isValid = true;
     return true;
@@ -178,13 +178,13 @@ PolyPedDataIterator::PolyPedDataIterator(PolyPedData &inPolyPedData, size_t star
 
 bool PolyPedDataIterator::loadData(PolyPedData &inPolyPedData, size_t start, size_t stop)
 {
-    if(!inPolyPedData.isValid) return false;
-    if(!stop) stop = inPolyPedData.nMarker;
-    if(start>=stop) return false;
+    if (!inPolyPedData.isValid) return false;
+    if (!stop) stop = inPolyPedData.nMarker;
+    if (start >= stop) return false;
     nPloid = inPolyPedData.nPloid;
     nSample = inPolyPedData.nSample;
     readNum = stop-start;
-    data = (inPolyPedData.data + start*nSample);
+    data = (inPolyPedData.data + start * nSample);
     readPoint = 0;
     isValid = true;
     return true;
@@ -248,9 +248,9 @@ BIMDataIterator::BIMDataIterator(BIMData &inBIMData, size_t start, size_t stop)
 
 bool BIMDataIterator::loadData(BIMData &inBIMData, size_t start, size_t stop)
 {
-    if(!inBIMData.isValid) return false;
-    if(!stop) stop = inBIMData.nMarker;
-    if(start>=stop) return false;
+    if (!inBIMData.isValid) return false;
+    if (!stop) stop = inBIMData.nMarker;
+    if (start >= stop) return false;
     readNum = stop-start;
     data = (inBIMData.data + start);
     readPoint = 0;
@@ -260,7 +260,7 @@ bool BIMDataIterator::loadData(BIMData &inBIMData, size_t start, size_t stop)
 
 BIMNode *BIMDataIterator::read()
 {
-    if(!isValid||!data||readPoint >= readNum) return nullptr;
+    if (!isValid || !data || readPoint >= readNum) return nullptr;
     return data+readPoint;
 }
 
@@ -284,9 +284,9 @@ BIMLogPDataIterator::BIMLogPDataIterator(BIMLogPData &inBIMLogPData, size_t star
 
 bool BIMLogPDataIterator::loadData(BIMLogPData &inBIMLogPData, size_t start, size_t stop)
 {
-    if(!inBIMLogPData.isValid) return false;
-    if(!stop) stop = inBIMLogPData.nMarker;
-    if(start>=stop) return false;
+    if (!inBIMLogPData.isValid) return false;
+    if (!stop) stop = inBIMLogPData.nMarker;
+    if (start >= stop) return false;
     readNum = stop-start;
     data = (inBIMLogPData.data + start);
     readPoint = 0;
@@ -296,8 +296,8 @@ bool BIMLogPDataIterator::loadData(BIMLogPData &inBIMLogPData, size_t start, siz
 
 BIMLogPNode *BIMLogPDataIterator::read()
 {
-    if(!isValid||!data||readPoint >= readNum) return nullptr;
-    return data+readPoint;
+    if (!isValid || !data || readPoint >= readNum) return nullptr;
+    return data + readPoint;
 }
 
 void BIMLogPDataIterator::operator=(const BIMLogPDataIterator &object)

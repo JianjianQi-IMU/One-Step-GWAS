@@ -23,16 +23,16 @@ bool GammaFuncMod::initLanczosParam()
     /*Lanczos approximation*/
     if (lanczosP) delete [] lanczosP;
     lanczosP = new double [9] {
-            0.99999999999980993,
-            676.5203681218851,
-            -1259.1392167224028,
-            771.32342877765313,
-            -176.61502916214059,
-            12.507343278686905,
-            -0.13857109526572012,
-            9.9843695780195716e-6,
-            1.5056327351493116e-7
-        };
+        0.99999999999980993,
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.13857109526572012,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7
+    };
     lanczosN = 9;
     lanczosG = 7;
     return true;
@@ -125,10 +125,18 @@ double GammaFuncMod::digamma(double x)
 
 double GammaFuncMod::polygamma(size_t k, double x)
 {
-    double	brn[] = {1.6666666666666666e-01, 3.3333333333333333e-02,
-     2.3809523809523809e-02, 3.3333333333333333e-02, 7.5757575757575757e-02,
-     2.5311355311355311e-01, 1.1666666666666667e+00, 7.0921568627450980e+00,
-     5.4971177944862155e+01, 5.2912424242424242e+02};
+    double	brn[] = {
+        1.6666666666666666e-01,
+        3.3333333333333333e-02,
+        2.3809523809523809e-02,
+        3.3333333333333333e-02,
+        7.5757575757575757e-02,
+        2.5311355311355311e-01,
+        1.1666666666666667e+00,
+        7.0921568627450980e+00,
+        5.4971177944862155e+01,
+        5.2912424242424242e+02
+    };
     int nBrn = 9;
     double	s;	/* return value */
     double	y;	/* minimum value more than `slv', adding `x' to integers */
@@ -501,7 +509,7 @@ double BetaFuncMod::impBetaSmallishBX(double a, double b, double x)
     double lnx = std::log(x);
     double prefix = 0.0;
     double lnPrefix = 0.0;
-    lnPrefix = a * lnx - (std::lgamma(a) + std::lgamma(b) - std::lgamma(a+b));
+    lnPrefix = a * lnx - (std::lgamma(a) + std::lgamma(b) - std::lgamma(a + b));
     prefix = std::exp(lnPrefix);
 
     int k = 1;
@@ -525,7 +533,7 @@ double BetaFuncMod::impBetaGreat(double a, double b, double x)
     double lny = std::log(1.0 - x);
     double prefix = 0.0;
     double lnPrefix = 0.0;
-    lnPrefix = a * lnx + b * lny - (std::lgamma(a) + std::lgamma(b) - std::lgamma(a+b));
+    lnPrefix = a * lnx + b * lny - (std::lgamma(a) + std::lgamma(b) - std::lgamma(a + b));
     prefix = std::exp(lnPrefix);
     ImpBetaGreatFuncIter iter;
     iter.setValue(a, b, x);
@@ -566,10 +574,10 @@ double BetaFuncMod::impBeta(double a, double b, double x)
 void BetaFuncMod::copy(const BetaFuncMod &object)
 {
     maxIterNum = object.maxIterNum;
-    dataNA     = object.dataNA;
-    tiny       = object.tiny;
-    eps        = object.eps;
-    pi         = object.pi;
+    dataNA = object.dataNA;
+    tiny = object.tiny;
+    eps = object.eps;
+    pi = object.pi;
 
     n_betaLargeASmallB_pn = object.n_betaLargeASmallB_pn;
     gammaFunc = object.gammaFunc;

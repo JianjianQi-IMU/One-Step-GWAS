@@ -93,7 +93,6 @@
         <file>icon/stru_up.png</file>
         <file>icon/writeInIcon.png</file>
         <file>icon/kinRangeSetIcon.png</file>
-        <file>Gif/waitGif.gif</file>
         <file>shader/QQPointsFragment.shader</file>
         <file>shader/QQPointsVertex.shader</file>
         <file>FileFormatInfo/FileFormatInfo.xml</file>

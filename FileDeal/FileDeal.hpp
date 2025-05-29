@@ -232,13 +232,13 @@ public:
               const char* nameKin="\0");
     ReadState readVCF(const char* nameVCF,
                       const char* namePhe,
-                      const char* nameCov="\0",
-                      const char* nameKin="\0");
+                      const char* nameCov = "\0",
+                      const char* nameKin = "\0");
     ReadState readTPolyPed(const char* nameTPed,
                        const char* nameBim,
                        const char* namePhe,
-                       const char* nameCov="\0",
-                       const char* nameKin="\0");
+                       const char* nameCov = "\0",
+                       const char* nameKin = "\0");
     bool saveOutput(const char* outFile) override;
     char** getChrName();
     int getNChr();
