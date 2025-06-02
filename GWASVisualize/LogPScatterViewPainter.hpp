@@ -66,7 +66,7 @@ private:
 public:
     LogPScatterViewPainter();
     ~LogPScatterViewPainter();
-    bool loadPoints(ValPoints *inPoints,long long inNPoints);
+    bool loadPoints(ValPoints *inPoints, long long inNPoints);
     inline ValPoints* getPointValAt(long long idPoint)
     {
         if(idPoint < 0 || idPoint >= nPoints)
@@ -75,20 +75,49 @@ public:
         }
         return points + idPoint;
     }
-    inline float getPointSize() const{return pointSize;}
-    inline double getMaxLogP() const{return maxLogP;}
-    inline double getMinLogP() const{return minLogP;}
-    inline int    getIntUpLogP() const{return intUpLogP;}
-    inline int    getIntDownLogP() const{return intDownLogP;}
-    inline ValPoints* getPoints(){return points;}
-    inline long long getNPoints() const{return nPoints;}
-    inline const QVector<QColor>& getPointsColor() const{return colorScatterPoint;}
-    inline int getMaxLabelPointsNum() const{return maxLabelPointsNum;}
-    inline long long getNPaintPoints() const{return nPaintPoints;}
+    inline float getPointSize() const
+    {
+        return pointSize;
+    }
+    inline double getMaxLogP() const
+    {
+        return maxLogP;
+    }
+    inline double getMinLogP() const
+    {
+        return minLogP;
+    }
+    inline int getIntUpLogP() const
+    {
+        return intUpLogP;
+    }
+    inline int getIntDownLogP() const
+    {
+        return intDownLogP;
+    }
+    inline ValPoints* getPoints()
+    {
+        return points;
+    }
+    inline long long getNPoints() const
+    {
+        return nPoints;
+    }
+    inline const QVector<QColor>& getPointsColor() const
+    {
+        return colorScatterPoint;
+    }
+    inline int getMaxLabelPointsNum() const
+    {
+        return maxLabelPointsNum;
+    }
+    inline long long getNPaintPoints() const
+    {
+        return nPaintPoints;
+    }
     inline long long getLabelPointAt(int row) const
     {
-        if(idLabelPoints.size() <= row || row <0)
-        {
+        if (idLabelPoints.size() <= row || row < 0) {
             return -1;
         }
         return idLabelPoints[row];
@@ -98,18 +127,27 @@ public:
         return isDisplayMovingLogPLine;
     }
 
-    inline void preSetMovingMouseY(int ypos){tmpMovingMouseY = ypos;}
-    inline void setPointSize(float val) {
+    inline void preSetMovingMouseY(int ypos)
+    {
+        tmpMovingMouseY = ypos;
+    }
+    inline void setPointSize(float val)
+    {
         pointSize = val;
     }
-    inline void setDisplaySelectedPointInfo(bool flag){displaySelectedPointInfo = flag;}
+    inline void setDisplaySelectedPointInfo(bool flag)
+    {
+        displaySelectedPointInfo = flag;
+    }
     inline bool setColorScatterPoint(const QVector<QColor>& inColor)
     {
-        if(inColor.empty()) return false;
-        colorScatterPoint=inColor;
-        if(colorScatterPoint.length() > 8){
+        if (inColor.empty()) {
+            return false;
+        }
+        colorScatterPoint = inColor;
+        if (colorScatterPoint.length() > 8) {
             int n = colorScatterPoint.length();
-            colorScatterPoint.remove(8,n-8);
+            colorScatterPoint.remove(8, n - 8);
         }
         return true;
     }
@@ -123,8 +161,7 @@ public:
     }
     inline bool removeLabelPointAt(int row)
     {
-        if(idLabelPoints.size() <= row || row <0)
-        {
+        if (idLabelPoints.size() <= row || row < 0) {
             return false;
         }
         idLabelPoints.removeAt(row);
@@ -134,18 +171,16 @@ public:
     {
         int i = -1;
         bool havePoint = false;
-        if(idPoint < 0)
-        {
+        if (idPoint < 0) {
             return -1;
         }
-        for(i = 0;i < idLabelPoints.size();++i){
-            if(idLabelPoints[i]==idPoint){
+        for (i = 0; i < idLabelPoints.size(); ++i) {
+            if (idLabelPoints[i] == idPoint) {
                 havePoint = true;
                 break;
             }
         }
-        if(!havePoint)
-        {
+        if (!havePoint) {
             return -1;
         }
         idLabelPoints.removeAt(i);
@@ -154,20 +189,18 @@ public:
     inline int addLabelPoint(long long idPoint)
     {
         bool havePoint = false;
-        if(idLabelPoints.size() >= maxLabelPointsNum)
-        {
+        if (idLabelPoints.size() >= maxLabelPointsNum) {
             return -1;
         }
-        if(nPaintPoints){
-            if(idPoint>=0){
-                for(int j=0;j<idLabelPoints.size();++j){
-                    if(idLabelPoints[j] == idPoint){
+        if (nPaintPoints) {
+            if (idPoint >= 0) {
+                for (int j = 0; j < idLabelPoints.size(); ++j) {
+                    if (idLabelPoints[j] == idPoint) {
                         havePoint = true;
                         break;
                     }
                 }
-                if(havePoint)
-                {
+                if (havePoint) {
                     return -1;
                 }
                 idLabelPoints.append(idPoint);
@@ -192,10 +225,9 @@ public:
     {
         tmpChrInfo = inChrInfo;
     }
-    inline void preSetCurrentPosF(const long double& inCurrentLeftPosF ,
-                           const long double& inCurrentRightPosF)
+    inline void preSetCurrentPosF(const long double& inCurrentLeftPosF, const long double& inCurrentRightPosF)
     {
-        tmpCurrentLeftPosF  = inCurrentLeftPosF;
+        tmpCurrentLeftPosF = inCurrentLeftPosF;
         tmpCurrentRightPosF = inCurrentRightPosF;
     }
     inline void preSetSelectedPointi(long long idPoint){
@@ -206,32 +238,39 @@ public:
     inline bool isClicked(const QPoint& pos)
     {
         int xpos = pos.x(), ypos = pos.y();
-        if(xpos >= displayArea.x() && xpos <= displayArea.x() + displayArea.width() &&
-           ypos >= displayArea.y() && ypos <= displayArea.y() + displayArea.height())
+        if (xpos >= displayArea.x() && xpos <= displayArea.x() + displayArea.width() &&
+            ypos >= displayArea.y() && ypos <= displayArea.y() + displayArea.height())
         {
             return true;
         }
         return false;
     }
     // false : -1 | true : clicked point id
-    inline long long isClickedPoint(const QPoint& pos){
-        if(nPaintPoints){
-            long long i=currentMinPointsi;
-            for(;i<=currentMaxPointsi;++i){
-                if(isSelectedPoint(i,pos.x(),pos.y())) break;
+    inline long long isClickedPoint(const QPoint& pos)
+    {
+        if (nPaintPoints) {
+            long long i = currentMinPointsi;
+            for (; i <= currentMaxPointsi; ++i) {
+                if (isSelectedPoint(i, pos.x(), pos.y())) {
+                    break;
+                }
             }
-            if(i<=currentMaxPointsi) return i;
+            if (i <= currentMaxPointsi) {
+                return i;
+            }
         }
         return -1;
     }
     inline bool isSelectedPoint(long long idPoint, int x, int y)
     {
         int px, py;
-        if(!getPointPxy(idPoint, px, py)){
+        if (!getPointPxy(idPoint, px, py)) {
             return false;
         }
-        int dx=px-x,dy=py-y;
-        if(dx*dx+dy*dy<=selectedPointsDistance2) return true;
+        int dx = px - x, dy = py - y;
+        if (dx * dx + dy * dy <= selectedPointsDistance2) {
+            return true;
+        }
         return false;
     }
     void paintLogPScatterView(QPainter *painter);
@@ -242,24 +281,22 @@ private:
     void initYTitlePainter()
     {
         yTitlePainter.addText(strYTitle, Qt::black, fontYTitle);
-
         yTitlePainter.setRotation(-90);
-
         yTitlePainter.setIsPaintRect(false);
     }
     void delDeleteGL();
     // origin point is at left-up orientation (outPx, outPy)
-    inline bool getPointPxy(long long  idPoint,int &outPx,int &outPy)
+    inline bool getPointPxy(long long  idPoint, int &outPx, int &outPy)
     {
-        if(idPoint < 0 || idPoint >= nPoints){
+        if (idPoint < 0 || idPoint >= nPoints) {
             return false;
         }
         int xpos = displayArea.x(), ypos = displayArea.y();
         int width = displayArea.width(), height = displayArea.height();
-        long long* cumChrLen = tmpChrInfo -> getCumChrLen();
-        long double positionGapLenF=tmpCurrentRightPosF-tmpCurrentLeftPosF;
-        outPx = (points[idPoint].pos+cumChrLen[points[idPoint].idchr]-tmpCurrentLeftPosF)*width/positionGapLenF+xpos;
-        outPy = height*(long double)(1-points[idPoint].val/(intUpLogP-intDownLogP))+ypos;
+        long long* cumChrLen = tmpChrInfo->getCumChrLen();
+        long double positionGapLenF = tmpCurrentRightPosF - tmpCurrentLeftPosF;
+        outPx = (points[idPoint].pos + cumChrLen[points[idPoint].idchr] - tmpCurrentLeftPosF) * width / positionGapLenF + xpos;
+        outPy = height * (long double)(1 - points[idPoint].val / (intUpLogP - intDownLogP)) + ypos;
         return true;
     }
     inline void adjustPaintPointsPos()
@@ -267,23 +304,23 @@ private:
         int width0 = widgetSize.width(), height0 = widgetSize.height();
         int xpos = displayArea.x(), ypos = displayArea.y();
         int width = displayArea.width(), height = displayArea.height();
-        long double positionGapLenF=tmpCurrentRightPosF-tmpCurrentLeftPosF;
-        long long* cumChrLen = tmpChrInfo -> getCumChrLen();
-        float tx,ty;
-        for(long long i=currentMinPointsi;i<=currentMaxPointsi;++i){
-            tx=2.0*(float(points[i].pos+cumChrLen[points[i].idchr]-tmpCurrentLeftPosF)*width/positionGapLenF+xpos)/width0-1.0;
-            ty=-2.0*(height*(1-points[i].val/(intUpLogP-intDownLogP))+ypos)/height0+1.0;
-            paintPoints[(i-currentMinPointsi)*2]=tx;
-            paintPoints[(i-currentMinPointsi)*2+1]=ty;
+        long double positionGapLenF = tmpCurrentRightPosF - tmpCurrentLeftPosF;
+        long long* cumChrLen = tmpChrInfo->getCumChrLen();
+        float tx, ty;
+        for (long long i = currentMinPointsi; i <= currentMaxPointsi; ++i) {
+            tx = 2.0 * (float(points[i].pos + cumChrLen[points[i].idchr] - tmpCurrentLeftPosF) * width / positionGapLenF + xpos) / width0 - 1.0;
+            ty = -2.0 * (height * (1 - points[i].val / (intUpLogP - intDownLogP)) + ypos) / height0 + 1.0;
+            paintPoints[(i - currentMinPointsi) * 2] = tx;
+            paintPoints[(i - currentMinPointsi)  *2 + 1] = ty;
         }
     }
     inline void adjustPaintPointsColor()
     {
-        int colorNum=colorScatterPoint.length();
-        GLuint idColor=0;
-        for(long long i=currentMinPointsi;i<=currentMaxPointsi;++i){
-             idColor = points[i].idchr%colorNum;
-             idPointColor[i-currentMinPointsi] = idColor;
+        int colorNum = colorScatterPoint.length();
+        GLuint idColor = 0;
+        for (long long i = currentMinPointsi; i <= currentMaxPointsi; ++i) {
+            idColor = points[i].idchr % colorNum;
+            idPointColor[i - currentMinPointsi] = idColor;
         }
     }
     void sendPointsToBuffer();

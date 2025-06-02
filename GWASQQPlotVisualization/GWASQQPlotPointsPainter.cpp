@@ -26,11 +26,11 @@ GWASQQPlotPointsPainter::~GWASQQPlotPointsPainter()
 {
     delDeleteGL();
 
-    if(dataPoints != nullptr){
+    if (dataPoints != nullptr) {
         delete [] dataPoints;
         dataPoints = nullptr;
     }
-    if(pointsData != nullptr){
+    if (pointsData != nullptr) {
         delete [] pointsData;
         pointsData = nullptr;
     }
@@ -41,34 +41,33 @@ GWASQQPlotPointsPainter::~GWASQQPlotPointsPainter()
 bool GWASQQPlotPointsPainter::loadPoints(ValPoints *inPoints, long long inNPoints)
 {
     long long iPoint;
-    if(inPoints == nullptr
-        || inNPoints <= 0){
+    if (inPoints == nullptr || inNPoints <= 0) {
         return false;
     }
     nPoints = inNPoints;
-    if(dataPoints != nullptr){
+    if (dataPoints != nullptr) {
         delete [] dataPoints;
         dataPoints = nullptr;
     }
-    if(pointsData != nullptr){
+    if (pointsData != nullptr) {
         delete [] pointsData;
         pointsData = nullptr;
     }
     maxVal = MML::DOUBLE_ZERO;
     minVal = MML::DOUBLE_MAX;
-    dataPoints = new ValPoints2[nPoints+1];
-    pointsData = new GLfloat[2*nPoints];
-    double* expectedVal = new double [nPoints+1];
+    dataPoints = new ValPoints2[nPoints + 1];
+    pointsData = new GLfloat[2 * nPoints];
+    double* expectedVal = new double [nPoints + 1];
     stats.genNegLog10PPoints(nPoints, expectedVal);
-    for(iPoint = 0;iPoint < nPoints;++ iPoint){
+    for (iPoint = 0; iPoint < nPoints; ++iPoint) {
         dataPoints[iPoint].idchr = inPoints[iPoint].idchr;
         dataPoints[iPoint].pos = inPoints[iPoint].pos;
         dataPoints[iPoint].val1 = inPoints[iPoint].val;
         maxVal = std::max(maxVal, dataPoints[iPoint].val1);
         minVal = std::min(minVal, dataPoints[iPoint].val1);
     }
-    std::sort(&(dataPoints[0]),&(dataPoints[nPoints]),ValPoints2CompLess);
-    for(iPoint = 0;iPoint < nPoints;++ iPoint){
+    std::sort(&(dataPoints[0]), &(dataPoints[nPoints]), ValPoints2CompLess);
+    for (iPoint = 0; iPoint < nPoints; ++iPoint) {
         dataPoints[iPoint].val2 = expectedVal[nPoints - iPoint - 1];
         maxVal = std::max(maxVal, dataPoints[iPoint].val2);
         minVal = std::min(minVal, dataPoints[iPoint].val2);
@@ -80,7 +79,7 @@ bool GWASQQPlotPointsPainter::loadPoints(ValPoints *inPoints, long long inNPoint
 
 bool GWASQQPlotPointsPainter::setAxisValue(double xMax, double yMax, bool isReset)
 {
-    if(isReset) {
+    if (isReset) {
         calcuAxisData();
         return true;
     }
@@ -99,25 +98,25 @@ void GWASQQPlotPointsPainter::initInitializeGL()
     tmpPaintWidget->glEnable(GL_POINT_SMOOTH);
 
     idPointsShader = 0;
-    tmpPaintWidget->setGLShaderProgram(":/shader/QQPointsVertex.shader",":/shader/QQPointsFragment.shader",idPointsShader);
+    tmpPaintWidget->setGLShaderProgram(":/shader/QQPointsVertex.shader", ":/shader/QQPointsFragment.shader", idPointsShader);
 
-    tmpPaintWidget->glGenBuffers(1,&pointsVBO);
-    tmpPaintWidget->glGenVertexArrays(1,&pointsVAO);
-    tmpPaintWidget->glBindBuffer(GL_ARRAY_BUFFER,pointsVBO);
+    tmpPaintWidget->glGenBuffers(1, &pointsVBO);
+    tmpPaintWidget->glGenVertexArrays(1, &pointsVAO);
+    tmpPaintWidget->glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
     tmpPaintWidget->glBindVertexArray(pointsVAO);
-    tmpPaintWidget->glBufferData(GL_ARRAY_BUFFER,2*nPoints*sizeof(GLfloat),nullptr,GL_DYNAMIC_DRAW);
-    tmpPaintWidget->glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,2*sizeof(GLfloat),(void*)0);
+    tmpPaintWidget->glBufferData(GL_ARRAY_BUFFER, 2 * nPoints * sizeof(GLfloat), nullptr, GL_DYNAMIC_DRAW);
+    tmpPaintWidget->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void*)0);
     tmpPaintWidget->glEnableVertexAttribArray(0);
 
     tmpPaintWidget->glBindVertexArray(0);
-    tmpPaintWidget->glBindBuffer(GL_ARRAY_BUFFER,0);
+    tmpPaintWidget->glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void GWASQQPlotPointsPainter::delDeleteGL()
 {
-    if(tmpPaintWidget -> isValid()){
-        tmpPaintWidget -> glDeleteBuffers(1,&pointsVBO);
-        tmpPaintWidget -> glDeleteVertexArrays(1,&pointsVAO);
+    if (tmpPaintWidget -> isValid()) {
+        tmpPaintWidget -> glDeleteBuffers(1, &pointsVBO);
+        tmpPaintWidget -> glDeleteVertexArrays(1, &pointsVAO);
     }
 }
 

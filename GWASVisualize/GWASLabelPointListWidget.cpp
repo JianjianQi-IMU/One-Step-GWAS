@@ -1,9 +1,8 @@
 #include "GWASLabelPointListWidget.hpp"
 #include "ui_GWASLabelPointListWidget.h"
 
-GWASLabelPointListWidget::GWASLabelPointListWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::GWASLabelPointListWidget)
+GWASLabelPointListWidget::GWASLabelPointListWidget(QWidget *parent)
+    : QWidget(parent), ui(new Ui::GWASLabelPointListWidget)
 {
     ui->setupUi(this);
     pLabelView = new LabelPointsListView(this);
@@ -12,12 +11,9 @@ GWASLabelPointListWidget::GWASLabelPointListWidget(QWidget *parent) :
 
     mainLayout->addWidget(pLabelView);
 
-    connect(pLabelView,&LabelPointsListView::removeLabelPoint,
-            this,&GWASLabelPointListWidget::removeLabelPoint);
-    connect(pLabelView,&LabelPointsListView::lookLabelPoint,
-            this,&GWASLabelPointListWidget::lookLabelPoint);
-    connect(pLabelView,&LabelPointsListView::removeAllLabelPoint,
-            this,&GWASLabelPointListWidget::removeAllLabelPoint);
+    connect(pLabelView, &LabelPointsListView::removeLabelPoint, this, &GWASLabelPointListWidget::removeLabelPoint);
+    connect(pLabelView, &LabelPointsListView::lookLabelPoint, this, &GWASLabelPointListWidget::lookLabelPoint);
+    connect(pLabelView, &LabelPointsListView::removeAllLabelPoint, this, &GWASLabelPointListWidget::removeAllLabelPoint);
 }
 
 GWASLabelPointListWidget::~GWASLabelPointListWidget()
@@ -27,8 +23,8 @@ GWASLabelPointListWidget::~GWASLabelPointListWidget()
 
 void GWASLabelPointListWidget::setPoints(ValPoints *inPoints, long long inNPoints)
 {
-    points=inPoints;
-    nPoints=inNPoints;
+    points = inPoints;
+    nPoints = inNPoints;
 
     pLabelView->setPointsData(inPoints);
 

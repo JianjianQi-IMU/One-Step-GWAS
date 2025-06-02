@@ -35,11 +35,11 @@ private:
     QPushButton*                pSave;
     QPushButton*                pCancel;
 public:
-    KinshipRangeValColSettingWidget(QWidget* parent = nullptr):
-        QWidget(parent)
+    KinshipRangeValColSettingWidget(QWidget* parent = nullptr)
+        : QWidget(parent)
     {
-        setAttribute(Qt::WA_DeleteOnClose,true);
-        setAttribute(Qt::WA_ShowModal,true);
+        setAttribute(Qt::WA_DeleteOnClose, true);
+        setAttribute(Qt::WA_ShowModal, true);
 
         pHighBox = new QDoubleSpinBox(this);
         pLowBox = new QDoubleSpinBox(this);
@@ -47,12 +47,12 @@ public:
         pHighColBtn = new ColorChoosePushButton(this);
         pLowColBtn = new ColorChoosePushButton(this);
         pMeanColBtn = new ColorChoosePushButton(this);
-        pSave = new QPushButton("Save",this);
-        pCancel = new QPushButton("Cancel",this);
-        QLabel* highLabel = new QLabel("Max Value",this);
-        QLabel* lowLabel = new QLabel("Min Value",this);
-        QLabel* meanLabel = new QLabel("Mean Value",this);
-        QGroupBox* pGroupBox = new QGroupBox("Value Range",this);
+        pSave = new QPushButton("Save", this);
+        pCancel = new QPushButton("Cancel", this);
+        QLabel* highLabel = new QLabel("Max Value", this);
+        QLabel* lowLabel = new QLabel("Min Value", this);
+        QLabel* meanLabel = new QLabel("Mean Value", this);
+        QGroupBox* pGroupBox = new QGroupBox("Value Range", this);
         QVBoxLayout* pGroupLayout = new QVBoxLayout(pGroupBox);
         QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
@@ -85,27 +85,26 @@ public:
         mainLayout->addWidget(pGroupBox);
         mainLayout->addWidget(pDownWidget);
 
-        pHighBox -> setRange(-1E37,1E37);
-        pLowBox -> setRange(-1E37,1E37);
-        pMeanBox -> setRange(-1E37,1E37);
+        pHighBox -> setRange(-1E37, 1E37);
+        pLowBox -> setRange(-1E37, 1E37);
+        pMeanBox -> setRange(-1E37, 1E37);
         pHighBox -> setSingleStep(0.1);
         pLowBox -> setSingleStep(0.1);
         pMeanBox -> setSingleStep(0.1);
 
-        connect(pHighColBtn,&ColorChoosePushButton::clicked,
-                this,&KinshipRangeValColSettingWidget::setHighColor);
-        connect(pLowColBtn,&ColorChoosePushButton::clicked,
-                this,&KinshipRangeValColSettingWidget::setLowColor);
-        connect(pMeanColBtn,&ColorChoosePushButton::clicked,
-                this,&KinshipRangeValColSettingWidget::setMeanColor);
-        connect(pSave,&QPushButton::clicked,
-                this,&KinshipRangeValColSettingWidget::saveTrigger);
-        connect(pCancel,&QPushButton::clicked,
-                this,&KinshipRangeValColSettingWidget::close);
+        connect(pHighColBtn, &ColorChoosePushButton::clicked,
+            this, &KinshipRangeValColSettingWidget::setHighColor);
+        connect(pLowColBtn, &ColorChoosePushButton::clicked,
+            this, &KinshipRangeValColSettingWidget::setLowColor);
+        connect(pMeanColBtn, &ColorChoosePushButton::clicked,
+            this, &KinshipRangeValColSettingWidget::setMeanColor);
+        connect(pSave, &QPushButton::clicked,
+            this, &KinshipRangeValColSettingWidget::saveTrigger);
+        connect(pCancel, &QPushButton::clicked,
+            this, &KinshipRangeValColSettingWidget::close);
     }
-    explicit KinshipRangeValColSettingWidget(const KinshipRangeValColParam& param,
-                                             QWidget* parent = nullptr):
-        KinshipRangeValColSettingWidget(parent)
+    explicit KinshipRangeValColSettingWidget(const KinshipRangeValColParam& param, QWidget* parent = nullptr)
+        : KinshipRangeValColSettingWidget(parent)
     {
         setParam(param);
     }
@@ -133,25 +132,22 @@ public slots:
     }
     void setHighColor()
     {
-        QColor color = QColorDialog::getColor(pHighColBtn -> getChooseColor(),this,"Choose High Color");
-        if(color.isValid())
-        {
+        QColor color = QColorDialog::getColor(pHighColBtn -> getChooseColor(), this, "Choose High Color");
+        if (color.isValid()) {
             pHighColBtn -> setChooseColor(color);
         }
     }
     void setLowColor()
     {
-        QColor color = QColorDialog::getColor(pLowColBtn -> getChooseColor(),this,"Choose Low Color");
-        if(color.isValid())
-        {
+        QColor color = QColorDialog::getColor(pLowColBtn -> getChooseColor(), this, "Choose Low Color");
+        if (color.isValid()) {
             pLowColBtn -> setChooseColor(color);
         }
     }
     void setMeanColor()
     {
-        QColor color = QColorDialog::getColor(pMeanColBtn -> getChooseColor(),this,"Choose Mean Color");
-        if(color.isValid())
-        {
+        QColor color = QColorDialog::getColor(pMeanColBtn -> getChooseColor(), this, "Choose Mean Color");
+        if (color.isValid()) {
             pMeanColBtn -> setChooseColor(color);
         }
     }

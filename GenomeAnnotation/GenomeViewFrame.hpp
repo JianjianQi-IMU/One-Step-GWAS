@@ -72,18 +72,17 @@ public:
     }
     void preSetCurrentPosF(const long double& inCurrentLeftPosF, const long double& inCurrentRightPosF)
     {
-        tmpCurrentLeftPosF  = inCurrentLeftPosF;
+        tmpCurrentLeftPosF = inCurrentLeftPosF;
         tmpCurrentRightPosF = inCurrentRightPosF;
     }
 
     void paintGenomeViewFrame(bool isLeftMousePressed, int leftMousePressedPosX, int leftMouseMovingPosX,
-                              QPainter *painter)
+        QPainter *painter)
     {
         paintBackground(painter);
         paintVerticalLineInPainter(painter);
         paintChrGridLineInPainter(painter);
-        if (isLeftMousePressed)
-        {
+        if (isLeftMousePressed) {
             paintZoomRegionLineInPainter(leftMousePressedPosX, leftMouseMovingPosX, painter);
         }
     }

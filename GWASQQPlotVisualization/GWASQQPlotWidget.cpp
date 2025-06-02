@@ -18,22 +18,21 @@ GWASQQPlotWidget::GWASQQPlotWidget(QWidget *parent)
 
 GWASQQPlotWidget::~GWASQQPlotWidget()
 {
-    if(pPointsPainter){
+    if (pPointsPainter) {
         delete pPointsPainter;
         pPointsPainter = nullptr;
     }
-    if(pFramePainter){
+    if (pFramePainter) {
         delete pFramePainter;
         pFramePainter = nullptr;
     }
-    if(pChrInfo){
+    if (pChrInfo) {
         delete pChrInfo;
         pChrInfo = nullptr;
     }
 }
 
-bool GWASQQPlotWidget::loadChromosome(const std::vector<long long>& inChrLen,
-                                      const std::vector<std::string>& inChrName)
+bool GWASQQPlotWidget::loadChromosome(const std::vector<long long>& inChrLen, const std::vector<std::string>& inChrName)
 {
     bool flag = pChrInfo -> loadChromosome(inChrLen, inChrName);
     return flag;
@@ -41,8 +40,8 @@ bool GWASQQPlotWidget::loadChromosome(const std::vector<long long>& inChrLen,
 
 bool GWASQQPlotWidget::loadPoints(ValPoints *inPoints, long long inNPoints)
 {
-    bool flag = pPointsPainter -> loadPoints(inPoints,inNPoints);
-    if(flag){
+    bool flag = pPointsPainter -> loadPoints(inPoints, inNPoints);
+    if (flag) {
         QVector<double> tVec;
         pPointsPainter -> getXAxisData(tVec);
         pFramePainter -> setXAxisData(tVec, tVec.back());
@@ -71,7 +70,7 @@ void GWASQQPlotWidget::setDiagonalLineColor(const QColor &col)
 
 bool GWASQQPlotWidget::setAxisValue(double xMax, double yMax, bool isReset)
 {
-    if(xMax <= 0 || yMax <= 0) {
+    if (xMax <= 0 || yMax <= 0) {
         return false;
     }
     pPointsPainter -> setAxisValue(xMax, yMax, isReset);
@@ -94,22 +93,22 @@ void GWASQQPlotWidget::savePlot(FD::SaveFileInfo inInfo)
     FD::SVGFileFormInfo *svgInfo = nullptr;
     FD::PNGFileFormInfo *pngInfo = nullptr;
     switch (inInfo.getIDForm()) {
-    case FD::FILEFORM_SVG:{
-        if(inInfo.getFileInfo()){
-            svgInfo = dynamic_cast<FD::SVGFileFormInfo *>(inInfo.getFileInfo());
-            savePaintCurrentSVG(svgInfo->filePath,svgInfo->saveSize);
+        case FD::FILEFORM_SVG: {
+            if (inInfo.getFileInfo()) {
+                svgInfo = dynamic_cast<FD::SVGFileFormInfo *>(inInfo.getFileInfo());
+                savePaintCurrentSVG(svgInfo->filePath, svgInfo->saveSize);
+            }
+            break;
         }
-        break;
-    }
-    case FD::FILEFORM_PNG:{
-        if(inInfo.getFileInfo()){
-            pngInfo = dynamic_cast<FD::PNGFileFormInfo *>(inInfo.getFileInfo());
-            savePaintCurrentPNG(pngInfo->filePath,pngInfo->saveSize);
+        case FD::FILEFORM_PNG: {
+            if (inInfo.getFileInfo()) {
+                pngInfo = dynamic_cast<FD::PNGFileFormInfo *>(inInfo.getFileInfo());
+                savePaintCurrentPNG(pngInfo->filePath, pngInfo->saveSize);
+            }
+            break;
         }
-        break;
-    }
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -118,11 +117,11 @@ void GWASQQPlotWidget::savePaintCurrentSVG(QString savePath, QSizeF inSize)
     if(savePath.isEmpty()) return;
     QSvgGenerator generator;
     generator.setFileName(savePath);
-    generator.setSize(QSize(inSize.width(),inSize.height()));
+    generator.setSize(QSize(inSize.width(), inSize.height()));
 
     int tSize = std::min(inSize.width(), inSize.height());
-    pPointsPainter -> setDisplayRect(QRect(1,1,tSize,tSize));
-    pFramePainter -> setDisplayRect(QRect(1,1,tSize,tSize));
+    pPointsPainter -> setDisplayRect(QRect(1, 1, tSize, tSize));
+    pFramePainter -> setDisplayRect(QRect(1, 1, tSize, tSize));
 
     QPainter Painter;
     Painter.begin(&generator);
@@ -135,12 +134,12 @@ void GWASQQPlotWidget::savePaintCurrentSVG(QString savePath, QSizeF inSize)
 
 void GWASQQPlotWidget::savePaintCurrentPNG(QString savePath, QSizeF inSize)
 {
-    if(savePath.isEmpty()) return;
-    QPixmap pixmap(QSize(inSize.width(),inSize.height()));
+    if (savePath.isEmpty()) return;
+    QPixmap pixmap(QSize(inSize.width(), inSize.height()));
     pixmap.fill(Qt::white);
     int tSize = std::min(inSize.width(), inSize.height());
-    pPointsPainter -> setDisplayRect(QRect(1,1,tSize,tSize));
-    pFramePainter -> setDisplayRect(QRect(1,1,tSize,tSize));
+    pPointsPainter -> setDisplayRect(QRect(1, 1, tSize, tSize));
+    pFramePainter -> setDisplayRect(QRect(1, 1, tSize, tSize));
 
     QPainter Painter;
 
@@ -158,7 +157,7 @@ void GWASQQPlotWidget::leftMousePressEvent(QMouseEvent *e, bool &isNeedUpdate)
 {
     long long idPoint = -1;
     pPointsPainter -> setSelectedPointIndex(-1);
-    if((idPoint = pPointsPainter -> isPressedPoint(QPoint(e->x(),e->y()))) != -1){
+    if ((idPoint = pPointsPainter -> isPressedPoint(QPoint(e->x(), e->y()))) != -1) {
         pPointsPainter -> setSelectedPointIndex(idPoint);
         isNeedUpdate = true;
     }
@@ -174,14 +173,12 @@ void GWASQQPlotWidget::paintGL()
 {
     QColor backgroundColor = pFramePainter -> getBackgroundColor();
 
-    glClearColor(backgroundColor.redF(),
-                 backgroundColor.greenF(),
-                 backgroundColor.blueF(),1.0f);
+    glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     int tSize = std::min(width(), height());
-    pPointsPainter -> setDisplayRect(QRect(1,1,tSize,tSize));
-    pFramePainter -> setDisplayRect(QRect(1,1,tSize,tSize));
+    pPointsPainter -> setDisplayRect(QRect(1, 1, tSize, tSize));
+    pFramePainter -> setDisplayRect(QRect(1, 1, tSize, tSize));
 
     QPainter Painter;
     Painter.begin(this);

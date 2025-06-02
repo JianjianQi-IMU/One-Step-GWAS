@@ -8,8 +8,7 @@
 #include <QSplitter>
 
 GWASQQVisualizationWidget::GWASQQVisualizationWidget(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::GWASQQVisualizationWidget)
+    : QMainWindow(parent), ui(new Ui::GWASQQVisualizationWidget)
 {
     ui->setupUi(this);
 
@@ -20,12 +19,12 @@ GWASQQVisualizationWidget::GWASQQVisualizationWidget(QWidget *parent)
 
     pMainInfoWidget = new GWASQQMainInfoWidget(this);
 
-    pLeftTabWidget=new QTabWidget(this);
-    pLeftTabWidget->addTab(pMainInfoWidget,"Main");
+    pLeftTabWidget = new QTabWidget(this);
+    pLeftTabWidget->addTab(pMainInfoWidget, "Main");
 
     QWidget* mainWidget = new QWidget(this);
     QVBoxLayout* mainLayout = new QVBoxLayout(mainWidget);
-    QSplitter* mainSplitter=new QSplitter(this);
+    QSplitter* mainSplitter = new QSplitter(this);
     mainSplitter->setOrientation(Qt::Horizontal);
     mainSplitter->addWidget(pLeftTabWidget);
     mainSplitter->addWidget(pPlotWidget);
@@ -35,7 +34,7 @@ GWASQQVisualizationWidget::GWASQQVisualizationWidget(QWidget *parent)
     mainSplitter->setStretchFactor(1, 6);
     setCentralWidget(mainWidget);
 
-    resize(1200,600);
+    resize(1200, 600);
 }
 
 GWASQQVisualizationWidget::~GWASQQVisualizationWidget()
@@ -45,7 +44,7 @@ GWASQQVisualizationWidget::~GWASQQVisualizationWidget()
 
 bool GWASQQVisualizationWidget::loadChromosome(const std::vector<long long> &inChrLen, const std::vector<std::string> &inChrName)
 {
-    if(pPlotWidget){
+    if (pPlotWidget) {
         pPlotWidget -> loadChromosome(inChrLen, inChrName);
         return true;
     }
@@ -54,7 +53,7 @@ bool GWASQQVisualizationWidget::loadChromosome(const std::vector<long long> &inC
 
 bool GWASQQVisualizationWidget::loadPoints(ValPoints *inPoints, long long inNPoints)
 {
-    if(pPlotWidget){
+    if (pPlotWidget) {
         pPlotWidget -> loadPoints(inPoints, inNPoints);
         pMainInfoWidget -> setMax(QString::number(pPlotWidget -> getMaxVal()));
         pMainInfoWidget -> setNumber(QString::number(inNPoints));
@@ -68,8 +67,7 @@ void GWASQQVisualizationWidget::on_actionExportPlot_triggered()
     FD::PlotFileSaveDialog* pWidget = new FD::PlotFileSaveDialog;
     pWidget -> setAttribute(Qt::WA_ShowModal, true);
     pWidget -> setSize(pPlotWidget -> size());
-    connect(pWidget,&FD::PlotFileSaveDialog::sendSaveFile,
-            pPlotWidget,&GWASQQPlotWidget::savePlot);
+    connect(pWidget, &FD::PlotFileSaveDialog::sendSaveFile, pPlotWidget, &GWASQQPlotWidget::savePlot);
     pWidget -> show();
 }
 
@@ -97,8 +95,7 @@ void GWASQQVisualizationWidget::on_actionSetAxis_triggered()
     double maxVal = pPlotWidget -> getMaxVal();
     GWASQQAxisSettingWidget* pWidget = new GWASQQAxisSettingWidget(pPlotWidget);
     pWidget -> setLimits(maxVal, maxVal);
-    connect(pWidget, &GWASQQAxisSettingWidget::sendAxisValue,
-            pPlotWidget, &GWASQQPlotWidget::setAxisValue);
+    connect(pWidget, &GWASQQAxisSettingWidget::sendAxisValue, pPlotWidget, &GWASQQPlotWidget::setAxisValue);
     pWidget -> show();
 }
 

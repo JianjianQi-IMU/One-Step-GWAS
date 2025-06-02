@@ -22,9 +22,7 @@ public:
     ~GenomeAnnoSlideWidget();
 
     bool loadChromosome(long long *inChrLen, char** inChrName, int inNChr);
-    bool loadChromosome(const std::vector<long long>& inChrLen,
-                        const std::vector<std::string>& inChrName);
-
+    bool loadChromosome(const std::vector<long long>& inChrLen, const std::vector<std::string>& inChrName);
 
     void setColorListBar(const QVector<QColor>& inList)
     {

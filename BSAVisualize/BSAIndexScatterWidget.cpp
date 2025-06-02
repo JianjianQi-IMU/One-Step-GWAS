@@ -1,26 +1,26 @@
 #include "BSAIndexScatterWidget.hpp"
 
 BSAPointID::BSAPointID()
-    :BSAPointID(0,-1)
+    : BSAPointID(0, -1)
 {
 
 }
 
 BSAPointID::BSAPointID(size_t inID, short inInfo)
 {
-    id=inID;
-    info=inInfo;
+    id = inID;
+    info = inInfo;
 }
 
 bool BSAPointID::operator==(const BSAPointID &B) const
 {
-    return id==B.id&&info==B.info;
+    return id == B.id && info == B.info;
 }
 
 int BSAIndexScatterWidget::chrNameMaxLen = 256;
 
 BSAIndexScatterWidget::BSAIndexScatterWidget(QWidget *parent)
-    :QOpenGLWidget(parent)
+    : QOpenGLWidget(parent)
 {
     init();
     makeMenu();
@@ -29,9 +29,9 @@ BSAIndexScatterWidget::BSAIndexScatterWidget(QWidget *parent)
 BSAIndexScatterWidget::BSAIndexScatterWidget(size_t *inChrLen, char **inChrName, int inNChr, FD::BSAInterVal *inPoints, size_t inNPoints,ValPoints2* inMarkers,size_t inNMarkers, QWidget *parent)
     :BSAIndexScatterWidget(parent)
 {
-    loadChromosome(inChrLen,inChrName,inNChr);
-    loadPoints(inPoints,inNPoints);
-    loadMarkers(inMarkers,inNMarkers);
+    loadChromosome(inChrLen,inChrName, inNChr);
+    loadPoints(inPoints, inNPoints);
+    loadMarkers(inMarkers, inNMarkers);
 }
 
 BSAIndexScatterWidget::~BSAIndexScatterWidget()

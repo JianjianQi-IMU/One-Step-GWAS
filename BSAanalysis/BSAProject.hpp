@@ -9,14 +9,13 @@
 #include <algorithm>
 #include <iterator>
 
-#include <QDebug>
-
-namespace FD{
+namespace FD
+{
 
 class BSAInterVal
 {
 public:
-    int    idChr;
+    int idChr;
     size_t start;
     size_t stop;
     size_t n;

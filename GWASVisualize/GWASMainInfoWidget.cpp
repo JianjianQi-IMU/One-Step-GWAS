@@ -1,9 +1,8 @@
 #include "GWASMainInfoWidget.hpp"
 #include "ui_GWASMainInfoWidget.h"
 
-GWASMainInfoWidget::GWASMainInfoWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::GWASMainInfoWidget)
+GWASMainInfoWidget::GWASMainInfoWidget(QWidget *parent)
+    : QWidget(parent), ui(new Ui::GWASMainInfoWidget)
 {
     ui->setupUi(this);
 }

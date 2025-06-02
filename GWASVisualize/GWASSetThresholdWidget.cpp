@@ -6,17 +6,18 @@
 #include <QPalette>
 #include <QGroupBox>
 
-GWASSetThresholdWidget::GWASSetThresholdWidget(QWidget *parent) : QWidget(parent)
+GWASSetThresholdWidget::GWASSetThresholdWidget(QWidget *parent)
+    : QWidget(parent)
 {
-    setAttribute(Qt::WA_DeleteOnClose,true);
+    setAttribute(Qt::WA_DeleteOnClose, true);
 
-    pColBtn    = new QPushButton("Click Color",this);
-    pOKBtn     = new QPushButton("save",this);
-    pCancelBtn = new QPushButton("cancel",this);
-    pColLabel  = new QLabel("Color",this);
-    pSizeLabel = new QLabel("Size",this);
-    pStyleLabel= new QLabel("Style",this);
-    pValBox    = new QDoubleSpinBox(this);
+    pColBtn = new QPushButton("Click Color", this);
+    pOKBtn = new QPushButton("save", this);
+    pCancelBtn = new QPushButton("cancel", this);
+    pColLabel = new QLabel("Color", this);
+    pSizeLabel = new QLabel("Size", this);
+    pStyleLabel = new QLabel("Style", this);
+    pValBox = new QDoubleSpinBox(this);
 
     pLineSizeComboBox = new LineStyleDisplayComboBox(this);
     pLineStyleComboBox = new LineStyleDisplayComboBox(this);
@@ -26,8 +27,8 @@ GWASSetThresholdWidget::GWASSetThresholdWidget(QWidget *parent) : QWidget(parent
     QWidget* styleWidget = new QWidget(this);
     QWidget* downWidget = new QWidget(this);
 
-    QGroupBox* thresholdLineBox = new QGroupBox("Threshold Line",this);
-    QGroupBox* thresholdValueBox = new QGroupBox("Threshold Value (- Lg P-value)",this);
+    QGroupBox* thresholdLineBox = new QGroupBox("Threshold Line", this);
+    QGroupBox* thresholdValueBox = new QGroupBox("Threshold Value (- Lg P-value)", this);
 
     QVBoxLayout* thresholdLineLayout = new QVBoxLayout(thresholdLineBox);
     QVBoxLayout* thresholdValueLayout = new QVBoxLayout(thresholdValueBox);
@@ -62,14 +63,13 @@ GWASSetThresholdWidget::GWASSetThresholdWidget(QWidget *parent) : QWidget(parent
     pValBox->setMinimum(0);
     pValBox->setSingleStep(0.01);
 
-    mapPenStyle[Qt::SolidLine] = 0,vecPenStyle.append(Qt::SolidLine);
-    mapPenStyle[Qt::DashLine] = 1,vecPenStyle.append(Qt::DashLine);
-    mapPenStyle[Qt::DotLine] = 2,vecPenStyle.append(Qt::DotLine);
-    mapPenStyle[Qt::DashDotLine] = 3,vecPenStyle.append(Qt::DashDotLine);
-    mapPenStyle[Qt::DashDotDotLine] = 4,vecPenStyle.append(Qt::DashDotDotLine);
+    mapPenStyle[Qt::SolidLine] = 0, vecPenStyle.append(Qt::SolidLine);
+    mapPenStyle[Qt::DashLine] = 1, vecPenStyle.append(Qt::DashLine);
+    mapPenStyle[Qt::DotLine] = 2, vecPenStyle.append(Qt::DotLine);
+    mapPenStyle[Qt::DashDotLine] = 3, vecPenStyle.append(Qt::DashDotLine);
+    mapPenStyle[Qt::DashDotDotLine] = 4, vecPenStyle.append(Qt::DashDotDotLine);
 
-    for(int size = 1;size <= 8;++size)
-    {
+    for (int size = 1; size <= 8; ++size) {
         mapSize[size] = vecSize.size();
         vecSize.append(size);
     }
@@ -77,12 +77,9 @@ GWASSetThresholdWidget::GWASSetThresholdWidget(QWidget *parent) : QWidget(parent
     initLineSizeComboBox();
     initLineStyleComboBox();
 
-    connect(pOKBtn,&QPushButton::clicked,
-            this,&GWASSetThresholdWidget::dealSave);
-    connect(pCancelBtn,&QPushButton::clicked,
-            this,&GWASSetThresholdWidget::close);
-    connect(pColBtn,&QPushButton::clicked,
-            this,&GWASSetThresholdWidget::chooseCol);
+    connect(pOKBtn, &QPushButton::clicked, this, &GWASSetThresholdWidget::dealSave);
+    connect(pCancelBtn, &QPushButton::clicked, this, &GWASSetThresholdWidget::close);
+    connect(pColBtn, &QPushButton::clicked, this, &GWASSetThresholdWidget::chooseCol);
 
     setWindowTitle("Threshold Settings");
 }
@@ -90,15 +87,15 @@ GWASSetThresholdWidget::GWASSetThresholdWidget(QWidget *parent) : QWidget(parent
 void GWASSetThresholdWidget::setLineStyleParam(const LineStyleParam &inParam)
 {
     color = inParam.lineColor;
-    QPalette tPalette=pColBtn -> palette();
-    tPalette.setColor(QPalette::Button,color);
+    QPalette tPalette = pColBtn -> palette();
+    tPalette.setColor(QPalette::Button, color);
     pColBtn -> setPalette(tPalette);
     int idSize = mapSize[inParam.lineSize];
     int idStyle = mapPenStyle[inParam.lineStyle];
-    if(idSize < 0 || idSize >= vecSize.size()){
+    if (idSize < 0 || idSize >= vecSize.size()) {
         idSize = 0;
     }
-    if(idStyle < 0 || idStyle >= vecPenStyle.size()){
+    if (idStyle < 0 || idStyle >= vecPenStyle.size()) {
         idStyle = 0;
     }
     pLineSizeComboBox -> setCurrentItem(idSize);
@@ -113,15 +110,15 @@ void GWASSetThresholdWidget::dealSave()
     tParam.lineColor = color;
     tParam.lineSize = tSize;
     tParam.lineStyle = tStyle;
-    emit sendThresholdLine(pValBox->value(),tParam);
+    emit sendThresholdLine(pValBox->value(), tParam);
     close();
 }
 
 void GWASSetThresholdWidget::chooseCol()
 {
-    color = QColorDialog::getColor(color,this);
+    color = QColorDialog::getColor(color, this);
     QPalette tPalette=pColBtn -> palette();
-    tPalette.setColor(QPalette::Button,color);
+    tPalette.setColor(QPalette::Button, color);
     pColBtn -> setPalette(tPalette);
     pColBtn -> update();
 }
@@ -129,10 +126,9 @@ void GWASSetThresholdWidget::chooseCol()
 void GWASSetThresholdWidget::initLineSizeComboBox()
 {
     LineStyleParam tParam;
-    for(int i = 0;i < vecSize.size();++i)
-    {
+    for (int i = 0; i < vecSize.size(); ++i) {
         tParam.lineSize = vecSize[i];
-        pLineSizeComboBox -> addLineItem(QString::number(vecSize[i]) + "pt",tParam);
+        pLineSizeComboBox -> addLineItem(QString::number(vecSize[i]) + "pt", tParam);
     }
 }
 
@@ -140,9 +136,8 @@ void GWASSetThresholdWidget::initLineStyleComboBox()
 {
     LineStyleParam tParam;
     tParam.lineSize = 2;
-    for(int i = 0;i < vecPenStyle.size();++i)
-    {
+    for (int i = 0; i < vecPenStyle.size(); ++i) {
         tParam.lineStyle = vecPenStyle[i];
-        pLineStyleComboBox -> addLineItem("",tParam);
+        pLineStyleComboBox -> addLineItem("", tParam);
     }
 }

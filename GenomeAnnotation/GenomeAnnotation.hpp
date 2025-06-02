@@ -20,11 +20,11 @@ public:
     char*                   annotation;
     std::list<long long>    CDS;
     /*
-     * CDS [cds1start,cds1stop,
-     *      cds2start,cds2stop,
+     * CDS [cds1start, cds1stop,
+     *      cds2start, cds2stop,
      *      ...
-     *      cdsNstart,cdsNstop]
-*/
+     *      cdsNstart, cdsNstop]
+    */
     long long            startUTR5;
     long long            stopUTR5;
     long long            startUTR3;
@@ -91,10 +91,10 @@ public:
     GeneAnnotation* getGene(long long i);
     long long search(const char* inKeywords) const;
     long long search(const char* inKeywords, long long* outListI, long long& outNum, long long outMaxN) const;
-    long long search(int inChrI, long double position, unsigned short mode = GA_START) const;   // find the first gene whose position
-    long long search(int inChrI, long long position, unsigned short mode = GA_START) const;        // is bigger than or equal to
+    long long search(int inChrI, long double position, unsigned short mode = GA_START) const; // find the first gene whose position
+    long long search(int inChrI, long long position, unsigned short mode = GA_START) const; // is bigger than or equal to
     long long searchLower(int inChrI, long double position, unsigned short mode = GA_START) const; // find the last gene whose position
-    long long searchLower(int inChrI, long long position, unsigned short mode = GA_START) const;      // is smaller than or equal to
+    long long searchLower(int inChrI, long long position, unsigned short mode = GA_START) const; // is smaller than or equal to
     bool haveGeneModel() const;
     void setGeneModel(bool flag);
     void clear();

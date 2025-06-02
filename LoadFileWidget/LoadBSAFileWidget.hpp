@@ -21,10 +21,8 @@ public:
     QList<FD::BaseProject*>* pProjectList;
     int row;
     explicit LoadBSAFileWidget(QWidget* parent = nullptr);
-    LoadBSAFileWidget(AnalyzeUnitInfo* inUnitInfo,
-                      QList<FD::BaseProject*>* inProjectList,
-                      int inRow,
-                      QWidget* parent = nullptr);
+    LoadBSAFileWidget(AnalyzeUnitInfo* inUnitInfo, QList<FD::BaseProject*>* inProjectList,
+        int inRow, QWidget* parent = nullptr);
     ~LoadBSAFileWidget();
     void setUnitInfo(AnalyzeUnitInfo* inUnitInfo);
     void loadMarkerFile();

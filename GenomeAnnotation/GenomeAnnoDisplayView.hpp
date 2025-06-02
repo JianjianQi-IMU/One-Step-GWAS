@@ -94,7 +94,9 @@ public:
         int paintx0 = double(tGeneStart - tmpCurrentLeftPosF) / positionGapLenF * width + xpos;
         int paintl = std::max(int(double(tGeneStop - tGeneStart + 1) / positionGapLenF * width), 1);
         int paintx1 = paintx0 + paintl - 1;
-        if (x >= paintx0 && x <= paintx1 && y >= painty0 && y <= painty1) return true;
+        if (x >= paintx0 && x <= paintx1 && y >= painty0 && y <= painty1) {
+            return true;
+        }
         return false;
     }
     inline bool isClicked(const QPoint& pos)
@@ -112,8 +114,7 @@ public:
     inline long long isClickedGene(const QPoint& pos)
     {
         int xpos = pos.x(), ypos = pos.y();
-        if (genome && nPaintGenes)
-        {
+        if (genome && nPaintGenes) {
             long long iGene = currentMinGenei;
             for (; iGene <= currentMaxGenei; ++iGene) {
                 if (isSelectedGene(iGene, xpos, ypos)) break;
@@ -154,8 +155,7 @@ public:
     } // GenomeAnno
     inline long long getNGenes() const
     {
-        if (genome)
-        {
+        if (genome) {
             return genome -> getNGenes();
         }
         return 0;

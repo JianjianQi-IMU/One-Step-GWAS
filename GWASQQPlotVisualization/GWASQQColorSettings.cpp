@@ -9,15 +9,15 @@
 GWASQQPointsColorChooseWidget::GWASQQPointsColorChooseWidget(QWidget *parent)
     : QWidget(parent)
 {
-    setAttribute(Qt::WA_DeleteOnClose,true);
-    setAttribute(Qt::WA_ShowModal,true);
+    setAttribute(Qt::WA_DeleteOnClose, true);
+    setAttribute(Qt::WA_ShowModal, true);
     setWindowTitle("Choose Points Color");
 
     plotWidget = nullptr;
 
-    QPushButton* chooseBtn = new QPushButton(QIcon(":/icon/chooseColorIcon2.png"),"",this);
-    QPushButton* setBtn = new QPushButton("set",this);
-    QPushButton* cancelBtn = new QPushButton("cancel",this);
+    QPushButton* chooseBtn = new QPushButton(QIcon(":/icon/chooseColorIcon2.png"), "", this);
+    QPushButton* setBtn = new QPushButton("set", this);
+    QPushButton* cancelBtn = new QPushButton("cancel", this);
     displayWidget = new QWidget(this);
 
     QWidget* downWidget = new QWidget(this);
@@ -50,22 +50,22 @@ void GWASQQPointsColorChooseWidget::setChoosedColor(const QColor &inCol)
 {
     colChoosed = inCol;
     QPalette pte = displayWidget -> palette();
-    pte.setColor(QPalette::Background,colChoosed);
+    pte.setColor(QPalette::Background, colChoosed);
     displayWidget -> setPalette(pte);
     update();
 }
 
 void GWASQQPointsColorChooseWidget::doChooseColor()
 {
-    QColor tCol = QColorDialog::getColor(colChoosed,this);
-    if(tCol.isValid()){
+    QColor tCol = QColorDialog::getColor(colChoosed, this);
+    if (tCol.isValid()) {
         setChoosedColor(tCol);
     }
 }
 
 void GWASQQPointsColorChooseWidget::setColor()
 {
-    if(plotWidget != nullptr) {
+    if (plotWidget != nullptr) {
         plotWidget -> setPointsColor(colChoosed);
     }
     close();
@@ -74,15 +74,15 @@ void GWASQQPointsColorChooseWidget::setColor()
 GWASQQDiagonalLineColorChooseWidget::GWASQQDiagonalLineColorChooseWidget(QWidget *parent)
     : QWidget(parent)
 {
-    setAttribute(Qt::WA_DeleteOnClose,true);
-    setAttribute(Qt::WA_ShowModal,true);
+    setAttribute(Qt::WA_DeleteOnClose, true);
+    setAttribute(Qt::WA_ShowModal, true);
     setWindowTitle("Choose Diagonal Line Color");
 
     plotWidget = nullptr;
 
-    QPushButton* chooseBtn = new QPushButton(QIcon(":/icon/chooseColorIcon2.png"),"",this);
-    QPushButton* setBtn = new QPushButton("set",this);
-    QPushButton* cancelBtn = new QPushButton("cancel",this);
+    QPushButton* chooseBtn = new QPushButton(QIcon(":/icon/chooseColorIcon2.png"), "", this);
+    QPushButton* setBtn = new QPushButton("set", this);
+    QPushButton* cancelBtn = new QPushButton("cancel", this);
     displayWidget = new QWidget(this);
 
     QWidget* downWidget = new QWidget(this);
@@ -115,22 +115,22 @@ void GWASQQDiagonalLineColorChooseWidget::setChoosedColor(const QColor &inCol)
 {
     colChoosed = inCol;
     QPalette pte = displayWidget -> palette();
-    pte.setColor(QPalette::Background,colChoosed);
+    pte.setColor(QPalette::Background, colChoosed);
     displayWidget -> setPalette(pte);
     update();
 }
 
 void GWASQQDiagonalLineColorChooseWidget::doChooseColor()
 {
-    QColor tCol = QColorDialog::getColor(colChoosed,this);
-    if(tCol.isValid()){
+    QColor tCol = QColorDialog::getColor(colChoosed, this);
+    if (tCol.isValid()) {
         setChoosedColor(tCol);
     }
 }
 
 void GWASQQDiagonalLineColorChooseWidget::setColor()
 {
-    if(plotWidget != nullptr) {
+    if (plotWidget != nullptr) {
         plotWidget -> setDiagonalLineColor(colChoosed);
     }
     close();

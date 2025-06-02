@@ -61,10 +61,10 @@ GenomeAnnoDisplayView::GenomeAnnoDisplayView()
 
 GenomeAnnoDisplayView::~GenomeAnnoDisplayView()
 {
-    if(genome){
+    if (genome) {
         delete genome;
     }
-    if(genomeSeq){
+    if (genomeSeq) {
         delete genomeSeq;
     }
 
@@ -77,7 +77,7 @@ bool GenomeAnnoDisplayView::loadGenomeSeq(const char *inFile)
     long long* chrLen = tmpChrInfo->getChrLen();
     char** chrName = tmpChrInfo->getChrName();
     int nChr = tmpChrInfo->getNChr();
-    if(genomeSeq) {
+    if (genomeSeq) {
         genomeSeq->clear();
     } else {
         genomeSeq = new GenomeSequence;
@@ -229,33 +229,33 @@ void GenomeAnnoDisplayView::paintGenesInPainter(QPainter *painter)
         paintl = std::max((long double)(tPaintStop - tPaintStart) / positionGapLenF * width, (long double)1.0);
         geneRect = QRect(paintx0, painty0, paintl, geneModelHeight);
         switch (pGene -> strand) {
-        case '+':{
-            geneFillColor = colorForwardGene;
-        }
-            break;
-        case '-':{
-            geneFillColor = colorReverseGene;
-        }
-            break;
-        default:{
-            geneFillColor = colorDefaultGene;
-        }
+            case '+':{
+                geneFillColor = colorForwardGene;
+            }
+                break;
+            case '-':{
+                geneFillColor = colorReverseGene;
+            }
+                break;
+            default:{
+                geneFillColor = colorDefaultGene;
+            }
             break;
         }
 
         switch (geneDisplayMode) {
-        case GENEDISPLAY_MODE1: {
-            paintOneGeneMode1(geneRect, pGene -> strand, colorDefaultGene, painter);
-        }
-            break;
-        case GENEDISPLAY_MODE2: {
-            paintOneGeneMode2(geneRect, pGene -> strand, geneFillColor, painter);
-        }
-            break;
-        default: {
-            paintOneGeneMode1(geneRect, pGene -> strand, colorDefaultGene, painter);
-        }
-            break;
+            case GENEDISPLAY_MODE1: {
+                paintOneGeneMode1(geneRect, pGene -> strand, colorDefaultGene, painter);
+            }
+                break;
+            case GENEDISPLAY_MODE2: {
+                paintOneGeneMode2(geneRect, pGene -> strand, geneFillColor, painter);
+            }
+                break;
+            default: {
+                paintOneGeneMode1(geneRect, pGene -> strand, colorDefaultGene, painter);
+            }
+                break;
         }
 
         painter->setPen(QPen(Qt::black, 3));
@@ -501,44 +501,44 @@ void GenomeAnnoDisplayView::paintOneBase(char inBase, int xPos, int oneBaseLen, 
     paintLen = paintx1 - paintx0 + 1;
     if (paintLen <= 0) return;
     switch (inBase) {
-    case 'A':
-        painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseA);
-        break;
-    case 'T':
-        painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseT);
-        break;
-    case 'C':
-        painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseC);
-        break;
-    case 'G':
-        painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseG);
-        break;
-    case 'N':
-        painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseN);
-        break;
-    default:
-        painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), base_);
-        break;
+        case 'A':
+            painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseA);
+            break;
+        case 'T':
+            painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseT);
+            break;
+        case 'C':
+            painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseC);
+            break;
+        case 'G':
+            painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseG);
+            break;
+        case 'N':
+            painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), baseN);
+            break;
+        default:
+            painter->fillRect(QRect(paintx0, painty0, paintLen, baseHeight), base_);
+            break;
     }
     if (paintLen > 10) {
         switch (inBase) {
-        case 'A':
-            painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "A");
-            break;
-        case 'T':
-            painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "T");
-            break;
-        case 'C':
-            painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "C");
-            break;
-        case 'G':
-            painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "G");
-            break;
-        case 'N':
-            painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "N");
-            break;
-        default:
-            break;
+            case 'A':
+                painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "A");
+                break;
+            case 'T':
+                painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "T");
+                break;
+            case 'C':
+                painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "C");
+                break;
+            case 'G':
+                painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "G");
+                break;
+            case 'N':
+                painter->drawText(QRect(paintx0, painty0, paintLen, baseHeight), Qt::AlignHCenter | Qt::AlignVCenter, "N");
+                break;
+            default:
+                break;
         }
     }
 }

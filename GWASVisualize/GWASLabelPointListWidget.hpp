@@ -5,7 +5,8 @@
 #include <QVBoxLayout>
 #include "GWASVisualize/LabelPointsListView.hpp"
 
-namespace Ui {
+namespace Ui
+{
 class GWASLabelPointListWidget;
 }
 
@@ -16,7 +17,7 @@ class GWASLabelPointListWidget : public QWidget
 public:
     explicit GWASLabelPointListWidget(QWidget *parent = nullptr);
     ~GWASLabelPointListWidget();
-    void setPoints(ValPoints* inPoints,long long inNPoints);
+    void setPoints(ValPoints* inPoints, long long inNPoints);
     bool setMaxLabelPointsNum(int n);
     bool setChrName(char** pName);
 

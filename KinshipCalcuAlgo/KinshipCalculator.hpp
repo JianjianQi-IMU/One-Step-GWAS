@@ -35,8 +35,8 @@ protected:
 public:
     KinshipCalculator();
     virtual ~KinshipCalculator();
-    bool standardizeCol(Mat& inMat,double factor = 1.0);
-    bool zeroCenterCol(Mat& inMat,double factor = 1.0);
+    bool standardizeCol(Mat& inMat, double factor = 1.0);
+    bool zeroCenterCol(Mat& inMat, double factor = 1.0);
     virtual bool addMat(const IMat& inX);
     virtual bool getKinship(Mat& outMat);
     size_t getNValidMarkers();

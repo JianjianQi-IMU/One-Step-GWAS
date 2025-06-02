@@ -1,9 +1,8 @@
 #include "GeneInfoWidget.hpp"
 #include "ui_GeneInfoWidget.h"
 
-GeneInfoWidget::GeneInfoWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::GeneInfoWidget)
+GeneInfoWidget::GeneInfoWidget(QWidget *parent)
+    : QWidget(parent), ui(new Ui::GeneInfoWidget)
 {
     ui->setupUi(this);
 }

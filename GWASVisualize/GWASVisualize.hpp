@@ -25,7 +25,8 @@
 #include "GWASSetThresholdWidget.hpp"
 #include "GenomeAnnotation/GenomeAnnoSlideWidget.h"
 
-namespace Ui {
+namespace Ui
+{
 class GWASVisualize;
 }
 
@@ -38,19 +39,19 @@ private:
     void setIntervalLenLabel(long double length);
     void setIntervalLenLabel(long long length);
 public:
-    QWidget*      areaSearchToolBar;
-    QHBoxLayout*  areaSearchToolBarLayout;
-    QComboBox*    leftChrChooseBox;
-    QComboBox*    rightChrChooseBox;
-    QLineEdit*    leftChrPosBox;
-    QLineEdit*    rightChrPosBox;
-    QPushButton*  searchBtn;
-    QLabel*       intervalLenLabel;
-    QPushButton*  leftMoveBtn;
-    QPushButton*  rightMoveBtn;
+    QWidget* areaSearchToolBar;
+    QHBoxLayout* areaSearchToolBarLayout;
+    QComboBox* leftChrChooseBox;
+    QComboBox* rightChrChooseBox;
+    QLineEdit* leftChrPosBox;
+    QLineEdit* rightChrPosBox;
+    QPushButton* searchBtn;
+    QLabel* intervalLenLabel;
+    QPushButton* leftMoveBtn;
+    QPushButton* rightMoveBtn;
     QRegExpValidator* posValidator;
 
-    QTabWidget*   pLeftTabWidget;
+    QTabWidget* pLeftTabWidget;
 
     InfoDisplayWidget* pInfoWidget;
     GeneFindList* pFindWidget;
@@ -58,12 +59,12 @@ public:
     LogPScatterVisualizeWidget* pLogPChart;
     GWASLabelPointListWidget* pLabelPointList;
     GenomeAnnoSlideWidget* pSlideWidget;
-    GWASVisualize(long long *inChrLen,char** inChrName,int inNChr,
-                  ValPoints *inPoints,long long inNPoints,
+    GWASVisualize(long long *inChrLen, char** inChrName, int inNChr,
+                  ValPoints *inPoints, long long inNPoints,
                   QWidget *parent = nullptr);
     GWASVisualize(const std::vector<long long>& inChrLen,
                   const std::vector<std::string>& inChrName,
-                  ValPoints *inPoints,long long inNPoints,
+                  ValPoints *inPoints, long long inNPoints,
                   QWidget *parent = nullptr);
     void createGenome();
     void setGenome(const GenomeAnnotation& inGenome);

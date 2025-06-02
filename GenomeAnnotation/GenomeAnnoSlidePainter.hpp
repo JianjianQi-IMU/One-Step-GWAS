@@ -26,9 +26,9 @@ private:
 public:
     GenomeAnnoSlidePainter()
     {
-        heightChooseFrame  = 0;
-        widthChooseFrame   = 2;
-        colorChooseFrame   = QColor(255, 0, 0);
+        heightChooseFrame = 0;
+        widthChooseFrame = 2;
+        colorChooseFrame = QColor(255, 0, 0);
         colorListBar.append(QColor(255, 127, 51, 0));
         fontChrName.setFamily("Times New Roman");
     }
@@ -52,7 +52,7 @@ public:
     }
     void preSetCurrentPosF(const long double& inCurrentLeftPosF, const long double& inCurrentRightPosF)
     {
-        tmpCurrentLeftPosF  = inCurrentLeftPosF;
+        tmpCurrentLeftPosF = inCurrentLeftPosF;
         tmpCurrentRightPosF = inCurrentRightPosF;
         calcuRect();
     }
@@ -63,9 +63,7 @@ public:
         int x0 = tmpRect.x(), y0 = tmpRect.y();
         int x = point.x();
         int y = point.y();
-        if (x >= x0 && x <= x0 + W &&
-           y >= y0 && y <= y0 + H)
-        {
+        if (x >= x0 && x <= x0 + W && y >= y0 && y <= y0 + H) {
             return true;
         }
         return false;
@@ -75,8 +73,7 @@ public:
     {
         long long maxCumPos = tmpChrInfo -> getMaxCumPos();
         long double posFMove = (long double)(leftMoveMouse) * maxCumPos / barDisplayRect.width();
-        if (posFMove > 0 && tmpCurrentRightPosF + posFMove > maxCumPos)
-        {
+        if (posFMove > 0 && tmpCurrentRightPosF + posFMove > maxCumPos) {
             posFMove = maxCumPos - tmpCurrentRightPosF;
         } else if (tmpCurrentLeftPosF + posFMove < 1) {
             posFMove = 1 - tmpCurrentLeftPosF;
@@ -108,7 +105,7 @@ private:
             barDisplayChrRectList.append(QRectF(leftPos, y0, rightPos - leftPos, H));
         }
         tmpRect = QRectF(leftX, y0 - (heightChooseFrame - H) / 2,
-                    rightX - leftX, heightChooseFrame);
+            rightX - leftX, heightChooseFrame);
     }
     void paintBar(QPainter* painter)
     {

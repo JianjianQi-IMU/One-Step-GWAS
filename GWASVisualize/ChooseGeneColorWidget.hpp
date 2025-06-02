@@ -5,7 +5,8 @@
 #include <QColorDialog>
 #include "GWASVisualize/LogPScatterWidget.h"
 
-namespace Ui {
+namespace Ui
+{
 class ChooseGeneColorWidget;
 }
 
@@ -19,7 +20,7 @@ public:
     QColor reverseGeneColor;
     QColor geneColor;
     LogPScatterVisualizeWidget* pLogPChart;
-    explicit ChooseGeneColorWidget(LogPScatterVisualizeWidget* inLogPChart,QWidget *parent = nullptr);
+    explicit ChooseGeneColorWidget(LogPScatterVisualizeWidget* inLogPChart, QWidget *parent = nullptr);
     ~ChooseGeneColorWidget();
 
 private slots:

@@ -2,11 +2,10 @@
 #include "ui_KinshipVisualizeWidget.h"
 
 
-KinshipVisualizeWidget::KinshipVisualizeWidget(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::KinshipVisualizeWidget)
+KinshipVisualizeWidget::KinshipVisualizeWidget(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::KinshipVisualizeWidget)
 {
-    setAttribute(Qt::WA_DeleteOnClose,true);
+    setAttribute(Qt::WA_DeleteOnClose, true);
 
     ui->setupUi(this);
     pHeatmapPlot = nullptr;
@@ -15,9 +14,9 @@ KinshipVisualizeWidget::KinshipVisualizeWidget(QWidget *parent) :
 }
 
 KinshipVisualizeWidget::KinshipVisualizeWidget(const MML::Mat &inKin, char **inName, QWidget *parent)
-    :KinshipVisualizeWidget(parent)
+    : KinshipVisualizeWidget(parent)
 {
-    pHeatmapPlot = new KinshipHeatmapWidget(inKin,inName,this);
+    pHeatmapPlot = new KinshipHeatmapWidget(inKin, inName, this);
     setCentralWidget(pHeatmapPlot);
 }
 
@@ -52,7 +51,7 @@ void KinshipVisualizeWidget::on_actionSetRangeLabel_triggered()
     pHeatmapPlot -> getRangeColor(param.colorHigh, param.colorLow, param.colorMean);
     pWidget -> setParam(param);
     connect(pWidget, &KinshipRangeValColSettingWidget::sendParam,
-            this, &KinshipVisualizeWidget::setRangeValCol);
+        this, &KinshipVisualizeWidget::setRangeValCol);
     pWidget -> show();
 }
 
@@ -62,8 +61,8 @@ void KinshipVisualizeWidget::on_actionExportPlot_triggered()
     FD::PlotFileSaveDialog* pWidget = new FD::PlotFileSaveDialog;
     pWidget -> setAttribute(Qt::WA_ShowModal, true);
     pWidget -> setSize(pHeatmapPlot -> size());
-    connect(pWidget,&FD::PlotFileSaveDialog::sendSaveFile,
-            pHeatmapPlot,&KinshipHeatmapWidget::savePlot);
+    connect(pWidget, &FD::PlotFileSaveDialog::sendSaveFile,
+        pHeatmapPlot, &KinshipHeatmapWidget::savePlot);
     pWidget -> show();
 }
 

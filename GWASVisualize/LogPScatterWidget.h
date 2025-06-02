@@ -42,15 +42,12 @@ protected:
     LogPScatterViewPainter*         pPointsPainter;
     GWASThresholdPainter*           pThresholdPainter;
 public:
-    LogPScatterVisualizeWidget(long long *inChrLen,char** inChrName,int inNChr,
-                               ValPoints *inPoints,long long inNPoints,
-                               QWidget *parent = nullptr);
-    LogPScatterVisualizeWidget(const std::vector<long long>& inChrLen,
-                               const std::vector<std::string>& inChrName,
-                               ValPoints *inPoints,long long inNPoints,
-                               QWidget *parent = nullptr);
+    LogPScatterVisualizeWidget(long long *inChrLen, char** inChrName, int inNChr, ValPoints *inPoints, long long inNPoints,
+        QWidget *parent = nullptr);
+    LogPScatterVisualizeWidget(const std::vector<long long>& inChrLen, const std::vector<std::string>& inChrName,
+        ValPoints *inPoints, long long inNPoints, QWidget *parent = nullptr);
     virtual ~LogPScatterVisualizeWidget();
-    bool loadPoints(ValPoints *inPoints,long long inNPoints);
+    bool loadPoints(ValPoints *inPoints, long long inNPoints);
     int getMaxLabelPointsNum() const;
     ValPoints* getPoints();
     long long getNPoints() const;
@@ -62,7 +59,7 @@ public:
     void dealAddPointLabel();
     void dealRemovePointLabel();
 
-    void getThresholdLine(float& val,LineStyleParam& lineStyle) const;
+    void getThresholdLine(float& val, LineStyleParam& lineStyle) const;
     float getPointSize();
 
     void paintCurrent(QPainter *painter);
@@ -76,13 +73,13 @@ public:
     void doLookLabelPoint(int row);
 
     void calcuNUpThreshold();
-    void setThresholdLine(float val,LineStyleParam lineStyle);
+    void setThresholdLine(float val, LineStyleParam lineStyle);
 
     void setDisplayMovingPosLine(bool flag) override;
     void setDisplayMovingLogPLine(bool flag);
 protected:
-    void leftMousePressEvent(QMouseEvent* e,bool& isNeedUpdate) override;
-    void rightMousePressEvent(QMouseEvent* e,bool& isNeedUpdate) override;
+    void leftMousePressEvent(QMouseEvent* e, bool& isNeedUpdate) override;
+    void rightMousePressEvent(QMouseEvent* e, bool& isNeedUpdate) override;
     void mouseMoveEvent(QMouseEvent* e) override;
     void makeMenu();
 private:
@@ -90,16 +87,12 @@ private:
     void paintGL() override; // basic
     void resizeGL(int w, int h) override; // basic
 
-    void savePaintCurrentSVG(QString savePath,
-                             QSizeF inSize,
-                             long double inLeftPosF,
-                             long double inRightPosF);
-    void savePaintCurrentPNG(QString savePath,
-                             QSizeF inSize,
-                             long double inLeftPosF,
-                             long double inRightPosF);
+    void savePaintCurrentSVG(QString savePath, QSizeF inSize,
+        long double inLeftPosF, long double inRightPosF);
+    void savePaintCurrentPNG(QString savePath, QSizeF inSize,
+        long double inLeftPosF, long double inRightPosF);
 signals:
-    void pointSelected(long long id,long long iGene1,long long iGene2);
+    void pointSelected(long long id, long long iGene1, long long iGene2);
     void addLabelPoint(long long idPoint);
     void removeLabelPoint(int row);
 public slots:

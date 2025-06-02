@@ -187,6 +187,4 @@ public:
     }
 };
 
-//int ChromosomeInfoClass::chrNameMaxLen = 256;
-
 #endif // CHROMOSOMEINFOCLASS_HPP

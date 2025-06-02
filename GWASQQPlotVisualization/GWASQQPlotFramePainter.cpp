@@ -1,6 +1,7 @@
 #include "GWASQQPlotFramePainter.h"
 
-GWASQQPlotFramePainter::GWASQQPlotFramePainter() {
+GWASQQPlotFramePainter::GWASQQPlotFramePainter()
+{
     leftBorderFactor       = .2;
     rightBorderFactor      = .2;
     topBorderFactor        = .2;
@@ -21,7 +22,6 @@ GWASQQPlotFramePainter::GWASQQPlotFramePainter() {
 
     colorXYLab = Qt::black;
     fontXYLab.setFamily("Times New Roman");
-    // fontXYLab.setBold(true);
     fontXYLab.setPointSize(16);
 
     setXYLabPainter();

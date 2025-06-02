@@ -5,7 +5,8 @@
 #include "KinshipHeatmapWidget.hpp"
 #include "KinshipRangeValColSettingWidget.hpp"
 
-namespace Ui {
+namespace Ui
+{
 class KinshipVisualizeWidget;
 }
 
@@ -16,9 +17,7 @@ private:
     explicit KinshipVisualizeWidget(QWidget *parent = nullptr);
 public:
     KinshipHeatmapWidget* pHeatmapPlot;
-    KinshipVisualizeWidget(const MML::Mat& inKin,
-                           char** inName,
-                           QWidget *parent = nullptr);
+    KinshipVisualizeWidget(const MML::Mat& inKin, char** inName, QWidget *parent = nullptr);
     ~KinshipVisualizeWidget();
 
 private:

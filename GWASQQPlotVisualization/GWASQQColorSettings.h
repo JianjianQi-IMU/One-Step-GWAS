@@ -14,7 +14,10 @@ private:
 public:
     explicit GWASQQPointsColorChooseWidget(QWidget *parent = nullptr);
     ~GWASQQPointsColorChooseWidget();
-    void setPlotWidget(GWASQQPlotWidget* inWidget){plotWidget = inWidget;}
+    void setPlotWidget(GWASQQPlotWidget* inWidget)
+    {
+        plotWidget = inWidget;
+    }
     void setChoosedColor(const QColor& inCol);
 
 public slots:
@@ -34,7 +37,10 @@ private:
 public:
     explicit GWASQQDiagonalLineColorChooseWidget(QWidget *parent = nullptr);
     ~GWASQQDiagonalLineColorChooseWidget();
-    void setPlotWidget(GWASQQPlotWidget* inWidget){plotWidget = inWidget;}
+    void setPlotWidget(GWASQQPlotWidget* inWidget)
+    {
+        plotWidget = inWidget;
+    }
     void setChoosedColor(const QColor& inCol);
 
 public slots:

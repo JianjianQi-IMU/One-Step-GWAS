@@ -29,21 +29,15 @@ private:
     QSize            displayFontSize;
     QSize            displayFrameSize;
 public:
-    GenomeViewTextPainter():
-        displayGenomePos(-1),
-        displayYPos(-1),
-        displayBackgroundColor(Qt::transparent),
-        displayFrameColor(Qt::transparent),
-        displayFrameLineSize(0),
-        displayFrameTopBorderWidth(0),
-        displayFrameButtomBorderWidth(0),
-        displayFrameLeftBorderWidth(0),
-        displayFrameRightBorderWidth(0)
+    GenomeViewTextPainter()
+        : displayGenomePos(-1), displayYPos(-1), displayBackgroundColor(Qt::transparent),
+        displayFrameColor(Qt::transparent), displayFrameLineSize(0), displayFrameTopBorderWidth(0),
+        displayFrameButtomBorderWidth(0), displayFrameLeftBorderWidth(0), displayFrameRightBorderWidth(0)
     {
 
     }
-    GenomeViewTextPainter(long double genomePos, int yPos, const QVector<QString>& textVec):
-        GenomeViewTextPainter()
+    GenomeViewTextPainter(long double genomePos, int yPos, const QVector<QString>& textVec)
+        : GenomeViewTextPainter()
     {
         displayGenomePos = genomePos;
         displayYPos = yPos;
@@ -106,7 +100,7 @@ public:
         displayFrameRightBorderWidth = width;
     }
     void paintText(QPainter* painter, const long double& currentLeftPosF, const long double& currentRightPosF,
-                   const int& leftBorder, const int& rightBorder)
+        const int& leftBorder, const int& rightBorder)
     {
         int textNum;
         QRect frameRect;
@@ -126,7 +120,7 @@ public:
         ypos = displayYPos;
         xpos = gapBorder * ((displayGenomePos - currentLeftPosF) / currentGapPos) + leftBorder;
         frameRect = QRect(xpos,ypos, fw + displayFrameLeftBorderWidth + displayFrameRightBorderWidth,
-                          fh * textNum + displayFrameTopBorderWidth + displayFrameButtomBorderWidth);
+            fh * textNum + displayFrameTopBorderWidth + displayFrameButtomBorderWidth);
         painter->save();
         painter->setFont(displayTextFont);
         painter->setBrush(displayBackgroundColor);
@@ -135,9 +129,8 @@ public:
         painter->setBrush(Qt::transparent);
         for (int iText = 0; iText < textNum; ++iText) {
             painter->setPen(displayTextColorVec[iText]);
-            painter->drawText(xpos + displayFrameLeftBorderWidth,
-                              ypos + displayFrameTopBorderWidth + iText * fh, fw, fh,
-                              Qt::AlignLeft | Qt::AlignTop, displayTextVec[iText]);
+            painter->drawText(xpos + displayFrameLeftBorderWidth, ypos + displayFrameTopBorderWidth + iText * fh, fw, fh,
+                Qt::AlignLeft | Qt::AlignTop, displayTextVec[iText]);
         }
         painter->restore();
     }
@@ -157,7 +150,7 @@ private:
         fh = displayTextLineSpace + fm.height();
         displayFontSize = QSize(fw, fh);
         displayFrameSize = QSize(fw + displayFrameLeftBorderWidth + displayFrameRightBorderWidth,
-                                 fh * textNum + displayFrameTopBorderWidth + displayFrameButtomBorderWidth);
+            fh * textNum + displayFrameTopBorderWidth + displayFrameButtomBorderWidth);
     }
 };
 
@@ -191,12 +184,12 @@ public:
 
     void preSetBorder(int leftBorder, int rightBorder)
     {
-        tmpLeftBorder  = leftBorder;
+        tmpLeftBorder = leftBorder;
         tmpRightBorder = rightBorder;
     }
     void preSetCurrentPos(long double currentLeftPosF, long double currentRightPosF)
     {
-        tmpCurrentLeftPosF  = currentLeftPosF;
+        tmpCurrentLeftPosF = currentLeftPosF;
         tmpCurrentRightPosF = currentRightPosF;
     }
     void paintTextVec(QPainter* painter)
@@ -207,7 +200,7 @@ public:
         int nItem = paintVec.size();
         for (int iItem = 0; iItem < nItem; ++iItem) {
             paintVec[iItem].paintText(painter, tmpCurrentLeftPosF, tmpCurrentRightPosF,
-                                      tmpLeftBorder, tmpRightBorder);
+                tmpLeftBorder, tmpRightBorder);
         }
     }
 };

@@ -59,9 +59,7 @@ public:
     KinshipLegendPainter*      pLegendPainter;
     KinshipFramePainter*       pFramePainter;
 
-    KinshipHeatmapWidget(const MML::Mat& inKin,
-                         char** inName,
-                         QWidget *parent = nullptr);
+    KinshipHeatmapWidget(const MML::Mat& inKin, char** inName, QWidget *parent = nullptr);
     ~KinshipHeatmapWidget();
     void mouseMoveEvent(QMouseEvent* e) override;
     void wheelEvent(QWheelEvent* e) override;
@@ -69,15 +67,15 @@ public:
     void setRangeValue(double highVal, double lowVal, double meanVal);
     void setRangeColor(QColor highCol, QColor lowCol, QColor meanCol);
 
-    void getRangeValue(double& outHighVal,double& outLowVal,double& outMeanVal);
-    void getRangeColor(QColor& outHighCol,QColor& outLowCol,QColor& outMeanCol);
+    void getRangeValue(double& outHighVal, double& outLowVal, double& outMeanVal);
+    void getRangeColor(QColor& outHighCol, QColor& outLowCol, QColor& outMeanCol);
 signals:
 
 protected:
-    void leftMousePressEvent(QMouseEvent* e,bool &isNeedUpdate) override;
-    void middleMousePressEvent(QMouseEvent* e,bool &isNeedUpdate) override;
-    void leftMouseReleaseEvent(QMouseEvent* e,bool &isNeedUpdate) override;
-    void middleMouseReleaseEvent(QMouseEvent* e,bool &isNeedUpdate) override;
+    void leftMousePressEvent(QMouseEvent* e, bool &isNeedUpdate) override;
+    void middleMousePressEvent(QMouseEvent* e, bool &isNeedUpdate) override;
+    void leftMouseReleaseEvent(QMouseEvent* e, bool &isNeedUpdate) override;
+    void middleMouseReleaseEvent(QMouseEvent* e, bool &isNeedUpdate) override;
 
 
 private:
@@ -85,10 +83,8 @@ private:
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int w, int h) override;
-    void savePaintCurrentSVG(QString savePath,
-                             QSizeF inSize);
-    void savePaintCurrentPNG(QString savePath,
-                             QSizeF inSize);
+    void savePaintCurrentSVG(QString savePath, QSizeF inSize);
+    void savePaintCurrentPNG(QString savePath, QSizeF inSize);
 public slots:
     void savePlot(FD::SaveFileInfo inInfo);
 };

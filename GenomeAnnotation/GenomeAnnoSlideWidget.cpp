@@ -5,8 +5,6 @@ GenomeAnnoSlideWidget::GenomeAnnoSlideWidget(QWidget *parent)
 {
     pSlidePainter = new GenomeAnnoSlidePainter;
     pChrInfo = new ChromosomeInfoClass;
-
-
     pSlidePainter -> preSetChrInfo(pChrInfo);
     chrHFactor = .8;
     isLookIntervalRectDrag = false;
@@ -49,8 +47,7 @@ void GenomeAnnoSlideWidget::paintEvent(QPaintEvent *event)
     QSize tSize = size();
     double chrH = chrHFactor*(tSize.height() - topBorder - downBorder);
     pSlidePainter -> setHeightChooseFrame(tSize.height() - topBorder - downBorder);
-    pSlidePainter -> setBarDisplayRect(QRect(topBorder,(tSize.height()-chrH)/2,tSize.width(),chrH));
-
+    pSlidePainter -> setBarDisplayRect(QRect(topBorder, (tSize.height() - chrH) / 2, tSize.width(), chrH));
     QPainter Painter;
     Painter.begin(this);
     pSlidePainter -> paintAnnoSlide(&Painter);

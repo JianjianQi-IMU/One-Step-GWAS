@@ -15,7 +15,7 @@ private:
     explicit SetGffReadAttribute(QWidget *parent = nullptr);
     FD::genomeRead *pGenomeReader;
 public:
-    SetGffReadAttribute(FD::genomeRead *genomeReader,QWidget *parent = nullptr);
+    SetGffReadAttribute(FD::genomeRead *genomeReader, QWidget *parent = nullptr);
     ~SetGffReadAttribute();
     void displayDemo();
     void saveSetting();

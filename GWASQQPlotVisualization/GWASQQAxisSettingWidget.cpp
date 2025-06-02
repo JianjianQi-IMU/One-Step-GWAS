@@ -12,15 +12,15 @@ GWASQQAxisSettingWidget::GWASQQAxisSettingWidget(GWASQQPlotWidget* parent)
     setAttribute(Qt::WA_DeleteOnClose, true);
     setWindowTitle("Axis Value");
 
-    resetBtn  = new QPushButton("reset",this);
-    saveBtn   = new QPushButton("save",this);
-    cancelBtn = new QPushButton("cancel",this);
-    xMaxLabel = new QLabel("X Max Limitation",this);
-    yMaxLabel = new QLabel("Y Max Limitation",this);
+    resetBtn = new QPushButton("reset", this);
+    saveBtn = new QPushButton("save", this);
+    cancelBtn = new QPushButton("cancel", this);
+    xMaxLabel = new QLabel("X Max Limitation", this);
+    yMaxLabel = new QLabel("Y Max Limitation", this);
     xMaxValue = new QDoubleSpinBox(this);
     yMaxValue = new QDoubleSpinBox(this);
-    xLimits   = 0.0;
-    yLimits   = 0.0;
+    xLimits = 0.0;
+    yLimits = 0.0;
 
     xMaxValue -> setMinimum(0);
     yMaxValue -> setMinimum(0);
@@ -32,31 +32,31 @@ GWASQQAxisSettingWidget::GWASQQAxisSettingWidget(GWASQQPlotWidget* parent)
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
-    QGroupBox*   upWidget   = new QGroupBox("Axis Value",this);
+    QGroupBox* upWidget = new QGroupBox("Axis Value",this);
     QVBoxLayout* upLayout = new QVBoxLayout(upWidget);
 
-    QWidget*     xMaxWidget = new QWidget(upWidget);
-    QWidget*     yMaxWidget = new QWidget(upWidget);
+    QWidget* xMaxWidget = new QWidget(upWidget);
+    QWidget* yMaxWidget = new QWidget(upWidget);
     QHBoxLayout* xMaxLayout = new QHBoxLayout(xMaxWidget);
     QHBoxLayout* yMaxLayout = new QHBoxLayout(yMaxWidget);
 
-    QWidget *    downWidget = new QWidget(this);
+    QWidget* downWidget = new QWidget(this);
     QHBoxLayout* downLayout = new QHBoxLayout(downWidget);
 
-    xMaxLayout -> addWidget(xMaxLabel);
-    xMaxLayout -> addWidget(xMaxValue);
-    yMaxLayout -> addWidget(yMaxLabel);
-    yMaxLayout -> addWidget(yMaxValue);
+    xMaxLayout->addWidget(xMaxLabel);
+    xMaxLayout->addWidget(xMaxValue);
+    yMaxLayout->addWidget(yMaxLabel);
+    yMaxLayout->addWidget(yMaxValue);
 
-    upLayout   -> addWidget(xMaxWidget);
-    upLayout   -> addWidget(yMaxWidget);
+    upLayout->addWidget(xMaxWidget);
+    upLayout->addWidget(yMaxWidget);
 
-    downLayout -> addWidget(resetBtn);
-    downLayout -> addWidget(saveBtn);
-    downLayout -> addWidget(cancelBtn);
+    downLayout->addWidget(resetBtn);
+    downLayout->addWidget(saveBtn);
+    downLayout->addWidget(cancelBtn);
 
-    mainLayout -> addWidget(upWidget);
-    mainLayout -> addWidget(downWidget);
+    mainLayout->addWidget(upWidget);
+    mainLayout->addWidget(downWidget);
 
     connect(resetBtn, &QPushButton::clicked,
             this, &GWASQQAxisSettingWidget::do_reset);

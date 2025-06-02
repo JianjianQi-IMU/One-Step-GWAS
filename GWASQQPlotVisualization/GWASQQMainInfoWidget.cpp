@@ -2,8 +2,7 @@
 #include "ui_GWASQQMainInfoWidget.h"
 
 GWASQQMainInfoWidget::GWASQQMainInfoWidget(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::GWASQQMainInfoWidget)
+    : QWidget(parent), ui(new Ui::GWASQQMainInfoWidget)
 {
     ui->setupUi(this);
 }

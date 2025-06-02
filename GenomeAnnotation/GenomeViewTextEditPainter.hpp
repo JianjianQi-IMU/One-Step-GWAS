@@ -8,8 +8,8 @@ class GenomeViewTextEdit : public QTextEdit
     Q_OBJECT
 private:
 public:
-    GenomeViewTextEdit(QWidget* parent = nullptr):
-        QTextEdit(parent)
+    GenomeViewTextEdit(QWidget* parent = nullptr)
+        : QTextEdit(parent)
     {
 
     }

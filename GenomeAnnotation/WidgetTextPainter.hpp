@@ -29,21 +29,17 @@ private:
     bool                isPaintShadow;
     bool                isPaintRect;
 public:
-    WidgetTextPainter():
-        leftBorder(4),
-        rightBorder(4),
-        topBorder(6),
-        buttomBorder(6),
-        lineSpace(2),
-        isPaintShadow(false),
-        isPaintRect(true)
+    WidgetTextPainter()
+        : leftBorder(4), rightBorder(4), topBorder(6),
+        buttomBorder(6), lineSpace(2), isPaintShadow(false), isPaintRect(true)
     {
         angleRotation = .0;
         colorbackground = Qt::white;
     }
     void setLineSpace(int val)
     {
-        lineSpace = val;calcuFrameSize();
+        lineSpace = val;
+        calcuFrameSize();
     }
     void setPaintPoint(const QPoint& pos)
     {
@@ -51,15 +47,18 @@ public:
     }
     void setTextList(const QList<QString>& list)
     {
-        listText = list;calcuFrameSize();
+        listText = list;
+        calcuFrameSize();
     }
     void setColorList(const QList<QColor>& list)
     {
-        listColor = list;calcuFrameSize();
+        listColor = list;
+        calcuFrameSize();
     }
     void setFontList(const QList<QFont>& list)
     {
-        listFont = list;calcuFrameSize();
+        listFont = list;
+        calcuFrameSize();
     }
     void setLeftBorder(int border)
     {
@@ -121,30 +120,31 @@ public:
         painter -> save();
         preProcessPainter(painter);
         if (isPaintShadow) {
-            painter -> setBrush(QColor(190, 190, 190));
-            painter -> setPen(QPen(Qt::transparent));
-            painter -> drawRect(2, 2, W, H);
+            painter->setBrush(QColor(190, 190, 190));
+            painter->setPen(QPen(Qt::transparent));
+            painter->drawRect(2, 2, W, H);
         }
         if (isPaintRect) {
-            painter -> setBrush(colorbackground);
-            painter -> setPen(QPen(Qt::black, 1));
-            painter -> drawRect(0, 0, W, H);
+            painter->setBrush(colorbackground);
+            painter->setPen(QPen(Qt::black, 1));
+            painter->drawRect(0, 0, W, H);
         }
         painter -> setBrush(Qt::transparent);
         for (int i = 0; i < listText.size(); ++i) {
-            painter -> setPen(QPen(listColor[i]));
-            painter -> setFont(listFont[i]);
-            painter -> drawText(leftBorder, cumH, W, listLineHeight[i],
-                                Qt::AlignLeft | Qt::AlignTop, listText[i]);
+            painter->setPen(QPen(listColor[i]));
+            painter->setFont(listFont[i]);
+            painter->drawText(leftBorder, cumH, W, listLineHeight[i],
+                Qt::AlignLeft | Qt::AlignTop, listText[i]);
             cumH += listLineHeight[i];
         }
-        painter -> restore();
+        painter->restore();
     }
 
 private:
-    void preProcessPainter(QPainter* painter){
-        painter -> translate(paintPoint);
-        painter -> rotate(angleRotation);
+    void preProcessPainter(QPainter* painter)
+    {
+        painter->translate(paintPoint);
+        painter->rotate(angleRotation);
     }
     void calcuFrameSize()
     {

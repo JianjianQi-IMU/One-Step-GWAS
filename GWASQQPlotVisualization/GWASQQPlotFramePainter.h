@@ -39,7 +39,10 @@ private:
 public:
     GWASQQPlotFramePainter();
     ~GWASQQPlotFramePainter();
-    QColor getBackgroundColor() const {return backgroundColor;};
+    QColor getBackgroundColor() const
+    {
+        return backgroundColor;
+    };
     void setXAxisData(const QVector<double>& inVec, double inMax) {
         xAxisDataVec = inVec;
         maxXAxisData = inMax;
@@ -48,16 +51,38 @@ public:
         yAxisDataVec = inVec;
         maxYAxisData = inMax;
     }
-    void setDisplayRect(QRect inRect){displayRect = inRect;}
-    void setLeftBorderFactor(float factor){leftBorderFactor = factor;}
-    void setRightBorderFactor(float factor){rightBorderFactor = factor;}
-    void setTopBorderFactor(float factor){topBorderFactor = factor;}
-    void setButtomBorderFactor(float factor){buttomBorderFactor = factor;}
-    void setDiagonalLineColor(const QColor& col){colorDiagonalLine = col;}
+    void setDisplayRect(QRect inRect)
+    {
+        displayRect = inRect;
+    }
+    void setLeftBorderFactor(float factor)
+    {
+        leftBorderFactor = factor;
+    }
+    void setRightBorderFactor(float factor)
+    {
+        rightBorderFactor = factor;
+    }
+    void setTopBorderFactor(float factor)
+    {
+        topBorderFactor = factor;
+    }
+    void setButtomBorderFactor(float factor)
+    {
+        buttomBorderFactor = factor;
+    }
+    void setDiagonalLineColor(const QColor& col)
+    {
+        colorDiagonalLine = col;
+    }
 
-    const QColor& getDiagonalLineColor() const {return colorDiagonalLine;}
+    const QColor& getDiagonalLineColor() const
+    {
+        return colorDiagonalLine;
+    }
 
-    void paintStart(QPainter* painter){
+    void paintStart(QPainter* painter)
+    {
         paintRect(painter);
         paintAxisValue(painter);
         paintDiagonalLine(painter);
@@ -65,24 +90,26 @@ public:
     }
 private:
     void setXYLabPainter();
-    void paintRect(QPainter* painter){
+    void paintRect(QPainter* painter)
+    {
         painter -> save();
         painter -> setPen(Qt::black);
         int W = displayRect.width();
         int H = displayRect.height();
         int x0 = displayRect.x();
         int y0 = displayRect.y();
-        float x1 = x0 + W*leftBorderFactor;
-        float x2 = x0 + W*(1-rightBorderFactor);
-        float y1 = y0 + H*topBorderFactor;
-        float y2 = y0 + H*(1-buttomBorderFactor);
-        painter -> drawLine(x1,y1,x1,y2);
-        painter -> drawLine(x1,y1,x2,y1);
-        painter -> drawLine(x2,y1,x2,y2);
-        painter -> drawLine(x1,y2,x2,y2);
+        float x1 = x0 + W * leftBorderFactor;
+        float x2 = x0 + W * (1 - rightBorderFactor);
+        float y1 = y0 + H * topBorderFactor;
+        float y2 = y0 + H * (1 - buttomBorderFactor);
+        painter -> drawLine(x1, y1, x1, y2);
+        painter -> drawLine(x1, y1, x2, y1);
+        painter -> drawLine(x2, y1, x2, y2);
+        painter -> drawLine(x1, y2, x2, y2);
         painter -> restore();
     }
-    void paintAxisValue(QPainter* painter){
+    void paintAxisValue(QPainter* painter)
+    {
         QVector<QLine> lineVec;
         painter -> save();
         painter -> setPen(Qt::black);
@@ -93,38 +120,39 @@ private:
         int H = displayRect.height();
         int x0 = displayRect.x();
         int y0 = displayRect.y();
-        float x1 = x0 + W*leftBorderFactor;
-        float y2 = y0 + H*(1-buttomBorderFactor);
-        float xLabLen = H*buttomBorderFactor*axisLengthFactor;
-        float yLabLen = W*leftBorderFactor*axisLengthFactor;
+        float x1 = x0 + W * leftBorderFactor;
+        float y2 = y0 + H * (1 - buttomBorderFactor);
+        float xLabLen = H * buttomBorderFactor * axisLengthFactor;
+        float yLabLen = W * leftBorderFactor * axisLengthFactor;
         double xRangeVal = maxXAxisData - 0;
         double yRangeVal = maxYAxisData - 0;
         int fH = fm.height(), fW;
         QString textVal;
 
         // x axis
-        for(int i = 0;i < xAxisDataVec.size();++i){
+        for (int i = 0; i < xAxisDataVec.size(); ++i) {
             val = xAxisDataVec[i];
-            txLabVal = x0 + W*leftBorderFactor + val*W*(1-leftBorderFactor-rightBorderFactor)/xRangeVal;
+            txLabVal = x0 + W * leftBorderFactor + val * W * (1 - leftBorderFactor - rightBorderFactor) / xRangeVal;
             lineVec.append(QLine(txLabVal, y2, txLabVal, y2 + yLabLen));
             textVal = QString::number(val);
             fW = fm.horizontalAdvance(textVal);
-            painter->drawText(txLabVal - .5*fW, y2 + yLabLen + 2, fW, fH, Qt::AlignHCenter|Qt::AlignTop, textVal);
+            painter->drawText(txLabVal - .5 * fW, y2 + yLabLen + 2, fW, fH, Qt::AlignHCenter | Qt::AlignTop, textVal);
         }
         // y axis
-        for(int i = 0;i < yAxisDataVec.size();++i){
+        for (int i = 0; i < yAxisDataVec.size(); ++i) {
             val = yAxisDataVec[i];
-            tyLabVal = y0 + H*(1-buttomBorderFactor) - val*H*(1-topBorderFactor-buttomBorderFactor)/yRangeVal;
+            tyLabVal = y0 + H * (1 - buttomBorderFactor) - val * H * (1 - topBorderFactor - buttomBorderFactor) / yRangeVal;
             lineVec.append(QLine(x1, tyLabVal, x1 - xLabLen, tyLabVal));
             textVal = QString::number(val);
             fW = fm.horizontalAdvance(textVal);
-            painter->drawText(x1 - xLabLen - fW - 2, tyLabVal - .5*fH, fW, fH, Qt::AlignRight|Qt::AlignVCenter, textVal);
+            painter->drawText(x1 - xLabLen - fW - 2, tyLabVal - .5 * fH, fW, fH, Qt::AlignRight | Qt::AlignVCenter, textVal);
         }
 
         painter -> drawLines(lineVec);
         painter -> restore();
     }
-    void paintDiagonalLine(QPainter* painter){
+    void paintDiagonalLine(QPainter* painter)
+    {
         painter -> save();
         painter -> setPen(colorDiagonalLine);
         int W = displayRect.width();
@@ -134,16 +162,16 @@ private:
         double x1, x2, y1, y2;
         double xMax = maxXAxisData;
         double yMax = maxYAxisData;
-        x1 = x0 + W*leftBorderFactor;
-        y2 = y0 + H*(1-buttomBorderFactor);
-        if(xMax > yMax) {
-            x2 = x0 + W*leftBorderFactor + (yMax/xMax)*W*(1-leftBorderFactor-rightBorderFactor);
-            y1 = y0 + H*topBorderFactor;
+        x1 = x0 + W * leftBorderFactor;
+        y2 = y0 + H * (1 - buttomBorderFactor);
+        if (xMax > yMax) {
+            x2 = x0 + W * leftBorderFactor + (yMax / xMax) * W * (1 - leftBorderFactor - rightBorderFactor);
+            y1 = y0 + H * topBorderFactor;
         } else {
-            x2 = x0 + W*(1-rightBorderFactor);
-            y1 = y0 + H*topBorderFactor + (1-xMax/yMax)*H*(1-topBorderFactor-buttomBorderFactor);
+            x2 = x0 + W * (1 - rightBorderFactor);
+            y1 = y0 + H * topBorderFactor + (1 - xMax / yMax) * H * (1 - topBorderFactor - buttomBorderFactor);
         }
-        painter -> drawLine(x2,y1,x1,y2);
+        painter -> drawLine(x2, y1, x1, y2);
         painter -> restore();
     }
     void paintXYLabText(QPainter* painter){
@@ -154,10 +182,10 @@ private:
         QSize xSize = xLabTextPainter.getSize();
         QSize ySize = yLabTextPainter.getSize();
 
-        xLabTextPainter.setPaintPoint(QPoint(x0 + (leftBorderFactor + .5*(1 - leftBorderFactor - rightBorderFactor))*W - .5*xSize.width(),
-                                             y0 + (1 - xLabPosFactor)*H - .5*xSize.height()));
-        yLabTextPainter.setPaintPoint(QPoint(x0 + yLabPosFactor*W - .5*ySize.height(),
-                                             y0 + (topBorderFactor + .5*(1 - topBorderFactor - buttomBorderFactor))*H + .5*ySize.width()));
+        xLabTextPainter.setPaintPoint(QPoint(x0 + (leftBorderFactor + .5 * (1 - leftBorderFactor - rightBorderFactor)) * W - .5 * xSize.width(),
+            y0 + (1 - xLabPosFactor) * H - .5 * xSize.height()));
+        yLabTextPainter.setPaintPoint(QPoint(x0 + yLabPosFactor * W - .5 * ySize.height(),
+            y0 + (topBorderFactor + .5 * (1 - topBorderFactor - buttomBorderFactor)) * H + .5 * ySize.width()));
 
         xLabTextPainter.paintText(painter);
         yLabTextPainter.paintText(painter);

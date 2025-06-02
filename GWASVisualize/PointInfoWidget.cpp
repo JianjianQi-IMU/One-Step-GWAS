@@ -1,9 +1,8 @@
 #include "PointInfoWidget.hpp"
 #include "ui_PointInfoWidget.h"
 
-PointInfoWidget::PointInfoWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::PointInfoWidget)
+PointInfoWidget::PointInfoWidget(QWidget *parent)
+    : QWidget(parent), ui(new Ui::PointInfoWidget)
 {
     ui->setupUi(this);
 }

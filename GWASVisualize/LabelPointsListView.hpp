@@ -33,7 +33,7 @@ public:
 
     //custom
     bool setPointsData(ValPoints *inPoints);
-    bool setIDList(const QModelIndex &index,long long id,int role = Qt::EditRole);
+    bool setIDList(const QModelIndex &index, long long id, int role = Qt::EditRole);
     bool setMaxmun(int n);
     bool setChrName(char** pName);
 private:

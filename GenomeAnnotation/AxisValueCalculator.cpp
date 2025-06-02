@@ -22,8 +22,8 @@ bool AxisValueCalculator::pri_calcuAxisData(double inMin, double inMax, double &
     } else {
         while (range / tstride < a) {
             if (flag % 2 == 0) {
-                tstride/=5;
-                flag=(flag+1)%2;
+                tstride /= 5;
+                flag = (flag + 1) % 2;
             } else {
                 tstride /= 2;
                 flag = (flag + 1) % 2;

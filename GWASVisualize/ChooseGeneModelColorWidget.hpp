@@ -5,7 +5,8 @@
 #include <QColorDialog>
 #include "GWASVisualize/LogPScatterWidget.h"
 
-namespace Ui {
+namespace Ui
+{
 class ChooseGeneModelColorWidget;
 }
 
@@ -20,8 +21,7 @@ public:
     QColor CDSColor;
     LogPScatterVisualizeWidget* pLogPChart;
 
-    explicit ChooseGeneModelColorWidget(LogPScatterVisualizeWidget *inLogPChart,
-                                        QWidget *parent = nullptr);
+    explicit ChooseGeneModelColorWidget(LogPScatterVisualizeWidget *inLogPChart, QWidget *parent = nullptr);
     ~ChooseGeneModelColorWidget();
 
 private slots:

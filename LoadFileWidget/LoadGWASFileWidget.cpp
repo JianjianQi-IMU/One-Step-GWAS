@@ -14,23 +14,23 @@ LoadGWASFileWidget::LoadGWASFileWidget(QWidget *parent)
     setAttribute(Qt::WA_DeleteOnClose,true);
     setWindowTitle("Load");
 
-    continueBtn  = nullptr;
-    cancelBtn    = nullptr;
+    continueBtn = nullptr;
+    cancelBtn = nullptr;
     openPlinkBtn = nullptr;
-    openPheBtn   = nullptr;
-    openKinBtn   = nullptr;
-    openCovBtn   = nullptr;
-    fileFormBtn  = nullptr;
+    openPheBtn = nullptr;
+    openKinBtn = nullptr;
+    openCovBtn = nullptr;
+    fileFormBtn = nullptr;
     fileFormChooseBox = nullptr;
-    editFile1      = nullptr;
-    editFile2      = nullptr;
-    editPhe      = nullptr;
-    editKin      = nullptr;
-    editCov      = nullptr;
-    labelPlink   = nullptr;
-    labelPhe     = nullptr;
-    labelKin     = nullptr;
-    labelCov     = nullptr;
+    editFile1 = nullptr;
+    editFile2 = nullptr;
+    editPhe = nullptr;
+    editKin = nullptr;
+    editCov = nullptr;
+    labelPlink = nullptr;
+    labelPhe = nullptr;
+    labelKin = nullptr;
+    labelCov = nullptr;
 }
 
 LoadGWASFileWidget::LoadGWASFileWidget(AnalyzeUnitInfo* inUnitInfo,

@@ -39,15 +39,9 @@ private:
     bool                   isPaintLegend;
 
 public:
-    KinshipLegendPainter():
-        rectWidth(20),
-        rectHeight(160),
-        gapText(8),
-        leftBorder(5),
-        rightBorder(5),
-        topBorder(5),
-        buttomBorder(5),
-        isPaintLegend(true)
+    KinshipLegendPainter()
+        : rectWidth(20), rectHeight(160), gapText(8), leftBorder(5), rightBorder(5),
+        topBorder(5), buttomBorder(5), isPaintLegend(true)
     {
         fontText.setFamily("Times New Roman");
         fontText.setBold(true);
@@ -64,12 +58,13 @@ public:
         paintSize.setHeight(topBorder + buttomBorder + rectHeight);
 
     }
-    void setPaintPoint(const QPoint& point){paintPoint = point;}
-    void setRectColor(const QColor& colHigh,
-                      const QColor& colLow,
-                      const QColor& colMean)
+    void setPaintPoint(const QPoint& point)
     {
-        lowColor  = colLow;
+        paintPoint = point;
+    }
+    void setRectColor(const QColor& colHigh, const QColor& colLow, const QColor& colMean)
+    {
+        lowColor = colLow;
         highColor = colHigh;
         meanColor = colMean;
     }
@@ -77,8 +72,8 @@ public:
     {
         QFontMetrics fm(fontText);
         int fw = 0;
-        maxVal  = valMax;
-        minVal  = valMin;
+        maxVal = valMax;
+        minVal = valMin;
         meanVal = valMean;
         maxValText  = QString::number(valMax);
         minValText  = QString::number(valMin);
@@ -91,54 +86,61 @@ public:
     }
     void setRectSize(int inW,int inH)
     {
-        rectWidth  = inW;
+        rectWidth = inW;
         rectHeight = inH;
         paintSize.setWidth(leftBorder + rightBorder + rectWidth + gapText + textWidth);
         paintSize.setHeight(topBorder + buttomBorder + rectHeight);
     }
-    void setIsPaintLegend(bool flag){isPaintLegend = flag;}
+    void setIsPaintLegend(bool flag)
+    {
+        isPaintLegend = flag;
+    }
 
-    QPoint getPaintPoint() const{return paintPoint;}
+    QPoint getPaintPoint() const
+    {
+        return paintPoint;
+    }
 
     bool isClicked(const QPoint& p)
     {
-        return QRect(paintPoint.x(),paintPoint.y(),
-                     paintSize.width(),paintSize.height()).contains(p);
+        return QRect(paintPoint.x(), paintPoint.y(),
+            paintSize.width(), paintSize.height()).contains(p);
     }
     void paintLegend(QPainter* painter)
     {
-        if(!isPaintLegend) return;
+        if (!isPaintLegend) {
+            return;
+        }
 
         QFontMetrics fm(fontText);
-        int w0=rectWidth,h0=rectHeight/2;
-        int xLegend = paintPoint.x(),yLegend = paintPoint.y();
-        QRect highRec(xLegend+leftBorder,yLegend+topBorder,w0,h0);
-        QRect lowRec(xLegend+leftBorder,yLegend+topBorder+h0,w0,h0);
+        int w0 = rectWidth, h0 = rectHeight / 2;
+        int xLegend = paintPoint.x(), yLegend = paintPoint.y();
+        QRect highRec(xLegend + leftBorder, yLegend + topBorder, w0, h0);
+        QRect lowRec(xLegend + leftBorder, yLegend + topBorder + h0, w0, h0);
         QPainterPath path;
         int fh = fm.height();
-        int textCenYHigh = yLegend+topBorder;
-        int textCenYMean = yLegend+topBorder+h0;
-        int textCenYLow = yLegend+topBorder+2*h0;
-        int textX = xLegend+leftBorder+rectWidth+gapText;
+        int textCenYHigh = yLegend + topBorder;
+        int textCenYMean = yLegend + topBorder + h0;
+        int textCenYLow = yLegend + topBorder + 2 * h0;
+        int textX = xLegend + leftBorder + rectWidth + gapText;
 
-        QLinearGradient highRecLinear(QPoint(xLegend,yLegend),QPoint(xLegend,yLegend+h0));
-        QLinearGradient lowRecLinear(QPoint(xLegend,yLegend+h0),QPoint(xLegend,yLegend+2*h0));
-        highRecLinear.setColorAt(0,highColor);
-        highRecLinear.setColorAt(1,meanColor);
-        lowRecLinear.setColorAt(0,meanColor);
-        lowRecLinear.setColorAt(1,lowColor);
+        QLinearGradient highRecLinear(QPoint(xLegend, yLegend), QPoint(xLegend, yLegend + h0));
+        QLinearGradient lowRecLinear(QPoint(xLegend, yLegend + h0), QPoint(xLegend, yLegend + 2 * h0));
+        highRecLinear.setColorAt(0, highColor);
+        highRecLinear.setColorAt(1, meanColor);
+        lowRecLinear.setColorAt(0, meanColor);
+        lowRecLinear.setColorAt(1, lowColor);
 
         highRecLinear.setSpread(QGradient::PadSpread);
         lowRecLinear.setSpread(QGradient::PadSpread);
 
-        path.addRect(QRect(xLegend+leftBorder,yLegend+topBorder,rectWidth,rectHeight));
+        path.addRect(QRect(xLegend + leftBorder, yLegend + topBorder, rectWidth, rectHeight));
 
         painter->save();
-        painter->setPen(QPen(lineStyleParamFrame.lineColor,
-                             lineStyleParamFrame.lineSize,
-                             lineStyleParamFrame.lineStyle));
+        painter->setPen(QPen(lineStyleParamFrame.lineColor, lineStyleParamFrame.lineSize,
+            lineStyleParamFrame.lineStyle));
         painter->setBrush(colorFrameBackground);
-        painter->drawRect(QRect(xLegend,yLegend,paintSize.width(),paintSize.height()));
+        painter->drawRect(QRect(xLegend, yLegend, paintSize.width(), paintSize.height()));
 
         painter->setPen(QPen(Qt::transparent));
         painter->setBrush(highRecLinear);
@@ -153,18 +155,12 @@ public:
 
         painter->setFont(fontText);
         painter->setPen(QPen(colorText));
-        painter->drawText(textX,textCenYHigh-0.5*fh,
-                          textWidth,fh,
-                          Qt::AlignLeft|Qt::AlignVCenter,
-                          maxValText);
-        painter->drawText(textX,textCenYMean-0.5*fh,
-                          textWidth,fh,
-                          Qt::AlignLeft|Qt::AlignVCenter,
-                          meanValText);
-        painter->drawText(textX,textCenYLow-0.5*fh,
-                          textWidth,fh,
-                          Qt::AlignLeft|Qt::AlignVCenter,
-                          minValText);
+        painter->drawText(textX, textCenYHigh - 0.5 * fh, textWidth, fh,
+            Qt::AlignLeft | Qt::AlignVCenter, maxValText);
+        painter->drawText(textX, textCenYMean - 0.5 * fh, textWidth, fh,
+            Qt::AlignLeft | Qt::AlignVCenter, meanValText);
+        painter->drawText(textX, textCenYLow - 0.5 * fh, textWidth, fh,
+            Qt::AlignLeft | Qt::AlignVCenter, minValText);
 
         painter->restore();
     }
