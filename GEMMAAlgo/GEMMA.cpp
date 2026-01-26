@@ -5,13 +5,13 @@
 
 #include <QDebug>
 
-GEMMA::NewtonPara::NewtonPara(double iMin, double iMax, size_t iN, size_t iMaxTimes)
+GEMMA::NewtonPara::NewtonPara(double iMin, double iMax, uint64_t iN, uint64_t iMaxTimes)
     : min(iMin), max(iMax), n(iN), maxTimes(iMaxTimes)
 {
     limList = new double [n + 1];
     dll1List = new double [n + 1];
     double lenRegion = (max - min) / n;
-    for (size_t i = 0; i < n + 1; ++i) {
+    for (uint64_t i = 0; i < n + 1; ++i) {
         limList[i] = min + i * lenRegion;
     }
     uList = new double [n];
@@ -26,10 +26,10 @@ GEMMA::NewtonPara::NewtonPara(const NewtonPara &inPara) : NewtonPara()
 }
 
 GEMMA::NewtonPara::~NewtonPara(){
-    if(limList)  delete [] limList;
-    if(dll1List) delete [] dll1List;
-    if(uList)    delete [] uList;
-    if(dList)    delete [] dList;
+    if (limList) delete [] limList;
+    if (dll1List) delete [] dll1List;
+    if (uList) delete [] uList;
+    if (dList) delete [] dList;
     limList = nullptr;
     dll1List = nullptr;
     uList = nullptr;
@@ -56,13 +56,13 @@ void GEMMA::NewtonPara::copy(const NewtonPara &object)
     }
     limList = new double [n + 1];
     dll1List = new double [n + 1];
-    for (size_t i = 0; i < n + 1; ++i){
+    for (uint64_t i = 0; i < n + 1; ++i) {
         limList[i] = (object.limList)[i];
         dll1List[i] = (object.dll1List)[i];
     }
     uList = new double [n];
     dList = new double [n];
-    for (size_t i = 0; i < n; ++i){
+    for (uint64_t i = 0; i < n; ++i) {
         uList[i] = (object.uList)[i];
         dList[i] = (object.dList)[i];
     }
@@ -88,7 +88,7 @@ GEMMA::VecList::VecList(const VecList &inVecList)
     copy(inVecList);
 }
 
-GEMMA::VecList::VecList(size_t inVecN, size_t inVecLen)
+GEMMA::VecList::VecList(uint64_t inVecN, uint64_t inVecLen)
 {
     if (inVecLen == 0 || inVecN == 0) {
         isValid = false;
@@ -98,7 +98,7 @@ GEMMA::VecList::VecList(size_t inVecN, size_t inVecLen)
     } else {
         vecN = inVecN, vecLen = inVecLen;
         data = new double* [vecN];
-        for (size_t i = 0; i < vecN; ++i) {
+        for (uint64_t i = 0; i < vecN; ++i) {
             data[i] = new double [vecLen];
         }
         isValid = true;
@@ -108,7 +108,7 @@ GEMMA::VecList::VecList(size_t inVecN, size_t inVecLen)
 GEMMA::VecList::~VecList()
 {
     if (data) {
-        for (size_t i = 0; i < vecN; ++i) {
+        for (uint64_t i = 0; i < vecN; ++i) {
             delete [] data[i];
         }
         delete [] data;
@@ -117,7 +117,7 @@ GEMMA::VecList::~VecList()
     }
 }
 
-bool GEMMA::VecList::resize(size_t inVecN, size_t inVecLen)
+bool GEMMA::VecList::resize(uint64_t inVecN, uint64_t inVecLen)
 {
     if (inVecLen == 0 || inVecN == 0) {
         isValid = false;
@@ -128,14 +128,14 @@ bool GEMMA::VecList::resize(size_t inVecN, size_t inVecLen)
         isValid = true;
     } else {
         if (data) {
-            for (size_t i = 0; i < vecN; ++i) {
+            for (uint64_t i = 0; i < vecN; ++i) {
                 delete [] data[i];
             }
             delete [] data;
         }
         vecN = inVecN, vecLen = inVecLen;
         data = new double* [vecN];
-        for (size_t i = 0; i < vecN; ++i) {
+        for (uint64_t i = 0; i < vecN; ++i) {
             data[i] = new double [vecLen];
         }
         isValid = true;
@@ -143,12 +143,12 @@ bool GEMMA::VecList::resize(size_t inVecN, size_t inVecLen)
     return isValid;
 }
 
-size_t GEMMA::VecList::getVecN()
+uint64_t GEMMA::VecList::getVecN()
 {
     return vecN;
 }
 
-size_t GEMMA::VecList::getVecLen()
+uint64_t GEMMA::VecList::getVecLen()
 {
     return vecLen;
 }
@@ -156,7 +156,7 @@ size_t GEMMA::VecList::getVecLen()
 void GEMMA::VecList::copy(const VecList &object)
 {
     if (data) {
-        for (size_t i = 0; i < vecN; ++i) {
+        for (uint64_t i = 0; i < vecN; ++i) {
             delete [] data[i];
         }
         delete [] data;
@@ -168,26 +168,26 @@ void GEMMA::VecList::copy(const VecList &object)
         data = nullptr;
     } else {
         data = new double* [vecN];
-        for (size_t i = 0; i < vecN; ++i) {
+        for (uint64_t i = 0; i < vecN; ++i) {
             data[i] = new double [vecLen];
-            for (size_t j = 0; j < vecLen; ++j) {
+            for (uint64_t j = 0; j < vecLen; ++j) {
                 data[i][j] = (object.data)[i][j];
             }
         }
     }
 }
 
-double* GEMMA::VecList::operator()(size_t Index)
+double* GEMMA::VecList::operator()(uint64_t Index)
 {
     return data[Index];
 }
 
-double& GEMMA::VecList::operator()(size_t Index1,size_t Index2)
+double& GEMMA::VecList::operator()(uint64_t Index1,uint64_t Index2)
 {
     return data[Index1][Index2];
 }
 
-const double& GEMMA::VecList::operator()(size_t Index1,size_t Index2) const
+const double& GEMMA::VecList::operator()(uint64_t Index1,uint64_t Index2) const
 {
     return data[Index1][Index2];
 }
@@ -216,8 +216,8 @@ GEMMA::MLM::~MLM(){}
 bool GEMMA::MLM::read(const MML::Phenotype& inPhe, const MML::Kinship& inKin, const MML::Covariates& inCov)
 {
     if (!(inPhe.isValid) || !(inKin.isValid) || !(inCov.isValid) ||
-       inPhe.filterN != inKin.filterN || inPhe.filterN != inCov.filterN ||
-       inCov.factorN == 0) {
+       inPhe.getFilterNum() != inKin.getFilterNum() || inPhe.getFilterNum() != inCov.getFilterNum() ||
+       inCov.getFactorNum() == 0) {
         isValid = false;
     } else {
         MML::Mat G;
@@ -233,8 +233,8 @@ bool GEMMA::MLM::read(const MML::Phenotype& inPhe, const MML::Kinship& inKin, co
             isValid = false;
             return false;
         }
-        factorN = inCov.factorN;
-        filterN = inPhe.filterN;
+        factorN = inCov.getFactorNum();
+        filterN = inPhe.getFilterNum();
         if (!initUaUb()) {
             isValid = false;
             return false;
@@ -249,7 +249,7 @@ bool GEMMA::MLM::read(const MML::Phenotype& inPhe, const MML::Kinship& inKin, co
 bool GEMMA::MLM::initUaUb()
 {
     if (filterN == 0 || factorN == 0) return false;
-    size_t i = 0, j = 0, k = 0;
+    uint64_t i = 0, j = 0, k = 0;
     double *pUab = nullptr;
     UaUb.resize((factorN + 2) * (factorN + 3) / 2, filterN);
     for (i = 1; i <= factorN; ++i) {
@@ -302,7 +302,7 @@ bool GEMMA::MLM::analyze(const double* Utx, double& outBetax, double& outFstat)
 bool GEMMA::MLM::updateUaUb(const MML::Mat& Utx)
 {
     if (Utx.getNRow() != filterN) return false;
-    size_t j = 0, k = 0;
+    uint64_t j = 0, k = 0;
     double *pUab = nullptr;
     for (j = 1; j <= factorN; ++j) {
         pUab = UaUb((factorN) * (factorN + 1) / 2 + j - 1);
@@ -323,7 +323,7 @@ bool GEMMA::MLM::updateUaUb(const MML::Mat& Utx)
 
 bool GEMMA::MLM::updateUaUb(const double* Utx)
 {
-    size_t j = 0, k = 0;
+    uint64_t j = 0, k = 0;
     double *pUab = nullptr;
     for (j = 1; j <= factorN; ++j) {
         pUab = UaUb((factorN) * (factorN + 1) / 2 + j - 1);
@@ -585,7 +585,7 @@ bool GEMMA::MLM::calcuREMLDLogL2(double lambda, double trP, double trPP, const M
 bool GEMMA::MLM::calcuLambda(double& outLambda, double& outLL)
 {
     MML::Mat atPb, atPPb, atPPPb, atIb, D;
-    size_t i = 0, choosedNum = 0, nIter = 0;
+    uint64_t i = 0, choosedNum = 0, nIter = 0;
     double tmpLambda = 0, tmpDLL1 = 0, tmpDLL2 = 0, deltaDLL = 0;
     double tmpTrP = 0, tmpTrPP = 0, tmpLL = 0, reLambda = -1, reLL = -1;
     double lam1, lam2, lamm, uDll, lDll;
@@ -733,9 +733,9 @@ bool GEMMA::MLM::centerKin(const MML::Mat &inMat, MML::Mat &outMat)
     if (inMat.info != MML::_sym) {
         return false;
     }
-    size_t n = inMat.getNCol();
+    uint64_t n = inMat.getNCol();
     double* kl = new double [n];
-    size_t i = 0, j = 0;
+    uint64_t i = 0, j = 0;
     double s = inMat.sum();
     for (i = 0; i < n; ++i) {
         kl[i] = 0;
@@ -774,14 +774,14 @@ bool GEMMA::GLM::read(const MML::Phenotype& inPhe, const MML::Covariates& inCov)
 {
     double yty, ytKKtKiKty;
     if (!(inPhe.isValid) || !(inCov.isValid) ||
-       inPhe.filterN != inCov.filterN || inCov.factorN == 0)
+       inPhe.getFilterNum() != inCov.getFilterNum() || inCov.getFactorNum() == 0)
     {
         isValid = false;
     } else {
         K = inCov.getFilterMat();
         y = inPhe.getFilterVec();
-        filterN = inPhe.filterN;
-        factorN = inCov.factorN;
+        filterN = inPhe.getFilterNum();
+        factorN = inCov.getFactorNum();
         K.t(Kt);
         MML::Mat::XtXmul(K, KtK);
         if (!(KtK.symInv(KtKi))) {

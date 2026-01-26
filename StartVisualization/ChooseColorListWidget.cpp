@@ -50,7 +50,7 @@ void ChooseColorListItemDelegate::paint(QPainter *painter, const QStyleOptionVie
     long btnx0=x0+width0-2*buttonSize-10,btnx1=x0+width0-buttonSize-5,btny0=y0+(height0-buttonSize)/2;
     QRectF rect(x0+21,y0+1,width0-22,height0-2);
     QRectF rect2(x0,y0,2,height0);
-    size_t id=index.row();
+    uint64_t id=index.row();
     QColor rectColor=colorList->at(id);
     bool isMouseOver=false;
     painter->fillRect(rect,rectColor);

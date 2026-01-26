@@ -21,7 +21,7 @@ void InfoDisplayWidget::setGenome(GenomeAnnotation *inGenome)
     genome = inGenome;
 }
 
-void InfoDisplayWidget::setPoints(ValPoints *inPoints, size_t inNPoints)
+void InfoDisplayWidget::setPoints(ValPoints *inPoints, uint64_t inNPoints)
 {
     points = inPoints;
     nPoints = inNPoints;

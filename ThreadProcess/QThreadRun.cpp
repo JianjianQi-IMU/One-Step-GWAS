@@ -1,6 +1,11 @@
 #include "QThreadRun.hpp"
 
+#include <QDir>
 #include <QDebug>
+
+#include <set>
+#include <algorithm>
+#include <iterator>
 
 namespace ThreadRun
 {
@@ -73,7 +78,7 @@ bool QEMMAXThread::makeThread()
     clearFlagList();
     startTP = std::chrono::system_clock::now();
     phe.read(project->phe.getNRow(),project->phe.data);
-    MML::Kinship kin(phe.rawN,project->kin.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Kinship kin(phe.getRawNum(), project->kin.data, phe.getFilterList());
 //    logInfoMux.lock();
     project->logInfo+="### start EMMAX ###\n";
     project->logInfo+="samples number = "+std::to_string(project->phe.getNRow())+"\n";
@@ -83,7 +88,7 @@ bool QEMMAXThread::makeThread()
         emit logUpdate();
         return false;
     }
-    MML::Covariates cov(phe.rawN,project->cov.getNCol(),project->cov.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Covariates cov(phe.getRawNum(),project->cov.getNCol(), project->cov.data,phe.getFilterList());
     project->logInfo+="factor number  = "+std::to_string(project->cov.getNCol())+"\n";
     EMMAX::REML reml(kin,cov);
     double delta=0,dll=0,ll=0;
@@ -182,7 +187,7 @@ bool QEMMAXThread::makeThreadMuti(int nThread)
     clearFlagList();
     startTP = std::chrono::system_clock::now();
     phe.read(project->phe.getNRow(),project->phe.data);
-    MML::Kinship kin(phe.rawN,project->kin.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Kinship kin(phe.getRawNum(),project->kin.data, phe.getFilterList());
     project->logInfo+="### start EMMAX ###\n";
     project->logInfo+="samples number = "+std::to_string(project->phe.getNRow())+"\n";
     project->logInfo+="markers number = "+std::to_string(project->bim.nMarker)+"\n";
@@ -191,7 +196,7 @@ bool QEMMAXThread::makeThreadMuti(int nThread)
         emit logUpdate();
         return false;
     }
-    MML::Covariates cov(phe.rawN,project->cov.getNCol(),project->cov.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Covariates cov(phe.getRawNum(),project->cov.getNCol(), project->cov.data,phe.getFilterList());
     project->logInfo+="factor number  = "+std::to_string(project->cov.getNCol())+"\n";
     EMMAX::REML reml(kin,cov);
     double delta=0,dll=0,ll=0;
@@ -307,7 +312,7 @@ void QGEMMAThread::run()
         MML::Mat::XVmul(mlm.Ut,fMarkers,tUtx);
         if(mlm.analyze(tUtx,betax0,Fstat))
         {
-            tP=1-dis.fcdf(Fstat,1,df);
+            tP=dis.fcdfTri(Fstat, 1, df);
             (project->bim.data)[i].PValue=tP;
             (project->bim.data)[i].statValue=Fstat;
             (project->bim.data)[i].betax0=betax0;
@@ -341,11 +346,11 @@ bool QGEMMAThread::makeThread()
     if((!isValid)||(!project->isKinValid)) return false;
     startTP = std::chrono::system_clock::now();
     phe.read(project->phe.getNRow(),project->phe.data);
-    MML::Kinship kin(phe.rawN,project->kin.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Kinship kin(phe.getRawNum(),project->kin.data, phe.getFilterList());
     project->logInfo+="### start GEMMA ###\n";
     project->logInfo+="samples number = "+std::to_string(project->phe.getNRow())+"\n";
     project->logInfo+="markers number = "+std::to_string(project->bim.nMarker)+"\n";
-    MML::Covariates cov(phe.rawN,project->cov.getNCol(),project->cov.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Covariates cov(phe.getRawNum(),project->cov.getNCol(),project->cov.data, phe.getFilterList());
     if(!mlm.read(phe,kin,cov)){
         project->logInfo+="Error in preparing MLM initialization\n";
         return false;
@@ -384,7 +389,7 @@ void QGEMMAThread::runPart(int idThread, FD::PedDataIteratorSet pedSet, FD::BIML
         MML::Mat::XVmul(inMLM.Ut,fMarkers,tUtx);
         if(inMLM.analyze(tUtx,betax0,Fstat))
         {
-            tP=1-dis.fcdf(Fstat,1,df);
+            tP=dis.fcdfTri(Fstat, 1, df);
             (bimIter.read())->PValue=tP;
             (bimIter.read())->statValue=Fstat;
             (bimIter.read())->betax0=betax0;
@@ -429,12 +434,12 @@ bool QGEMMAThread::makeThreadMuti(int nThread)
     clearFlagList();
     startTP = std::chrono::system_clock::now();
     phe.read(project->phe.getNRow(),project->phe.data);
-    MML::Kinship kin(phe.rawN,project->kin.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Kinship kin(phe.getRawNum(),project->kin.data, phe.getFilterList());
     project->logInfo+="### start GEMMA ###\n";
     project->logInfo+="samples number = "+std::to_string(project->phe.getNRow())+"\n";
     project->logInfo+="samples number(filtered) = "+std::to_string(phe.getFilterNum())+"\n";
     project->logInfo+="markers number = "+std::to_string(project->bim.nMarker)+"\n";
-    MML::Covariates cov(phe.rawN,project->cov.getNCol(),project->cov.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Covariates cov(phe.getRawNum(),project->cov.getNCol(),project->cov.data, phe.getFilterList());
     if(!mlm.read(phe,kin,cov)){
         project->logInfo+="Error in preparing MLM initialization\n";
         return false;
@@ -507,66 +512,62 @@ QGLMThread::QGLMThread(QObject *parent) : QObject(parent)
 }
 
 QGLMThread::QGLMThread(FD::GWASProject *inProject, QObject *parent)
-    :GLMThread(inProject),QObject(parent)
+    : GLMThread(inProject), QObject(parent)
 {
 
 }
 
 void QGLMThread::run()
 {
-    MML::Mat tMarkers,fMarkers;
+    MML::Mat tMarkers, fMarkers;
     tMarkers.resize(project->phe.getNRow(),1);
     tMarkers.toColVec();
-    long long i,MarkersNum=project->bim.nMarker;
-    double betax0,Fstat,df=glm.filterN-glm.factorN-1,tP;
-    for(i=0;i<MarkersNum;++i)
+    long long i, MarkersNum = project->bim.nMarker;
+    double betax0, Fstat, df = glm.filterN - glm.factorN - 1, tP;
+    for (i = 0; i < MarkersNum; ++i)
     {
-        if(i%16==0)
+        if (i % 16 == 0)
         {
             dealedNum.store(i);
             std::unique_lock<std::mutex> ul(mux);
-            conv.wait(ul,[this]{
+            conv.wait(ul, [this]{
                 return !isPause.load();
             });
-            if(isStop.load()) break;
+            if (isStop.load()) break;
         }
-        if(project->isPolyploid) project->pData.read2(tMarkers.data);
+        if (project->isPolyploid) project->pData.read2(tMarkers.data);
         else project->bed.read2(tMarkers.data);
-        if(!phe.filterMarkers(tMarkers,fMarkers)){
-            (project->bim.data)[i].PValue=1;
-            (project->bim.data)[i].betax0=MML::DATA_NA;
-            (project->bim.data)[i].statValue=MML::DATA_NA;
-            (project->bim.data)[i].log10PValue=0;
+        if (!phe.filterMarkers(tMarkers, fMarkers)) {
+            (project->bim.data)[i].PValue = 1;
+            (project->bim.data)[i].betax0 = MML::DATA_NA;
+            (project->bim.data)[i].statValue = MML::DATA_NA;
+            (project->bim.data)[i].log10PValue = 0;
+        } else if (glm.analyze(fMarkers, betax0, Fstat)) {
+            tP = dis.fcdfTri(Fstat, 1, df);
+            (project->bim.data)[i].PValue = tP;
+            (project->bim.data)[i].betax0 = betax0;
+            (project->bim.data)[i].statValue = Fstat;
+            (project->bim.data)[i].log10PValue = -std::log10(tP);
+        } else {
+            (project->bim.data)[i].PValue = 1;
+            (project->bim.data)[i].betax0 = MML::DATA_NA;
+            (project->bim.data)[i].statValue = MML::DATA_NA;
+            (project->bim.data)[i].log10PValue = 0;
         }
-        else if(glm.analyze(fMarkers,betax0,Fstat))
-        {
-            tP=dis.fcdfTri(Fstat,1,df);
-            (project->bim.data)[i].PValue=tP;
-            (project->bim.data)[i].betax0=betax0;
-            (project->bim.data)[i].statValue=Fstat;
-            (project->bim.data)[i].log10PValue=-std::log10(tP);
-        }
-        else
-        {
-            (project->bim.data)[i].PValue=1;
-            (project->bim.data)[i].betax0=MML::DATA_NA;
-            (project->bim.data)[i].statValue=MML::DATA_NA;
-            (project->bim.data)[i].log10PValue=0;
-        }
-        if(isStop.load()) break;
+        if (isStop.load()) break;
     }
 //    qDebug() << dealedNum.load();
     isFinished.store(true);
-    if(!isStop.load()) project->logInfo+="Done ";
+    if (!isStop.load()) project->logInfo += "Done ";
 //    logInfoMux.unlock();
     const auto theTP = std::chrono::system_clock::now();
-    const auto theDura = std::chrono::duration_cast<std::chrono::seconds>(theTP-startTP);
+    const auto theDura = std::chrono::duration_cast<std::chrono::seconds>(theTP - startTP);
     const auto hrs = std::chrono::duration_cast<std::chrono::hours>(theDura);
     const auto mins = std::chrono::duration_cast<std::chrono::minutes>(theDura - hrs);
     const auto secs = std::chrono::duration_cast<std::chrono::seconds>(theDura - hrs - mins);
-    project->logInfo+='['+std::to_string(hrs.count())+" hours:"+std::to_string(mins.count())+" mins:"+std::to_string(secs.count())+" secs]\n";
+    project->logInfo += '[' + std::to_string(hrs.count()) + " hours:" + std::to_string(mins.count()) + " mins:" + std::to_string(secs.count()) + " secs]\n";
     //    emit logUpdate();
-    if(!isStop.load()) emit taskFinished();
+    if (!isStop.load()) emit taskFinished();
 }
 
 bool QGLMThread::makeThread()
@@ -576,7 +577,7 @@ bool QGLMThread::makeThread()
     phe.read(project->phe.getNRow(),project->phe.data);
     startTP = std::chrono::system_clock::now();
     project->logInfo+="### start GLM ###\n";
-    MML::Covariates cov(phe.rawN,project->cov.getNCol(),project->cov.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Covariates cov(phe.getRawNum(),project->cov.getNCol(),project->cov.data, phe.getFilterList());
     if(!glm.read(phe,cov)){
         project->logInfo+="Error in preparing GLM initialization\n";
         emit logUpdate();
@@ -593,7 +594,8 @@ bool QGLMThread::makeThread()
     return true;
 }
 
-void QGLMThread::runPart(int idThread, FD::PedDataIteratorSet pedSet, FD::BIMLogPDataIterator bimIter, MML::Phenotype inPhe, GEMMA::GLM inGLM, MML::Distribution inDis)
+void QGLMThread::runPart(int idThread, FD::PedDataIteratorSet pedSet, FD::BIMLogPDataIterator bimIter,
+    MML::Phenotype inPhe, GEMMA::GLM inGLM, MML::Distribution inDis)
 {
     MML::Mat tMarkers,fMarkers;
     tMarkers.resize(project->phe.getNRow(),1);
@@ -664,7 +666,7 @@ bool QGLMThread::makeThreadMuti(int nThread)
     phe.read(project->phe.getNRow(),project->phe.data);
     startTP = std::chrono::system_clock::now();
     project->logInfo+="### start GLM ###\n";
-    MML::Covariates cov(phe.rawN,project->cov.getNCol(),project->cov.data,phe.getFilterIndex(),phe.getFilterNum());
+    MML::Covariates cov(phe.getRawNum(),project->cov.getNCol(), project->cov.data,phe.getFilterList());
     if(!glm.read(phe,cov)){
         project->logInfo+="Error in preparing GLM initialization\n";
         emit logUpdate();
@@ -734,13 +736,321 @@ bool QGLMThread::makeThreadMuti(int nThread)
     return true;
 }
 
+QGLMBlinkThread::QGLMBlinkThread(QObject *parent)
+    : QObject(parent)
+{
+
+}
+
+void QGLMBlinkThread::finishedProc()
+{
+    isFinished.store(true);
+    if (!isStop.load()) project->logInfo += "Done ";
+    const auto theTP = std::chrono::system_clock::now();
+    const auto theDura = std::chrono::duration_cast<std::chrono::seconds>(theTP - startTP);
+    const auto hrs = std::chrono::duration_cast<std::chrono::hours>(theDura);
+    const auto mins = std::chrono::duration_cast<std::chrono::minutes>(theDura - hrs);
+    const auto secs = std::chrono::duration_cast<std::chrono::seconds>(theDura - hrs - mins);
+    project->logInfo += '[' + std::to_string(hrs.count()) + " hours:" + std::to_string(mins.count()) + " mins:" + std::to_string(secs.count()) + " secs]\n";
+    emit logUpdate();
+    if (!isStop.load()) emit taskFinished();
+}
+
+QGLMBlinkThread::QGLMBlinkThread(FD::GWASProject* inProject, QObject *parent)
+    : GLMBlinkThread(inProject), QObject(parent)
+{
+
+}
+
+void QGLMBlinkThread::run()
+{
+    FARMCPU::FarmCPUUtil util;
+    FARMCPU::FarmCPULM lm;
+    MML::DataFilter<uint64_t> filterList = phe.getFilterList();
+    uint64_t nMarkers = project->bim.nMarker;
+    uint64_t nSample = project->phe.getNRow();
+    uint64_t q0 = cov.getFactorNum();
+    uint64_t nFilterSample = phe.getFilterNum();
+    int8_t markerLabel;
+    MML::SIMat tmpRawMarker(nSample, 1, (int16_t)0, MML::_colvec);
+    MML::SIMat tmpMarker(nFilterSample, 1, (int16_t)0, MML::_colvec);
+    MML::Mat tmpNormMarker(nFilterSample, 1, (double)0.0);
+    MML::Mat rawFilterY = phe.getFilterVec();
+    MML::Mat rawFilterW = cov.getFilterMat();
+    MML::Mat pValVec(nMarkers, 1, (double)0.0, MML::_colvec);
+
+    double betax;
+    double tval;
+    double pval;
+    int64_t df = (int64_t)nFilterSample - rawFilterW.getNCol() - 1;
+    // qDebug() << "QGLMBlinkThread step 1";
+    lm.LMInit(rawFilterY, rawFilterW);
+    // qDebug() << "QGLMBlinkThread step 2";
+    for (uint64_t i = 0; i < nMarkers; ++i) {
+        if (i % 16 == 0)
+        {
+            dealedNum.store(i);
+            std::unique_lock<std::mutex> ul(mux);
+            conv.wait(ul, [this]{
+                return !isPause.load();
+            });
+            if (isStop.load()) break;
+        }
+
+        dataForRun.readAt(tmpRawMarker.data, (int64_t)i);
+        filterList.FilterVec(tmpRawMarker, tmpMarker);
+        util.CheckDataOne(tmpMarker, &markerLabel);
+        if (markerLabel == 0) {
+            (project->bim.data)[i].PValue = 1;
+            (project->bim.data)[i].betax0 = MML::DATA_NA;
+            (project->bim.data)[i].statValue = MML::DATA_NA;
+            (project->bim.data)[i].log10PValue = 0;
+            pValVec(i) = 1;
+            continue;
+        }
+        util.NormDataOne(tmpMarker, (double)project->getNPolyploid(), tmpNormMarker);
+        lm.LMTestOne(tmpNormMarker, betax, tval);
+        pval = dis.tPvalue2(tval, (double)df);
+        (project->bim.data)[i].PValue = pval;
+        (project->bim.data)[i].betax0 = betax;
+        (project->bim.data)[i].statValue = tval;
+        (project->bim.data)[i].log10PValue = 0;
+        pValVec(i) = pval;
+    }
+    // qDebug() << "QGLMBlinkThread step 3";
+    double bon = 0.01 / nMarkers;
+    uint64_t lim = nFilterSample / (uint64_t)std::log((double)nFilterSample);
+    std::vector<uint64_t> pFilterIdx;
+    std::vector<uint64_t> tmpLDIdx;
+    std::vector<uint64_t> pLDFilterIdx;
+    std::vector<uint64_t> pBICFilterIdx;
+    uint64_t BICFilterNum;
+    util.FilterLessIdx(pValVec, bon, pFilterIdx);
+    uint64_t tmpFilterNum = pFilterIdx.size();
+    if (tmpFilterNum == 0) {
+        finishedProc();
+        // qDebug() << "QGLMBlinkThread step 3.5";
+        return ;
+    }
+    // qDebug() << "QGLMBlinkThread step 3.6; nFilterSample is " << tmpFilterNum << "; lim is " << lim;
+    MML::Mat tmpx(nFilterSample, tmpFilterNum, (double)0.0);
+    for (uint64_t i = 0; i < tmpFilterNum; ++i) {
+        dataForRun.readAt(tmpRawMarker.data, (int64_t)pFilterIdx[i]);
+        filterList.FilterVec(tmpRawMarker, tmpMarker);
+        util.NormDataOne(tmpMarker, (double)project->getNPolyploid(), tmpNormMarker);
+        for (uint64_t j = 0; j < nFilterSample; ++j) {
+            tmpx(j, i) = tmpNormMarker(j);
+        }
+    }
+    // qDebug() << "QGLMBlinkThread step 3.7";
+    util.RemoveLD(tmpx, 0.7, lim, tmpLDIdx);
+    for (uint64_t i = 0; i < tmpLDIdx.size(); ++i) {
+        pLDFilterIdx.push_back(pFilterIdx[tmpLDIdx[i]]);
+    }
+    // qDebug() << "QGLMBlinkThread step 3.8";
+    tmpx.setData(nFilterSample, pLDFilterIdx.size() + 1, (double)0.0);
+    for (uint64_t j = 0; j < nFilterSample; ++j) {
+        tmpx(j, 0) = 1.0;
+    }
+    for (uint64_t i = 0; i < pLDFilterIdx.size(); ++i) {
+        dataForRun.readAt(tmpRawMarker.data, (int64_t)pLDFilterIdx[i]);
+        filterList.FilterVec(tmpRawMarker, tmpMarker);
+        util.NormDataOne(tmpMarker, (double)project->getNPolyploid(), tmpNormMarker);
+        for (uint64_t j = 0; j < nFilterSample; ++j) {
+            tmpx(j, i + 1) = tmpNormMarker(j);
+        }
+    }
+    // qDebug() << "QGLMBlinkThread step 3.9; LDFilterNum is " << pLDFilterIdx.size() << "; tmpx.ncol is " << tmpx.getNCol();
+    util.BICSelectionIdx(tmpx, rawFilterY, &BICFilterNum);
+    if (BICFilterNum == 0) {
+        finishedProc();
+        return ;
+    }
+    pBICFilterIdx.insert(pBICFilterIdx.begin(), pLDFilterIdx.begin(), pLDFilterIdx.begin() + BICFilterNum);
+    // qDebug() << "QGLMBlinkThread step 4";
+    uint64_t tmpUseNum = pBICFilterIdx.size();
+    std::vector<int8_t> calcIdxVec(nMarkers, 1);
+    for (uint64_t i = 0; i < tmpUseNum; ++i) {
+        calcIdxVec[pBICFilterIdx[i]] = 0;
+    }
+    MML::Mat tmpW(nFilterSample, q0 + tmpUseNum, (double)0);
+    for (uint64_t i = 0; i < q0; ++i) {
+        for (uint64_t j = 0; j < nFilterSample; ++j) {
+            tmpW(j, i) = rawFilterW(j, i);
+        }
+    }
+    for (uint64_t i = 0; i < tmpUseNum; ++i) {
+        dataForRun.readAt(tmpRawMarker.data, (int64_t)pBICFilterIdx[i]);
+        filterList.FilterVec(tmpRawMarker, tmpMarker);
+        util.NormDataOne(tmpMarker, (double)project->getNPolyploid(), tmpNormMarker);
+        for (uint64_t j = 0; j < nFilterSample; ++j) {
+            tmpW(j, i + q0) = tmpNormMarker(j);
+        }
+    }
+    uint64_t iLoop = 0;
+    bon = blinkRaw.cutoffBon / nMarkers;
+    MML::Mat betaVec;
+    MML::Mat tvalVec;
+    std::vector<uint64_t> pLoopBICFilterIdx = pBICFilterIdx;
+    // qDebug() << "QGLMBlinkThread step 5";
+    while (iLoop < param.maxLoop) {
+        lm.LMInit(rawFilterY, tmpW);
+        df = (int64_t)nFilterSample - tmpW.getNCol() - 1;
+
+        for (uint64_t i = 0; i < nMarkers; ++i) {
+            if (i % 16 == 0)
+            {
+                dealedNum.store(i);
+                std::unique_lock<std::mutex> ul(mux);
+                conv.wait(ul, [this]{
+                    return !isPause.load();
+                });
+                if (isStop.load()) break;
+            }
+
+            if (calcIdxVec[i] == 0) {
+                continue;
+            }
+            dataForRun.readAt(tmpRawMarker.data, (int64_t)i);
+            filterList.FilterVec(tmpRawMarker, tmpMarker);
+            util.CheckDataOne(tmpMarker, &markerLabel);
+            if (markerLabel == 0) {
+                continue;
+            }
+            util.NormDataOne(tmpMarker, (double)project->getNPolyploid(), tmpNormMarker);
+            lm.LMTestOne(tmpNormMarker, betaVec, tvalVec);
+            for (uint64_t j = 0; j < tmpUseNum; ++j) {
+                if (tvalVec(q0 + j) == MML::DATA_NA || betaVec(q0 + j) == MML::DATA_NA) {
+                    continue;
+                }
+                pval = dis.tPvalue2(tvalVec(q0 + j), (double)df);
+                uint64_t tmpIdx = pLoopBICFilterIdx[j];
+                if (pValVec(tmpIdx) > pval) {
+                    (project->bim.data)[tmpIdx].PValue = pval;
+                    (project->bim.data)[tmpIdx].betax0 = betaVec(q0 + j);
+                    (project->bim.data)[tmpIdx].statValue = tvalVec(q0 + j);
+                    (project->bim.data)[tmpIdx].log10PValue = 0;
+                    pValVec(tmpIdx) = pval;
+                }
+            }
+            if (tvalVec(q0 + tmpUseNum) == MML::DATA_NA || betaVec(q0 + tmpUseNum) == MML::DATA_NA) {
+                continue;
+            }
+            pval = dis.tPvalue2(tvalVec(q0 + tmpUseNum), (double)df);
+            if (pValVec(i) > pval) {
+                (project->bim.data)[i].PValue = pval;
+                (project->bim.data)[i].betax0 = betaVec(q0 + tmpUseNum);
+                (project->bim.data)[i].statValue = tvalVec(q0 + tmpUseNum);
+                (project->bim.data)[i].log10PValue = 0;
+                pValVec(i) = pval;
+            }
+        }
+
+        util.FilterLessIdx(pValVec, bon, pFilterIdx);
+        tmpFilterNum = pFilterIdx.size();
+        if (tmpFilterNum == 0) {
+            finishedProc();
+            break;
+        }
+        tmpx.setData(nFilterSample, tmpFilterNum, (double)0.0);
+        for (uint64_t i = 0; i < tmpFilterNum; ++i) {
+            dataForRun.readAt(tmpRawMarker.data, (int64_t)pFilterIdx[i]);
+            filterList.FilterVec(tmpRawMarker, tmpMarker);
+            util.NormDataOne(tmpMarker, (double)project->getNPolyploid(), tmpNormMarker);
+            for (uint64_t j = 0; j < nFilterSample; ++j) {
+                tmpx(j, i) = tmpNormMarker(j);
+            }
+        }
+        util.RemoveLD(tmpx, 0.7, lim, tmpLDIdx);
+        pLDFilterIdx.clear();
+        for (uint64_t i = 0; i < tmpLDIdx.size(); ++i) {
+            pLDFilterIdx.push_back(pFilterIdx[tmpLDIdx[i]]);
+        }
+        tmpx.setData(nFilterSample, pLDFilterIdx.size() + 1, (double)0.0);
+        for (uint64_t j = 0; j < nFilterSample; ++j) {
+            tmpx(j, 0) = 1.0;
+        }
+        for (uint64_t i = 0; i < pLDFilterIdx.size(); ++i) {
+            dataForRun.readAt(tmpRawMarker.data, (int64_t)pLDFilterIdx[i]);
+            filterList.FilterVec(tmpRawMarker, tmpMarker);
+            util.NormDataOne(tmpMarker, (double)project->getNPolyploid(), tmpNormMarker);
+            for (uint64_t j = 0; j < nFilterSample; ++j) {
+                tmpx(j, i + 1) = tmpNormMarker(j);
+            }
+        }
+        util.BICSelectionIdx(tmpx, rawFilterY, &BICFilterNum);
+        if (BICFilterNum == 0) {
+            break;
+        }
+        pBICFilterIdx.clear();
+        pBICFilterIdx.insert(pBICFilterIdx.begin(), pLDFilterIdx.begin(), pLDFilterIdx.begin() + BICFilterNum);
+        util.UpdateIdx(pBICFilterIdx, pLoopBICFilterIdx);
+        if (tmpUseNum == pLoopBICFilterIdx.size()) {
+            break;
+        }
+        tmpUseNum = pLoopBICFilterIdx.size();
+
+        ++iLoop;
+    }
+
+    finishedProc();
+}
+
+bool QGLMBlinkThread::makeThread()
+{
+    if (!isValid) {
+        return false;
+    }
+    FD::PolyPedDataIterator tPPed;
+    FD::BedDataIterator tBed;
+    uint64_t nMarker = project->bim.nMarker;
+    phe.read(project->phe.getNRow(), project->phe.data);
+    startTP = std::chrono::system_clock::now();
+    project->logInfo += "### start Blink ###\n";
+    cov.read(phe.getRawNum(), project->cov.getNCol(), project->cov.data, phe.getFilterList());
+
+    if (project->isPolyploid) {
+        tPPed.loadData(project->pData, 0, nMarker);
+        dataForRun.setPPedIter(tPPed);
+    } else {
+        tBed.loadData(project->bed, 0, nMarker);
+        dataForRun.setBedIter(tBed);
+    }
+    bimForRun.loadData(project->bim, 0, nMarker);
+    // blink.SetSampleFilter(phe.getFilterIndex(), phe.getFilterNum());
+    //
+    FD::PedDataIteratorSet tSet;
+    if (project->isPolyploid) {
+        tSet.nSample = phe.getRawNum();
+        tSet.nScale = project->bim.nMarker;
+        tSet.setPPedIter(tPPed);
+    } else {
+        tSet.nSample = phe.getRawNum();
+        tSet.nScale = project->bim.nMarker;
+        tSet.setBedIter(tBed);
+    }
+    // std::string curDir = QDir::currentPath().toStdString();
+    // blinkRaw.prePocessDir = curDir + std::string("/_tmpBlink_") + timePointToString(startTP);
+    // blinkRaw.gwas_prepare(tSet, bimForRun, phe, cov);
+    //
+    project->logInfo += "samples number = " + std::to_string(project->phe.getNRow()) + "\n";
+    project->logInfo += "samples number(filtered) = " + std::to_string(phe.getFilterNum()) + "\n";
+    project->logInfo += "markers number = " + std::to_string(project->bim.nMarker) + "\n";
+    emit logUpdate();
+    isStop.store(false), isPause.store(false);
+    std::thread theThread(&QGLMBlinkThread::run, this);
+    theThread.detach();
+    isThreadStart = true;
+    return true;
+}
+
 QFastPCAThread::QFastPCAThread(QObject *parent) : QObject(parent)
 {
 
 }
 
 QFastPCAThread::QFastPCAThread(FD::GWASProject *inProject, QObject *parent)
-    :FastPCAThread(inProject),QObject(parent)
+    : FastPCAThread(inProject), QObject(parent)
 {
 
 }
@@ -769,8 +1079,8 @@ QPCAThread::QPCAThread(FD::GWASProject *inProject, QObject *parent)
 void QPCAThread::run()
 {
     MML::Mat tX,CY,Q,R;
-    size_t n=project->phe.getNRow(),pi=0,i;
-    size_t p=project->bim.nMarker;
+    uint64_t n=project->phe.getNRow(),pi=0,i;
+    uint64_t p=project->bim.nMarker;
     while(pi+READSCALE<p){
         tX.resize(READSCALE,n);
         if(project->isPolyploid) project->pData.read2(tX.data,READSCALE);
@@ -820,7 +1130,7 @@ void QPCAThread::run()
 
 bool QPCAThread::makeThread()
 {
-    size_t n=project->phe.getNRow();
+    uint64_t n=project->phe.getNRow();
     startTP = std::chrono::system_clock::now();
     PCn=std::min(n,PCn);
     CovMat.setData(n,n,0.0);
@@ -844,7 +1154,7 @@ QStructureThread::QStructureThread(FD::GWASProject *inProject, QObject *parent)
 
 void QStructureThread::run()
 {
-    size_t iRep=0,nRep=nBurnIn+nRecord;
+    uint64_t iRep=0,nRep=nBurnIn+nRecord;
 //    qDebug() << iRep;
     for(iRep=0;iRep<nRep;++iRep){
         if(iRep==nBurnIn) structure.setRecord(true);
@@ -865,8 +1175,8 @@ void QStructureThread::run()
     }
     structure.onlyResult();
     out.resize(structure.nSample,structure.nPop);
-    for(size_t i=0;i<structure.nSample;++i){
-        for(size_t j=0;j<structure.nPop;++j){
+    for(uint64_t i=0;i<structure.nSample;++i){
+        for(uint64_t j=0;j<structure.nPop;++j){
             out(i,j)=structure.getSumQ(i,j)/nRecord;
         }
     }
@@ -885,15 +1195,15 @@ void QStructureThread::run()
 
 bool QStructureThread::makeThread()
 {
-    size_t nMarker = project->bim.nMarker, iMarker;
-    size_t nSample = project->phe.getNRow(), iSample;
-    size_t nPloid = project->pData.nPloid, iPloid;
+    uint64_t nMarker = project->bim.nMarker, iMarker;
+    uint64_t nSample = project->phe.getNRow(), iSample;
+    uint64_t nPloid = project->pData.nPloid, iPloid;
     startTP = std::chrono::system_clock::now();
-    short *tMarkers = nullptr;
-    short *tPMarkers = nullptr;
-    short tc;
+    int16_t *tMarkers = nullptr;
+    int16_t *tPMarkers = nullptr;
+    int16_t tc;
     if (project->isPolyploid) {
-        tPMarkers = new short[nSample];
+        tPMarkers = new int16_t[nSample];
         project->pData.resetReadPoint();
         structure.setParameter(nMarker, nPopulation, 2, nSample, nPloid);
         structure.initialize();
@@ -920,7 +1230,7 @@ bool QStructureThread::makeThread()
     } else {
         structure.setParameter(nMarker, nPopulation, 2, nSample, 2);
         structure.initialize();
-        tMarkers = new short[nSample];
+        tMarkers = new int16_t[nSample];
         project->bed.resetReadPoint();
         for (iMarker = 0; iMarker < nMarker; ++iMarker){
             project->bed.read(tMarkers);
@@ -979,11 +1289,11 @@ void QFastStructureThread::run()
     MML::FastStructureParam initParam;
     MML::FastStructure initStru;
     MML::Mat iPLambda;
-    std::vector<size_t> randomList;
+    std::vector<uint64_t> randomList;
     double tLL=-1e300,LL=-1e300,iterTol=1e300;
-    size_t batchSize = std::min(param.nMarker,(unsigned long long)(1000000)/param.nSample);
-    size_t nMarker=param.nMarker,nSample=param.nSample,nPloid=param.nPloid;
-    size_t i,j,iMarker,iSample,iPloid,iter=0;
+    uint64_t batchSize = std::min(param.nMarker,(unsigned long long)(1000000)/param.nSample);
+    uint64_t nMarker=param.nMarker,nSample=param.nSample,nPloid=param.nPloid;
+    uint64_t i,j,iMarker,iSample,iPloid,iter=0;
     meanDev.clear();
     if(nMarker <= batchSize){
         tP.initialize(param);
@@ -1080,12 +1390,12 @@ void QFastStructureThread::run()
 
 bool QFastStructureThread::makeThread()
 {
-    size_t nMarker = project->bim.nMarker, iMarker;
-    size_t nSample = project->phe.getNRow(), iSample;
-    size_t nPloid = project->pData.nPloid, iPloid;
-    short tc;
-    short *tMarkers = nullptr;
-    short *tPMarkers = nullptr;
+    uint64_t nMarker = project->bim.nMarker, iMarker;
+    uint64_t nSample = project->phe.getNRow(), iSample;
+    uint64_t nPloid = project->pData.nPloid, iPloid;
+    int16_t tc;
+    int16_t *tMarkers = nullptr;
+    int16_t *tPMarkers = nullptr;
     startTP = std::chrono::system_clock::now();
 
     param.nAllele = 2;
@@ -1101,7 +1411,7 @@ bool QFastStructureThread::makeThread()
 
 
         param.nPloid = nPloid;
-        tPMarkers = new short[nSample];
+        tPMarkers = new int16_t[nSample];
         project->pData.resetReadPoint();
         structure.loadParam(param);
         structure.initialize();
@@ -1129,7 +1439,7 @@ bool QFastStructureThread::makeThread()
         param.nPloid = 2;
         structure.loadParam(param);
         structure.initialize();
-        tMarkers = new short[nSample];
+        tMarkers = new int16_t[nSample];
         project->bed.resetReadPoint();
         for (iMarker = 0; iMarker < nMarker; ++iMarker) {
             project->bed.read(tMarkers);
@@ -1183,9 +1493,9 @@ QKinshipThread::QKinshipThread(FD::GWASProject *inProject, MML::KinshipMode inMo
 
 void QKinshipThread::run()
 {
-    MML::IMat tX;
-    size_t n = project->phe.getNRow(), pi = 0;
-    size_t p = project->bim.nMarker;
+    MML::SIMat tX;
+    uint64_t n = project->phe.getNRow(), pi = 0;
+    uint64_t p = project->bim.nMarker;
     while (pi + READSCALE < p) {
         tX.resize(READSCALE, n);
         if (project->isPolyploid) {
@@ -1258,15 +1568,15 @@ QNormalBSAThread::QNormalBSAThread(FD::BSAProject *inProject, QObject *parent)
 
 void QNormalBSAThread::run()
 {
-    size_t iChr,nChr=(project->chrLen).size();
-    size_t iInter = 0,iTotalInter = 0,iMarker,nInterMarker;
-    size_t start,stop;
-    size_t winLength=project->winLength;
-    size_t strideLength=project->strideLength;
-    std::vector<size_t> nChrInter(nChr);
+    uint64_t iChr,nChr=(project->chrLen).size();
+    uint64_t iInter = 0,iTotalInter = 0,iMarker,nInterMarker;
+    uint64_t start,stop;
+    uint64_t winLength=project->winLength;
+    uint64_t strideLength=project->strideLength;
+    std::vector<uint64_t> nChrInter(nChr);
     std::vector<double> threList;
     ValPoints2* points=project->points;
-    size_t nMarkers=(project->data).getNRow(),nValidMarkers=0;
+    uint64_t nMarkers=(project->data).getNRow(),nValidMarkers=0;
     double t1,t2,t3,s1,s2,s3;
     nInter = 0;
 
@@ -1387,72 +1697,14 @@ bool QNormalBSAThread::makeThread()
 void qDeleteThreadRun(const BaseThread *p)
 {
     if(!p) return ;
-    switch (p->info) {
-    case GLM_GEMMA:
-        delete dynamic_cast<const QGLMThread*>(p);
-        break;
-    case MLM_GEMMA:
-        delete dynamic_cast<const QGEMMAThread*>(p);
-        break;
-    case MLM_EMMAX:
-        delete dynamic_cast<const QEMMAXThread*>(p);
-        break;
-    case PCA_PCA:
-        delete dynamic_cast<const QPCAThread*>(p);
-        break;
-    case PCA_FASTPCA:
-        delete dynamic_cast<const QFastPCAThread*>(p);
-        break;
-    case STR_STRUCTURE:
-        delete dynamic_cast<const QStructureThread*>(p);
-        break;
-    case STR_FASTSTRUCTURE:
-        delete dynamic_cast<const QFastStructureThread*>(p);
-        break;
-    case KIN_KINSHIP:
-        delete dynamic_cast<const QKinshipThread*>(p);
-        break;
-    case BSA_NORMALBSA:
-        delete dynamic_cast<const QNormalBSAThread*>(p);
-        break;
-    default: break;
-    }
+    delete p;
 }
 
 bool qSaveOutput(BaseThread *p, const char *outFile)
 {
     if(!p) return false;
-    switch (p->info) {
-    case GLM_GEMMA:
-        return (dynamic_cast<QGLMThread*>(p))->saveOutput(outFile);
-        break;
-    case MLM_GEMMA:
-        return (dynamic_cast<QGEMMAThread*>(p))->saveOutput(outFile);
-        break;
-    case MLM_EMMAX:
-        return (dynamic_cast<QEMMAXThread*>(p))->saveOutput(outFile);
-        break;
-    case PCA_PCA:
-        return (dynamic_cast<QPCAThread*>(p))->saveOutput(outFile);
-        break;
-    case PCA_FASTPCA:
-        return (dynamic_cast<QFastPCAThread*>(p))->saveOutput(outFile);
-        break;
-    case STR_STRUCTURE:
-        return (dynamic_cast<QStructureThread*>(p))->saveOutput(outFile);
-        break;
-    case STR_FASTSTRUCTURE:
-        return (dynamic_cast<QFastStructureThread*>(p))->saveOutput(outFile);
-        break;
-    case KIN_KINSHIP:
-        return (dynamic_cast<QKinshipThread*>(p))->saveOutput(outFile);
-        break;
-    case BSA_NORMALBSA:
-        return (dynamic_cast<QNormalBSAThread*>(p))->saveOutput(outFile);
-        break;
-    default: break;
-    }
-    return false;
+    return p->saveOutput(outFile);
+    return true;
 }
 
 FD::BIMLogPData *qGetBIMInfo(BaseThread *p)
@@ -1482,6 +1734,9 @@ FD::BIMLogPData *qGetBIMInfo(BaseThread *p)
         break;
     case KIN_KINSHIP:
         return &((dynamic_cast<QKinshipThread*>(p))->project->bim);
+        break;
+    case GLM_BLINK:
+        return &((dynamic_cast<QGLMBlinkThread*>(p))->project->bim);
         break;
     default: break;
     }

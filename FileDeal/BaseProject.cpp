@@ -2,7 +2,7 @@
 
 bool FD::compare(const char *s1, const char *s2)
 {
-    size_t i=0;
+    uint64_t i=0;
     while (s1[i] != '\0' && s2[i] != '\0') {
         if (s1[i] != s2[i]) return false;
         ++i;
@@ -13,7 +13,7 @@ bool FD::compare(const char *s1, const char *s2)
 
 bool FD::pstrip(char *str)
 {
-    size_t i, pi, len;
+    uint64_t i, pi, len;
     bool f = true;
     for (i = 0, pi = 0; str[i] != '\0'; ++i) {
         if ((str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\r') && f) {
@@ -203,7 +203,7 @@ bool FD::split(std::vector<std::string> &list, const std::string &line, const st
 
 bool FD::charLess(const char *s1, const char *s2)
 {
-    size_t i = 0;
+    uint64_t i = 0;
     while (s1[i] != '\0' || s2[i] != '\0') {
         if (s1[i] > s2[i]) return false;
         else if (s1[i] < s2[i]) return true;
@@ -274,17 +274,17 @@ FD::BedData::~BedData()
     clear();
 }
 // out[isam + iMarkers * nSample] --> 0, 1, 2 : AA, Aa, aa
-bool FD::BedData::read(short *out, size_t nMarkers)
+bool FD::BedData::read(int16_t *out, uint64_t nMarkers)
 {
     if (!isValid || !data || !out) {
         return false;
     }
-    size_t nByte = ((nSample + 3) / 4) * nMarkers;
-    size_t i = 0;
-    size_t isam = 0;
-    size_t j = 0;
-    size_t iMarkers = 0;
-    unsigned short tByte = 0, tc = 3;
+    uint64_t nByte = ((nSample + 3) / 4) * nMarkers;
+    uint64_t i = 0;
+    uint64_t isam = 0;
+    uint64_t j = 0;
+    uint64_t iMarkers = 0;
+    uint16_t tByte = 0, tc = 3;
     char* pByte = new (std::nothrow) char [nByte];
     if (pByte == nullptr) {
         return false;
@@ -296,7 +296,7 @@ bool FD::BedData::read(short *out, size_t nMarkers)
 
     for (i = 0; i < nByte; ++i)
     {
-        tByte = (unsigned short)(pByte[i]);
+        tByte = (uint16_t)(pByte[i]);
         for (j = 0; j < 4 && isam < nSample; ++j, ++isam)
         {
             switch(tByte & tc){
@@ -330,17 +330,17 @@ bool FD::BedData::read(short *out, size_t nMarkers)
 }
 
 // out[isam + iMarkers * nSample] --> 0, 0.5, 1.0 : AA, Aa, aa
-bool FD::BedData::read2(double *out, size_t nMarkers)
+bool FD::BedData::read2(double *out, uint64_t nMarkers)
 {
     if(!isValid || !data || !out) {
         return false;
     }
-    size_t nByte=((nSample + 3) / 4) * nMarkers;
-    size_t i = 0;
-    size_t isam = 0;
-    size_t j = 0;
-    size_t iMarkers = 0;
-    unsigned short tByte = 0, tc = 3;
+    uint64_t nByte=((nSample + 3) / 4) * nMarkers;
+    uint64_t i = 0;
+    uint64_t isam = 0;
+    uint64_t j = 0;
+    uint64_t iMarkers = 0;
+    uint16_t tByte = 0, tc = 3;
     char* pByte= new (std::nothrow) char [nByte];
     if (pByte == nullptr) {
         return false;
@@ -352,7 +352,7 @@ bool FD::BedData::read2(double *out, size_t nMarkers)
 
     for(i = 0; i < nByte; ++i)
     {
-        tByte = (unsigned short)(pByte[i]);
+        tByte = (uint16_t)(pByte[i]);
         for(j = 0; j < 4 && isam < nSample; ++j, ++isam)
         {
             switch(tByte & tc){
@@ -412,7 +412,7 @@ FD::PolyPedData::~PolyPedData()
     if (data) delete [] data;
 }
 
-bool FD::PolyPedData::read(short *out, size_t outNMarkers)
+bool FD::PolyPedData::read(int16_t *out, uint64_t outNMarkers)
 {
     if (!isValid || !data || !outNMarkers || !out) {
         return false;
@@ -420,8 +420,8 @@ bool FD::PolyPedData::read(short *out, size_t outNMarkers)
     if (readPoint + outNMarkers > nMarker) {
         return false;
     }
-    for (size_t i = 0; i < outNMarkers; ++i) {
-        for (size_t iSample = 0; iSample < nSample; ++iSample) {
+    for (uint64_t i = 0; i < outNMarkers; ++i) {
+        for (uint64_t iSample = 0; iSample < nSample; ++iSample) {
             if (data[readPoint * nSample + iSample] != MML::UNASSIGNED) {
                 out[i * nSample + iSample] = data[readPoint * nSample + iSample];
             } else {
@@ -433,7 +433,7 @@ bool FD::PolyPedData::read(short *out, size_t outNMarkers)
     return true;
 }
 
-bool FD::PolyPedData::read2(double *out, size_t outNMarkers)
+bool FD::PolyPedData::read2(double *out, uint64_t outNMarkers)
 {
     if (!isValid || !data || !outNMarkers || !out) {
         return false;
@@ -441,8 +441,8 @@ bool FD::PolyPedData::read2(double *out, size_t outNMarkers)
     if (readPoint + outNMarkers > nMarker) {
         return false;
     }
-    for (size_t i = 0; i < outNMarkers; ++i){
-        for (size_t iSample = 0; iSample < nSample; ++iSample) {
+    for (uint64_t i = 0; i < outNMarkers; ++i){
+        for (uint64_t iSample = 0; iSample < nSample; ++iSample) {
             if (data[readPoint * nSample + iSample] != MML::UNASSIGNED) {
                 out[i * nSample + iSample] = data[readPoint * nSample + iSample] / double(nPloid);
             } else{
@@ -468,7 +468,7 @@ void FD::PolyPedData::clear()
 }
 
 void FD::charCopy(char* object, const char* source){
-    size_t i = 0;
+    uint64_t i = 0;
     while (source[i]) {
         object[i] = source[i];
         ++i;
@@ -476,18 +476,18 @@ void FD::charCopy(char* object, const char* source){
     object[i] = '\0';
 }
 
-void FD::charCopy(char *object, const char *source, size_t len)
+void FD::charCopy(char *object, const char *source, uint64_t len)
 {
-    size_t i = 0;
+    uint64_t i = 0;
     while (i < len) {
         object[i] = source[i];
         ++i;
     }
 }
 
-size_t FD::charLen(const char *str)
+uint64_t FD::charLen(const char *str)
 {
-    size_t i = 0;
+    uint64_t i = 0;
     while (str[i]) {
         ++i;
     }

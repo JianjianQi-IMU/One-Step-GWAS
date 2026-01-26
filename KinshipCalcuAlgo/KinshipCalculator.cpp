@@ -30,9 +30,9 @@ bool KinshipCalculator::standardizeCol(Mat &inMat, double factor)
     if (inMat.info == _null) {
         return false;
     }
-    size_t nRow = inMat.getNRow(), nCol = inMat.getNCol();
+    uint64_t nRow = inMat.getNRow(), nCol = inMat.getNCol();
     double sum = 0.0, mean = 0.0, d2 = 0.0, d = 0.0;
-    size_t i = 0, j = 0, n = 0;
+    uint64_t i = 0, j = 0, n = 0;
     for (i = 0; i < nCol; ++i) {
         sum = 0.0;
         n = 0;
@@ -78,9 +78,9 @@ bool KinshipCalculator::zeroCenterCol(Mat &inMat, double factor)
     if (inMat.info == _null) {
         return false;
     }
-    size_t nRow = inMat.getNRow(), nCol = inMat.getNCol();
+    uint64_t nRow = inMat.getNRow(), nCol = inMat.getNCol();
     double sum = 0.0, mean = 0.0;
-    size_t i, j, n = 0;
+    uint64_t i, j, n = 0;
     for (i = 0; i < nCol; ++i) {
         sum = 0.0;
         n = 0;
@@ -109,7 +109,7 @@ bool KinshipCalculator::zeroCenterCol(Mat &inMat, double factor)
     return true;
 }
 
-bool KinshipCalculator::addMat(const IMat &inX)
+bool KinshipCalculator::addMat(const SIMat &inX)
 {
     if (inX.getNRow() != nSamples || !isValid) {
         return false;
@@ -138,8 +138,8 @@ bool KinshipCalculator::getKinship(Mat &outMat)
 {
     if (isValid && nMarkers > 0) {
         outMat.resize(nSamples, nSamples);
-        for (size_t i = 0; i < nSamples; ++i) {
-            for (size_t j = 0 ; j <= i; ++j) {
+        for (uint64_t i = 0; i < nSamples; ++i) {
+            for (uint64_t j = 0 ; j <= i; ++j) {
                 outMat(i, j) = kin(i, j) / nValidMarkers;
                 outMat(j, i) = outMat(i, j);
             }
@@ -149,7 +149,7 @@ bool KinshipCalculator::getKinship(Mat &outMat)
     return false;
 }
 
-size_t KinshipCalculator::getNValidMarkers()
+uint64_t KinshipCalculator::getNValidMarkers()
 {
     return nValidMarkers;
 }
@@ -159,7 +159,7 @@ KinshipMode KinshipCalculator::getMode()
     return mode;
 }
 
-bool KinshipCalculator::setNPloid(size_t inNPloid)
+bool KinshipCalculator::setNPloid(uint64_t inNPloid)
 {
     nPloid = inNPloid;
     return true;
@@ -171,7 +171,7 @@ bool KinshipCalculator::setIsPolyploid(bool inIsPolyploid)
     return true;
 }
 
-bool KinshipCalculator::setNSamples(size_t inNSamples)
+bool KinshipCalculator::setNSamples(uint64_t inNSamples)
 {
     if (inNSamples == 0) {
         return false;
@@ -206,9 +206,9 @@ bool KinshipIBSMatCalculator::fillCol(Mat &inMat)
     if (inMat.info == _null) {
         return false;
     }
-    size_t nRow = inMat.getNRow(), nCol = inMat.getNCol();
+    uint64_t nRow = inMat.getNRow(), nCol = inMat.getNCol();
     double sum = 0.0, mean = 0.0;
-    size_t i = 0, j = 0, n = 0;
+    uint64_t i = 0, j = 0, n = 0;
     for (i = 0; i < nCol; ++i) {
         sum = 0.0;
         n = 0;
@@ -235,14 +235,14 @@ bool KinshipIBSMatCalculator::fillCol(Mat &inMat)
     return true;
 }
 
-bool KinshipIBSMatCalculator::fillColBi(const IMat &inMat, Mat &outMat)
+bool KinshipIBSMatCalculator::fillColBi(const SIMat &inMat, Mat &outMat)
 {
     if (inMat.getMatClass() == MML::_null) {
         return false;
     }
-    size_t nRow = inMat.getNRow(), nCol = inMat.getNCol();
+    uint64_t nRow = inMat.getNRow(), nCol = inMat.getNCol();
     double fac = 0.0;
-    size_t i = 0, j = 0, n = 0;
+    uint64_t i = 0, j = 0, n = 0;
     outMat.resize(nRow, 2 * nCol);
     for (i = 0; i < nCol; ++i) {
         fac = 0.0;
@@ -294,7 +294,7 @@ KinshipIBSMatCalculator::~KinshipIBSMatCalculator()
 
 }
 
-bool KinshipIBSMatCalculator::addMat(const IMat &inX)
+bool KinshipIBSMatCalculator::addMat(const SIMat &inX)
 {
     if (inX.info == _null || inX.getNRow() != nSamples || !isValid) {
         return false;
@@ -321,15 +321,15 @@ bool KinshipIBSMatCalculator::getKinship(Mat &outMat)
     if (isValid && nMarkers > 0) {
         outMat.resize(nSamples, nSamples);
         if (isPolyploid) {
-            for (size_t i = 0; i < nSamples; ++i) {
-                for (size_t j = 0; j <= i; ++j) {
+            for (uint64_t i = 0; i < nSamples; ++i) {
+                for (uint64_t j = 0; j <= i; ++j) {
                     outMat(i, j) = 0.0;
                     outMat(j, i) = outMat(i, j);
                 }
             }
         } else {
-            for (size_t i = 0; i < nSamples; ++i) {
-                for (size_t j = 0 ;j <= i; ++j) {
+            for (uint64_t i = 0; i < nSamples; ++i) {
+                for (uint64_t j = 0 ;j <= i; ++j) {
                     outMat(i, j) = 0.5 * kin(i, j) / (2 * nValidMarkers) + 0.5;
                     outMat(j, i) = outMat(i, j);
                 }

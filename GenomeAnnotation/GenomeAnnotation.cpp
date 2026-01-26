@@ -1,5 +1,7 @@
 #include "GenomeAnnotation.hpp"
 
+#include <cstdint>
+
 int GeneAnnotation::charMaxLen = 4096;
 
 GeneAnnotation::GeneAnnotation()
@@ -307,7 +309,7 @@ bool GenomeAnnotation::loadChromosome(char **inChrName, int inNChr)
         chrName = new char*[inNChr];
         firstI = new long long[inNChr];
         lastI = new long long[inNChr];
-        isNull = new short[inNChr];
+        isNull = new int16_t[inNChr];
         for (i = 0; (int)i < inNChr; ++i) {
             chrName[i] = new char[chrNameMaxLen];
         }
@@ -342,7 +344,7 @@ bool GenomeAnnotation::loadChromosome(const std::vector<std::string> &inChrName)
         chrName = new char*[inNChr];
         firstI = new long long[inNChr];
         lastI = new long long[inNChr];
-        isNull = new short[inNChr];
+        isNull = new int16_t[inNChr];
         for (i = 0; (int)i < inNChr; ++i) {
             chrName[i] = new char[chrNameMaxLen];
         }
@@ -628,7 +630,7 @@ long long GenomeAnnotation::search(const char *inKeywords, long long *outListI, 
     return -1;
 }
 
-long long GenomeAnnotation::search(int inChrI, long double position, unsigned short mode) const
+long long GenomeAnnotation::search(int inChrI, long double position, uint16_t mode) const
 {
     if (!isValid) {
         return -1;
@@ -659,7 +661,7 @@ long long GenomeAnnotation::search(int inChrI, long double position, unsigned sh
     return i;
 }
 
-long long GenomeAnnotation::search(int inChrI, long long position, unsigned short mode) const
+long long GenomeAnnotation::search(int inChrI, long long position, uint16_t mode) const
 {
     if (!isValid) {
         return -1;
@@ -690,7 +692,7 @@ long long GenomeAnnotation::search(int inChrI, long long position, unsigned shor
     return i;
 }
 
-long long GenomeAnnotation::searchLower(int inChrI, long double position, unsigned short mode) const
+long long GenomeAnnotation::searchLower(int inChrI, long double position, uint16_t mode) const
 {
     if (!isValid) {
         return -1;
@@ -721,7 +723,7 @@ long long GenomeAnnotation::searchLower(int inChrI, long double position, unsign
     return j;
 }
 
-long long GenomeAnnotation::searchLower(int inChrI, long long position, unsigned short mode) const
+long long GenomeAnnotation::searchLower(int inChrI, long long position, uint16_t mode) const
 {
     if (!isValid) {
         return -1;
@@ -764,7 +766,7 @@ void GenomeAnnotation::setGeneModel(bool flag)
 
 void GenomeAnnotation::clear()
 {
-    size_t i;
+    uint64_t i;
     if (chrName) {
         for (i = 0; (int)i < nChr; ++i) {
             delete [] chrName[i];
@@ -801,7 +803,7 @@ GenomeAnnotation &GenomeAnnotation::operator=(const GenomeAnnotation &inGenome)
         chrName = new char*[inGenome.nChr];
         firstI = new long long[inGenome.nChr];
         lastI = new long long[inGenome.nChr];
-        isNull = new short[inGenome.nChr];
+        isNull = new int16_t[inGenome.nChr];
         for (i = 0; i < inGenome.nChr; ++i) {
             chrName[i] = new char[chrNameMaxLen];
         }
@@ -916,7 +918,7 @@ bool GenomeSequence::insertSeq(int iChr, long long iPosition, const char* inSeq)
         return false;
     }
     long long i = 0, i2 = 0, i3;
-    short flag;
+    int16_t flag;
     if ((iPosition + 1) % 2 == 0) {
         flag = 0;
     } else {
@@ -988,7 +990,7 @@ void GenomeSequence::clear()
     }
 }
 
-short GenomeSequence::Base2Value(char inBase)
+int16_t GenomeSequence::Base2Value(char inBase)
 {
     switch(inBase){
         case 'a':
@@ -1045,7 +1047,7 @@ short GenomeSequence::Base2Value(char inBase)
     }
 }
 
-char GenomeSequence::Value2Base(short inValue)
+char GenomeSequence::Value2Base(int16_t inValue)
 {
     switch (inValue) {
         case 1:
@@ -1090,7 +1092,7 @@ void GenomeSequence::write(const char *file,long long ip)
     std::fstream oF(file, std::ios::out);
     std::string outLine;
     char* tC;
-    short tmp, b1, b2;
+    int16_t tmp, b1, b2;
     for (long long i = 0; i < nChr; ++i) {
         oF << chrName[i] << '\n';
         outLine.clear();

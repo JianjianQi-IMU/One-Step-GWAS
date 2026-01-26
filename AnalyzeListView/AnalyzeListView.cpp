@@ -31,7 +31,7 @@ AnalyzeUnitInfo::AnalyzeUnitInfo()
 }
 
 AnalyzeUnitInfo::AnalyzeUnitInfo(const QString &inPhe, const QString &inBed, const QString &inBim,
-                                 const QString &inCov, const QString &inKin)
+    const QString &inCov, const QString &inKin)
 {
     state = RUN_DEFAULT;
     sdataList.append(inBed);
@@ -61,10 +61,7 @@ AnalyzeUnitInfo::AnalyzeUnitInfo(const QString &inPhe, const QString &inBed, con
     sdataIcon.append(":/icon/n_covariateIcon.png");
 }
 
-AnalyzeUnitInfo::AnalyzeUnitInfo(const QString &inPhe,
-                                 const QString &inBed,
-                                 const QString &inBim,
-                                 const QString &inCov)
+AnalyzeUnitInfo::AnalyzeUnitInfo(const QString &inPhe, const QString &inBed, const QString &inBim, const QString &inCov)
 {
     state = RUN_DEFAULT;
     sdataList.append(inBed);
@@ -104,7 +101,7 @@ void AnalyzeUnitInfo::setNNumber(int n)
     ldataIcon.resize(n);
 }
 
-void AnalyzeUnitInfo::setRunState(runState inState)
+void AnalyzeUnitInfo::setRunState(RUN_STATE inState)
 {
     state = inState;
 }
@@ -141,7 +138,7 @@ QString AnalyzeUnitInfo::getINumberName(int id) const
     return ldataName[id];
 }
 
-size_t AnalyzeUnitInfo::getINumber(int id) const
+uint64_t AnalyzeUnitInfo::getINumber(int id) const
 {
     if (id >= ldataList.size() || id < 0) return SIZE_MAX;
     return ldataList[id];
@@ -174,7 +171,7 @@ QString &AnalyzeUnitInfo::getINumberName(int id)
     return ldataName[id];
 }
 
-size_t &AnalyzeUnitInfo::getINumber(int id)
+uint64_t &AnalyzeUnitInfo::getINumber(int id)
 {
     return ldataList[id];
 }
@@ -196,7 +193,7 @@ void AnalyzeUnitInfo::addFile(const QString &file, const QString &name, const QS
     sdataIcon.append(icon);
 }
 
-void AnalyzeUnitInfo::addNumber(size_t n, const QString &name, const QString &icon)
+void AnalyzeUnitInfo::addNumber(uint64_t n, const QString &name, const QString &icon)
 {
     ldataList.append(n);
     ldataName.append(name);
@@ -348,7 +345,7 @@ bool AnalyzeWidget::setThread(ThreadRun::BaseThread *inThread)
 {
     if (!inThread) return false;
     pThread = inThread;
-    if (pThread->info == ThreadRun::STR_FASTSTRUCTURE) {
+    if (pThread->info == ThreadRun::STR_FASTSTRUCTURE || pThread->info == ThreadRun::GLM_BLINK) {
         runningBar->setRange(0, 0);
     }
     return true;
@@ -438,7 +435,7 @@ void AnalyzeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     long startBtnSize = 64;
     QRectF rect1(x0 + 1, y0 + 1, width0 - 2, height0 - 2);
     QPainterPath ppath1;
-    size_t id = index.row();
+    uint64_t id = index.row();
     painter->setPen(QColor(125, 162, 206));
 
     // paint selected state
@@ -461,7 +458,7 @@ void AnalyzeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 
     // paint number text
     painter->setPen(QPen(Qt::black, 8));
-    size_t iNumber = 0, nNumber = (pUnitList->at(id)).getNNumber(), tmpNumberVal;
+    uint64_t iNumber = 0, nNumber = (pUnitList->at(id)).getNNumber(), tmpNumberVal;
     QString tmpNumText;
     QPixmap tmpNumPixmap;
     for (iNumber = 0; iNumber < nNumber; ++iNumber) {
@@ -538,6 +535,9 @@ void AnalyzeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         } else if ((*pThreadList)[id]->info == ThreadRun::MLM_EMMAX) {
             mapFinished = QPixmap(":/icon/GWASIcon.png");
             finishedStr = "EMMAX";
+        } else if ((*pThreadList)[id]->info == ThreadRun::GLM_BLINK) {
+            mapFinished = QPixmap(":/icon/GWASIcon.png");
+            finishedStr = "Blink";
         }
         lenFinishedStr = finishedFontMetricsF.horizontalAdvance(finishedStr);
         painter->setFont(finishedFont);
@@ -578,8 +578,6 @@ void AnalyzeItemDelegate::setProjectList(QList<FD::BaseProject *> *inProjectList
 {
     pProjectList = inProjectList;
 }
-
-
 
 AnalyzeListModel::AnalyzeListModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -759,11 +757,11 @@ AnalyzeListViewMenu::~AnalyzeListViewMenu()
 
 AnalyzeListView::AnalyzeListView(QWidget *parent):QListView(parent)
 {
-    pUnitList=new QList<AnalyzeUnitInfo>();
-    pDelegate=new AnalyzeItemDelegate(this);
-    pWidgetList=new QList<AnalyzeWidget*>();
-    pThreadList=new QList<ThreadRun::BaseThread*>();
-    pProjectList=new QList<FD::BaseProject*>();
+    pUnitList = new QList<AnalyzeUnitInfo>();
+    pDelegate = new AnalyzeItemDelegate(this);
+    pWidgetList = new QList<AnalyzeWidget*>();
+    pThreadList = new QList<ThreadRun::BaseThread*>();
+    pProjectList = new QList<FD::BaseProject*>();
     setItemDelegate(pDelegate);
     pDelegate->setUnitList(pUnitList);
     pDelegate->setWidgetList(pWidgetList);
@@ -803,8 +801,8 @@ bool AnalyzeListView::pro_loadFileAt(int id, FD::ProjectInfo info)
     int currentCount = pModel->rowCount();
     if (id < 0 || id >= currentCount) return false;
     if (pProjectList->at(id) && !(((*pUnitList)[id]).state == RUN_PAUSE || ((*pUnitList)[id]).state == RUN_RUNNING)) {
-           if(QMessageBox::question(this, "Is replace?", "The project has been initiated.Is replace?",
-                QMessageBox::Yes, QMessageBox::No) == QMessageBox::No) return false;
+        if(QMessageBox::question(this, "Is replace?", "The project has been initiated.Is replace?",
+            QMessageBox::Yes, QMessageBox::No) == QMessageBox::No) return false;
     }
     if (((*pUnitList)[id]).state == RUN_PAUSE || ((*pUnitList)[id]).state == RUN_RUNNING) {
         if (QMessageBox::warning(this, "remove", "This project is incomplete. Will you continue?",
@@ -980,7 +978,7 @@ bool AnalyzeListView::pro_AnalyzeAt(int row, ThreadRun::AnalyzeClass info, int n
             return false;
         }
         (*pThreadList)[row] = tmp;
-    } else if (info==ThreadRun::MLM_GEMMA) {
+    } else if (info == ThreadRun::MLM_GEMMA) {
         if (!tproject->isKinValid) {
             QMessageBox::critical(this, "error", "There is no kinship data");
             return false;
@@ -1065,7 +1063,7 @@ bool AnalyzeListView::pro_AnalyzeAt(int row, ThreadRun::AnalyzeClass info, int n
             return false;
         }
         (*pThreadList)[row] = tmp;
-    } else if (info==ThreadRun::STR_FASTSTRUCTURE) {
+    } else if (info == ThreadRun::STR_FASTSTRUCTURE) {
         tmp = new ThreadRun::QFastStructureThread(tproject);
         connect(dynamic_cast<ThreadRun::QFastStructureThread*>(tmp),
                 &ThreadRun::QFastStructureThread::taskFinished,
@@ -1082,7 +1080,7 @@ bool AnalyzeListView::pro_AnalyzeAt(int row, ThreadRun::AnalyzeClass info, int n
             return false;
         }
         (*pThreadList)[row] = tmp;
-    } else if (info==ThreadRun::KIN_KINSHIP) {
+    } else if (info == ThreadRun::KIN_KINSHIP) {
         tmp = new ThreadRun::QKinshipThread(tproject, kinshipPara.mode);
         connect(dynamic_cast<ThreadRun::QKinshipThread*>(tmp),
                 &ThreadRun::QKinshipThread::taskFinished,
@@ -1098,7 +1096,7 @@ bool AnalyzeListView::pro_AnalyzeAt(int row, ThreadRun::AnalyzeClass info, int n
             return false;
         }
         (*pThreadList)[row] = tmp;
-    } else if (info==ThreadRun::BSA_NORMALBSA) {
+    } else if (info == ThreadRun::BSA_NORMALBSA) {
         tmp = new ThreadRun::QNormalBSAThread(bproject);
         connect(dynamic_cast<ThreadRun::QNormalBSAThread*>(tmp),
                 &ThreadRun::QNormalBSAThread::taskFinished,
@@ -1114,9 +1112,23 @@ bool AnalyzeListView::pro_AnalyzeAt(int row, ThreadRun::AnalyzeClass info, int n
             return false;
         }
         (*pThreadList)[row] = tmp;
-    }
-    else return false;
-
+    } else if (info == ThreadRun::GLM_BLINK) {
+        tmp = new ThreadRun::QGLMBlinkThread(tproject);
+        connect(dynamic_cast<ThreadRun::QGLMBlinkThread*>(tmp),
+                &ThreadRun::QGLMBlinkThread::taskFinished,
+                (*pWidgetList)[row],
+                &AnalyzeWidget::projectFinished);
+        connect(dynamic_cast<ThreadRun::QGLMBlinkThread*>(tmp),
+                &ThreadRun::QGLMBlinkThread::logUpdate,
+                (*pWidgetList)[row],
+                &AnalyzeWidget::projectLogUpdate);
+        if (!tmp->makeThread()) {
+            QMessageBox::critical(this,"error","Thread start failed.");
+            delete dynamic_cast<ThreadRun::QGLMBlinkThread*>(tmp);
+            return false;
+        }
+        (*pThreadList)[row] = tmp;
+    } else return false;
 
     (*pUnitList)[row].state = RUN_RUNNING;
     (*pWidgetList)[row]->setThread(tmp);
@@ -1268,7 +1280,7 @@ bool AnalyzeListView::pro_startVisualizationAt(int row)
         return false;
     }
     if (analyzeClass == ThreadRun::GLM_GEMMA || analyzeClass == ThreadRun::MLM_EMMAX ||
-        analyzeClass == ThreadRun::MLM_GEMMA) {
+        analyzeClass == ThreadRun::MLM_GEMMA || analyzeClass == ThreadRun::GLM_BLINK) {
         bimData = ThreadRun::getBIMInfo(pThreadList->at(row));
         pPreVisualWidget = new PreVisualizeWidget(bimData);
         pPreVisualWidget->setAttribute(Qt::WA_ShowModal, true);
@@ -1279,8 +1291,7 @@ bool AnalyzeListView::pro_startVisualizationAt(int row)
         pPrePCAVisualWidget = new PrePCAVisualizeWidget(&(pPCAThread->PCs));
         pPrePCAVisualWidget->setAttribute(Qt::WA_ShowModal, true);
         pPrePCAVisualWidget->setVarRatio(pPCAThread->EVal(0) / pPCAThread->sumEVal,
-                                         pPCAThread->EVal(1) / pPCAThread->sumEVal,
-                                         pPCAThread->EVal(2) / pPCAThread->sumEVal);
+            pPCAThread->EVal(1) / pPCAThread->sumEVal, pPCAThread->EVal(2) / pPCAThread->sumEVal);
         connect(this, &AnalyzeListView::windowsClose, pPrePCAVisualWidget, &PrePCAVisualizeWidget::close);
         pPrePCAVisualWidget->show();
     } else if (analyzeClass == ThreadRun::STR_STRUCTURE) {
@@ -1301,7 +1312,7 @@ bool AnalyzeListView::pro_startVisualizationAt(int row)
         pPreKinshipVisualizeWidget -> setAttribute(Qt::WA_ShowModal, true);
         connect(this,&AnalyzeListView::windowsClose, pPreKinshipVisualizeWidget, &PreKinshipVisualizeWidget::close);
         pPreKinshipVisualizeWidget -> show();
-    } else if (analyzeClass==ThreadRun::BSA_NORMALBSA) {
+    } else if (analyzeClass == ThreadRun::BSA_NORMALBSA) {
         pNormalBSAThread = dynamic_cast<ThreadRun::QNormalBSAThread*>((*pThreadList)[row]);
         pPreBSAVisualizeWidget = new PreBSAVisualizeWidget(pNormalBSAThread);
         pPreBSAVisualizeWidget -> setAttribute(Qt::WA_ShowModal, true);
@@ -1324,9 +1335,8 @@ bool AnalyzeListView::addNew()
 bool AnalyzeListView::removeOne(int row)
 {
     int currentCount = pModel->rowCount();
-    if (row<0||row>=currentCount) return false;
-    if ((pUnitList->at(row).state == RUN_RUNNING || pUnitList->at(row).state == RUN_PAUSE))
-    {
+    if (row < 0 || row >= currentCount) return false;
+    if ((pUnitList->at(row).state == RUN_RUNNING || pUnitList->at(row).state == RUN_PAUSE)) {
         if(QMessageBox::warning(this, "remove", "This project is incomplete. Will you continue?",
             QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Cancel) return false;
     }
@@ -1551,6 +1561,28 @@ void AnalyzeListView::runNormalBSA()
     pWidget->show();
 }
 
+void AnalyzeListView::runBlink()
+{
+    QModelIndex currentID = currentIndex();
+    if(!currentID.isValid()) {
+        QMessageBox::critical(this, "warning", "the project is incorrect.");
+        return ;
+    }
+    int row = currentID.row();
+    if (!(*pProjectList)[row]) {
+        QMessageBox::critical(this, "error", "This project is null.");
+        return;
+    }
+    if ((*pProjectList)[row]->proInfo != FD::PROJECT_GWAS) {
+        QMessageBox::critical(this, "error", "This project is not GWAS project.");
+        return;
+    }
+    SetGWASParamWidget* pWidget = new SetGWASParamWidget(row, ThreadRun::GLM_BLINK);
+    connect(pWidget, &SetGWASParamWidget::startGWAS, this, &AnalyzeListView::startGWAS);
+    pWidget->setAttribute(Qt::WA_ShowModal, true);
+    pWidget->show();
+}
+
 void AnalyzeListView::removeCurrent()
 {
     QModelIndex currentID = currentIndex();
@@ -1646,27 +1678,27 @@ void AnalyzeListView::startVisualization()
     pro_startVisualizationAt(currentID.row());
 }
 
-void AnalyzeListView::startGWAS(size_t id, ThreadRun::AnalyzeClass info, int nThread)
+void AnalyzeListView::startGWAS(uint64_t id, ThreadRun::AnalyzeClass info, int nThread)
 {
     pro_AnalyzeAt(id, info, nThread);
 }
 
-void AnalyzeListView::startStructure(size_t id, int nThread)
+void AnalyzeListView::startStructure(uint64_t id, int nThread)
 {
     pro_AnalyzeAt(id, ThreadRun::STR_STRUCTURE, nThread);
 }
 
-void AnalyzeListView::startFastStructure(size_t id, int nThread)
+void AnalyzeListView::startFastStructure(uint64_t id, int nThread)
 {
     pro_AnalyzeAt(id, ThreadRun::STR_FASTSTRUCTURE, nThread);
 }
 
-void AnalyzeListView::startKinship(size_t id, int nThread)
+void AnalyzeListView::startKinship(uint64_t id, int nThread)
 {
     pro_AnalyzeAt(id, ThreadRun::KIN_KINSHIP, nThread);
 }
 
-void AnalyzeListView::startNormalBSA(size_t id, int nThread)
+void AnalyzeListView::startNormalBSA(uint64_t id, int nThread)
 {
     pro_AnalyzeAt(id, ThreadRun::BSA_NORMALBSA, nThread);
 }
@@ -1686,7 +1718,7 @@ void AnalyzeListView::pauseOrContinueSelectedProject()
     (*pWidgetList)[row]->startButtonTrigger();
 }
 
-void AnalyzeListView::receiveProjectStateChanged(int id, runState state)
+void AnalyzeListView::receiveProjectStateChanged(int id, RUN_STATE state)
 {
     QModelIndex currentID = currentIndex();
     if (!currentID.isValid()) return;

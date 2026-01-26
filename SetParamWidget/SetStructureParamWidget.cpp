@@ -53,7 +53,7 @@ SetStructureParamWidget::SetStructureParamWidget(QWidget *parent)
     connect(continueBtn,&QPushButton::clicked,this,&SetStructureParamWidget::dealwithContinue);
 }
 
-SetStructureParamWidget::SetStructureParamWidget(size_t inId, MML::StructureParam *inPara, QWidget *parent)
+SetStructureParamWidget::SetStructureParamWidget(uint64_t inId, MML::StructureParam *inPara, QWidget *parent)
     :SetStructureParamWidget(parent)
 {
     para=inPara;

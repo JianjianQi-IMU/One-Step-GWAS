@@ -216,7 +216,7 @@ void PCA3DScatterFramePainter::setAxisData()
     double minv[3] {minPC1,minPC2,minPC3};
     double maxv[3] {maxPC1,maxPC2,maxPC3};
     double color[3];
-    size_t i=0,j=0,k=0;
+    uint64_t i=0,j=0,k=0;
     if(axisData){
         delete [] axisData;
     }

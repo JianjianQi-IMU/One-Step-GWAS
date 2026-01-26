@@ -31,7 +31,7 @@ SetFastStructureParamWidget::SetFastStructureParamWidget(QWidget *parent)
 
 }
 
-SetFastStructureParamWidget::SetFastStructureParamWidget(size_t inId, MML::FastStructureParam *inPara, QWidget *parent)
+SetFastStructureParamWidget::SetFastStructureParamWidget(uint64_t inId, MML::FastStructureParam *inPara, QWidget *parent)
     :SetFastStructureParamWidget(parent)
 {
     para = inPara;

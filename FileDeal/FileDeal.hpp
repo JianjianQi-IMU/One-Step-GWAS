@@ -23,9 +23,9 @@ class BIMNode
 public:
     std::string name;
     int idChr;
-    size_t pos;
+    uint64_t pos;
     BIMNode() : pos(0), idChr(-1) {}
-    BIMNode(const std::string& inName, int inIdChr, size_t inPos)
+    BIMNode(const std::string& inName, int inIdChr, uint64_t inPos)
         : pos(inPos), idChr(inIdChr)
     {
         name = inName;
@@ -52,7 +52,7 @@ public:
 class BIMData
 {
 public:
-    size_t       nMarker;
+    uint64_t       nMarker;
     BIMNode*     data;
     char**       chrName;
     int          nChr;
@@ -67,7 +67,7 @@ public:
 class BIMLogPData
 {
 public:
-    size_t       nMarker;
+    uint64_t       nMarker;
     BIMLogPNode* data;
     char**       chrName;
     int          nChr;
@@ -82,15 +82,15 @@ public:
 class BEDread : public BaseFileRead
 {
 public:
-    short fileTest;
+    int16_t fileTest;
     BEDread();
     ~BEDread();
     BEDread(const char* inFile);
     bool load(const char* inFile);
-    bool statNum(size_t inNSample, size_t& outNum);
-    bool readAll(size_t inNSample, BedData& out);
+    bool statNum(uint64_t inNSample, uint64_t& outNum);
+    bool readAll(uint64_t inNSample, BedData& out);
 
-    static const size_t ReadScaleSize = 100000;
+    static const uint64_t ReadScaleSize = 100000;
 };
 
 class TPolyPedread : public BaseFileRead
@@ -196,14 +196,14 @@ public:
     double* data;
     std::fstream file;
     bool isValid;
-    size_t nMarkers;
+    uint64_t nMarkers;
     explicit GWASOutread();
     explicit GWASOutread(const char* inFile);
     ~GWASOutread();
     bool loadFile(const char* inFile);
     bool setLogCol(int iCol);
     bool readAll();
-    double getValueAt(size_t id);
+    double getValueAt(uint64_t id);
     const double* getValues();
 };
 
@@ -221,24 +221,13 @@ public:
     bool isKinValid;
     ReadState state;
     GWASProject();
-    size_t getNSample() const;
-    size_t getNMarker() const;
-    size_t getNFactor() const;
-    size_t getNPolyploid() const;
-    ReadState read(const char* nameBed,
-              const char* nameBim,
-              const char* namePhe,
-              const char* nameCov="\0",
-              const char* nameKin="\0");
-    ReadState readVCF(const char* nameVCF,
-                      const char* namePhe,
-                      const char* nameCov = "\0",
-                      const char* nameKin = "\0");
-    ReadState readTPolyPed(const char* nameTPed,
-                       const char* nameBim,
-                       const char* namePhe,
-                       const char* nameCov = "\0",
-                       const char* nameKin = "\0");
+    uint64_t getNSample() const;
+    uint64_t getNMarker() const;
+    uint64_t getNFactor() const;
+    uint64_t getNPolyploid() const;
+    ReadState read(const char* nameBed, const char* nameBim, const char* namePhe, const char* nameCov = "\0", const char* nameKin = "\0");
+    ReadState readVCF(const char* nameVCF, const char* namePhe, const char* nameCov = "\0", const char* nameKin = "\0");
+    ReadState readTPolyPed(const char* nameTPed, const char* nameBim, const char* namePhe, const char* nameCov = "\0", const char* nameKin = "\0");
     bool saveOutput(const char* outFile) override;
     char** getChrName();
     int getNChr();
@@ -247,7 +236,7 @@ public:
 class BIMLogPNodeLessWithLogP
 {
 public:
-    bool operator ()(const BIMLogPNode* a,const BIMLogPNode* b);
+    bool operator ()(const BIMLogPNode* a, const BIMLogPNode* b);
 };
 
 void deleteProject(const BaseProject* p);

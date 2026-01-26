@@ -16,7 +16,7 @@ void StartGWASVisualizationLessWithLogP::setCompList(double *inCompList)
     data=inCompList;
 }
 
-bool StartGWASVisualizationLessWithLogP::operator ()(size_t a, size_t b)
+bool StartGWASVisualizationLessWithLogP::operator ()(uint64_t a, uint64_t b)
 {
     return data[a]<data[b];
 }
@@ -341,7 +341,7 @@ void StartGWASVisualizationWidget::startVisualization()
             if(GWASLogP) delete [] GWASLogP;
             return;
         }
-        std::priority_queue<size_t,std::vector<size_t>,StartGWASVisualizationLessWithLogP> pq(comp);
+        std::priority_queue<uint64_t,std::vector<uint64_t>,StartGWASVisualizationLessWithLogP> pq(comp);
         for(i=0;i<nBimPoints;++i) pq.push(i);
         outPoints=new ValPoints[nOutPoints];
         for(i=0;i<nOutPoints;++i){

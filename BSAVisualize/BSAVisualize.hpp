@@ -33,7 +33,7 @@ public:
     QPushButton*  searchBtn;
     QPushButton*  leftMoveBtn;
     QPushButton*  rightMoveBtn;
-    QRegExpValidator* posValidator;
+    QRegularExpressionValidator* posValidator;
 
     QTabWidget*   pLeftTabWidget;
 
@@ -41,9 +41,9 @@ public:
     BSAMainInfoWidget* pMainInfoWidget;
     BSAIndexScatterWidget* pIndexChart;
     BSALabelInterListWidget* pLabelInterList;
-    BSAVisualize(size_t *inChrLen,char** inChrName,int inNChr,
-                 FD::BSAInterVal *inInter,size_t inNInter,
-                 ValPoints2* inMarkers,size_t inNMarkers,
+    BSAVisualize(uint64_t *inChrLen,char** inChrName,int inNChr,
+                 FD::BSAInterVal *inInter,uint64_t inNInter,
+                 ValPoints2* inMarkers,uint64_t inNMarkers,
                  QWidget *parent = nullptr);
     ~BSAVisualize();
 

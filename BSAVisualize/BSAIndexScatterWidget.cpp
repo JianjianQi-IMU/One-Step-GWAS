@@ -6,7 +6,7 @@ BSAPointID::BSAPointID()
 
 }
 
-BSAPointID::BSAPointID(size_t inID, short inInfo)
+BSAPointID::BSAPointID(uint64_t inID, int16_t inInfo)
 {
     id = inID;
     info = inInfo;
@@ -26,7 +26,7 @@ BSAIndexScatterWidget::BSAIndexScatterWidget(QWidget *parent)
     makeMenu();
 }
 
-BSAIndexScatterWidget::BSAIndexScatterWidget(size_t *inChrLen, char **inChrName, int inNChr, FD::BSAInterVal *inPoints, size_t inNPoints,ValPoints2* inMarkers,size_t inNMarkers, QWidget *parent)
+BSAIndexScatterWidget::BSAIndexScatterWidget(uint64_t *inChrLen, char **inChrName, int inNChr, FD::BSAInterVal *inPoints, uint64_t inNPoints,ValPoints2* inMarkers,uint64_t inNMarkers, QWidget *parent)
     :BSAIndexScatterWidget(parent)
 {
     loadChromosome(inChrLen,inChrName, inNChr);
@@ -207,7 +207,7 @@ void BSAIndexScatterWidget::wheelEvent(QWheelEvent *e)
     else if(e->angleDelta().y()<0) zoomOut();
 }
 
-bool BSAIndexScatterWidget::isSelectedPoint(long long pointi, int x, int y, short info)
+bool BSAIndexScatterWidget::isSelectedPoint(long long pointi, int x, int y, int16_t info)
 {
     int py=0,dx=0,dy=0;
     long double meanPos=(points[pointi].start+points[pointi].stop)/2.0;
@@ -275,7 +275,7 @@ bool BSAIndexScatterWidget::loadPoints(FD::BSAInterVal *inPoints, long long inNP
     return true;
 }
 
-bool BSAIndexScatterWidget::loadChromosome(size_t *inChrLen, char **inChrName, int inNChr)
+bool BSAIndexScatterWidget::loadChromosome(uint64_t *inChrLen, char **inChrName, int inNChr)
 {
     if(!inChrLen||!inChrName||!inNChr) return false;
     int i,j;
@@ -412,7 +412,7 @@ BSAPointID BSAIndexScatterWidget::isPointPos(int x, int y)
 {
     if(nPaintPoints){
         long long i=currentMinPointsi;
-        short iInfo=0;
+        int16_t iInfo=0;
         for(iInfo=0;iInfo<5;++iInfo){
             for(;i<=currentMaxPointsi;++i){
                 if(isSelectedPoint(i,x,y,iInfo)) break;
@@ -429,7 +429,7 @@ double BSAIndexScatterWidget::calcuChartX(long long idChr,long double pos)
     return (long double)(pos+cumChrLen[idChr]-currentLeftPosF)*(width()-widgetLeftMargin)/positionGapLenF+widgetLeftMargin;
 }
 
-double BSAIndexScatterWidget::calcuChartY(double val, short info)
+double BSAIndexScatterWidget::calcuChartY(double val, int16_t info)
 {
     if(info<0) return -1;
     double py=-1;
@@ -1010,8 +1010,8 @@ void BSAIndexScatterWidget::paintSelectedPoint(QPainter *painter)
     int width0=width(),height0=height();
     int lx=widgetLeftMargin,rx=width0;
     int px=0,py=0,px1,px2;
-    size_t tStart=points[selectedPointi.id].start;
-    size_t tStop=points[selectedPointi.id].stop;
+    uint64_t tStart=points[selectedPointi.id].start;
+    uint64_t tStop=points[selectedPointi.id].stop;
     long double meanPos=(tStart+tStop)/2.0;
     if(meanPos+cumChrLen[points[selectedPointi.id].idChr]<currentLeftPosF||
             meanPos+cumChrLen[points[selectedPointi.id].idChr]>currentRightPosF){
@@ -1063,7 +1063,7 @@ void BSAIndexScatterWidget::paintGenomeSeq(QPainter *painter)
     long double oneBaseLen=paintAreaWidth/positionGapLenF;
     long double tStart,tStop;
     long long tStarti,tNBase,tIBase,tPos,i;
-    short tBaseValue;
+    uint16_t tBaseValue;
     char* tSeq=nullptr;
     char base1,base2;
     QBrush basicGeneBrush(colorNullStrandGene);
@@ -1315,7 +1315,7 @@ void BSAIndexScatterWidget::adjustPaintPointsPos()
     int width0=width(),height0=height();
     float tx,ty;
     double px,py,meanPos;
-    size_t tN=0;
+    uint64_t tN=0;
     FD::BSAInterVal inter;
 
     for(long long i=currentMinPointsi;i<=currentMaxPointsi;++i){
@@ -1359,7 +1359,7 @@ void BSAIndexScatterWidget::adjustPaintPointsPos()
 void BSAIndexScatterWidget::adjustPaintMarkersPos()
 {
     ValPoints2 tp;
-    size_t tpos,tN=0;
+    uint64_t tpos,tN=0;
     float px,py,tx,ty;
     int width0=width(),height0=height();
     for(long long i=currentMinMarkersi;i<=currentMaxMarkersi;++i){
@@ -1531,7 +1531,7 @@ FD::BSAInterVal *BSAIndexScatterWidget::getPoints()
     return points;
 }
 
-size_t BSAIndexScatterWidget::getNPoints()
+uint64_t BSAIndexScatterWidget::getNPoints()
 {
     return nPoints;
 }

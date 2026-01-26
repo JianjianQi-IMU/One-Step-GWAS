@@ -43,7 +43,7 @@ SetGWASParamWidget::SetGWASParamWidget(QWidget *parent) : QWidget(parent)
     connect(cancelBtn,&QPushButton::clicked,this,&SetGWASParamWidget::close);
 }
 
-SetGWASParamWidget::SetGWASParamWidget(size_t inID, ThreadRun::AnalyzeClass inInfo, QWidget *parent)
+SetGWASParamWidget::SetGWASParamWidget(uint64_t inID, ThreadRun::AnalyzeClass inInfo, QWidget *parent)
     :SetGWASParamWidget(parent)
 {
     id=inID;

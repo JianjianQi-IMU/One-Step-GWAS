@@ -14,11 +14,11 @@
 
 class BSAPointID{
 public:
-    size_t id;
-    short info;
+    uint64_t id;
+    int16_t info;
     //-1:NULL 0:HPIndex 1:LPIndex 2:DeltaIndex 3:upThreshold 4:downThreshold
     explicit BSAPointID();
-    BSAPointID(size_t inID,short inInfo);
+    BSAPointID(uint64_t inID,int16_t inInfo);
     bool operator==(const BSAPointID& B) const;
 };
 
@@ -38,16 +38,16 @@ public:
         //                      = subScatterAreaHeightRatio*scatterAreaHeightRatio*(width()-widgetTopMargin)
     int scatterScaleLen;
     int zoomFactor;
-    size_t minPosGapLen;
+    uint64_t minPosGapLen;
     int geneModelHeight;
     int baseHeight;
     int positionLabelHeight;
     int positionLabelWidth;
     float moveFactor;
-    size_t geneDisplayMaxPosGapLen;
+    uint64_t geneDisplayMaxPosGapLen;
     int maxLabelNum;
     float selectedPointsDistance2;
-    short geneDisplayMode;
+    int16_t geneDisplayMode;
     int maxLabelPointsNum;
     bool isDisplayMajorGridline;
     bool isDisplayMinorGridline;
@@ -169,9 +169,9 @@ public:
     GLuint idMarkersVBOL;
     GLuint idMarkersVBOD;
 
-    BSAIndexScatterWidget(size_t *inChrLen,char** inChrName,int inNChr,
-                          FD::BSAInterVal* inPoints,size_t inNPoints,
-                          ValPoints2* inMarkers,size_t inNMarkers,
+    BSAIndexScatterWidget(uint64_t *inChrLen,char** inChrName,int inNChr,
+                          FD::BSAInterVal* inPoints,uint64_t inNPoints,
+                          ValPoints2* inMarkers,uint64_t inNMarkers,
                           QWidget *parent = nullptr);
     ~BSAIndexScatterWidget();
     void mousePressEvent(QMouseEvent* e) override;
@@ -179,12 +179,12 @@ public:
     void mouseMoveEvent(QMouseEvent* e) override;
     void wheelEvent(QWheelEvent* e) override;
 
-    bool isSelectedPoint(long long pointi,int x,int y,short info); // 0:HPIndex 1:LPIndex 2:DeltaIndex
+    bool isSelectedPoint(long long pointi,int x,int y,int16_t info); // 0:HPIndex 1:LPIndex 2:DeltaIndex
                                                                    // 3:upThreshold 4:downThreshold
     bool isSelectedGene(long long genei,int x,int y);
 
     bool loadPoints(FD::BSAInterVal* inPoints,long long inNPoints);
-    bool loadChromosome(size_t *inChrLen,char** inChrName,int inNChr);
+    bool loadChromosome(uint64_t *inChrLen,char** inChrName,int inNChr);
 
     bool loadGenomeSeq(const char* inFile);
     bool loadMarkers(ValPoints2* inMarkers,long long inNMarkers);
@@ -194,7 +194,7 @@ public:
     bool mouseXToPointX(int x1,int x2);
     BSAPointID isPointPos(int x,int y);
     double calcuChartX(long long idChr,long double pos);
-    double calcuChartY(double val,short info);
+    double calcuChartY(double val,int16_t info);
     double calcuChartY(const BSAPointID& p);
     void dealLeftMousePressPoint(int x,int y);
     void dealLeftMousePressGene(int x,int y);
@@ -229,7 +229,7 @@ public:
                               int& rightIdChr,long double& rightChrPos);
     GenomeAnnotation* getGenome();
     FD::BSAInterVal* getPoints();
-    size_t getNPoints();
+    uint64_t getNPoints();
     char** getChrName();
     QColor getPointsColor() const;
     QColor getForwardGeneColor() const;
@@ -270,7 +270,7 @@ public:
     static int chrNameMaxLen;
 signals:
     void pointSelected(BSAPointID ip);
-    void geneSelected(size_t id);
+    void geneSelected(uint64_t id);
     void removeLabelPoint(int row);
     void addLabelPoint(BSAPointID ip);
     void currentIntervalChanged();

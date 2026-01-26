@@ -127,7 +127,7 @@ public:
             return QRectF();
         }
         long long id = paintSeq[idPaint];
-        size_t nSample=individualsData.getNRow();
+        uint64_t nSample=individualsData.getNRow();
         float yMarginFactor=1-yBarAreaFactor,xMarginFactor=1-xBarAreaFactor;
         float y0=yMarginFactor/2,x0=xMarginFactor/2;
         float barHeight=yBarAreaFactor;

@@ -47,7 +47,7 @@ SetKinshipParamWidget::SetKinshipParamWidget(QWidget *parent)
     connect(continueBtn,&QPushButton::clicked,this,&SetKinshipParamWidget::dealwithContinue);
 }
 
-SetKinshipParamWidget::SetKinshipParamWidget(size_t inId, MML::KinshipParam *inPara, QWidget *parent)
+SetKinshipParamWidget::SetKinshipParamWidget(uint64_t inId, MML::KinshipParam *inPara, QWidget *parent)
     : SetKinshipParamWidget(parent)
 {
     para = inPara;

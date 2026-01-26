@@ -46,7 +46,7 @@ GenomeAnnoDisplayView::GenomeAnnoDisplayView()
 
     displayAreaLabelFont.setFamily("Times New Roman");
     displayAreaLabelFont.setBold(true);
-    displayAreaLabelFont.setWeight(3);
+    displayAreaLabelFont.setWeight(QFont::Bold);
 
     currentMinGenei                      = 0;
     currentMaxGenei                      = 0;
@@ -421,7 +421,7 @@ void GenomeAnnoDisplayView::paintGenomeSeq(QPainter *painter)
     long double oneBaseLen = width / positionGapLenF;
     long double tStart, tStop;
     long long tStarti, tNBase, tIBase, tPos, i;
-    short tBaseValue;
+    uint16_t tBaseValue;
     char* tSeq = nullptr;
     char base1, base2;
     QBrush basicGeneBrush(colorNullStrandGene);

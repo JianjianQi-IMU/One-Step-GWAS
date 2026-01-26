@@ -14,10 +14,10 @@ void printMat(const Mat& inX,const char *out);
 class FastPCA
 {
 public:
-    size_t ranNCol;
+    uint64_t ranNCol;
     Mat ranMat;
     FastPCA();
-    bool calcuPC(const Mat& inQ,const Mat& inS,Mat& outPC,size_t d);
+    bool calcuPC(const Mat& inQ,const Mat& inS,Mat& outPC,uint64_t d);
     bool IterativeRun(const Mat& covMat,Mat& Y);
     bool addCovMat(const Mat& inX,Mat& outMat); // outMat += X %*% Xt
     bool addIterMat(const Mat& inX,const Mat& inRan,Mat& outMat); // outMat += X %*% R

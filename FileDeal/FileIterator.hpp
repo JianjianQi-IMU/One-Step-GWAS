@@ -5,11 +5,19 @@
 
 namespace FD {
 
+enum FileIterPedClass : int32_t
+{
+    FILEITER_UNVALID = -1,
+    FILEITER_BED = 0,
+    FILEITER_PPED,
+    FILEITER_NUM
+};
+
 class BaseMarkerIterator
 {
 protected:
-    size_t readPoint;
-    size_t readNum;
+    uint64_t readPoint;
+    uint64_t readNum;
     bool isValid;
 public:
     BaseMarkerIterator();
@@ -17,6 +25,7 @@ public:
     virtual ~BaseMarkerIterator();
     virtual bool next();
     virtual bool isEnd();
+    virtual bool reset();
     void copy(const BaseMarkerIterator& object);
     void operator=(const BaseMarkerIterator& object);
     void operator=(BaseMarkerIterator&& object);
@@ -26,28 +35,36 @@ class BedDataIterator : public BaseMarkerIterator
 {
 private:
     char* data;
-    size_t nSample;
+    uint64_t nSample;
 public:
     BedDataIterator();
-    BedDataIterator(BedData& inBedData, size_t start = 0, size_t stop = 0);
-    bool loadData(BedData& inBedData, size_t start = 0, size_t stop = 0);
-    bool read(short* out);
-    bool read2(double* out);
+    BedDataIterator(BedData& inBedData, uint64_t start = 0, uint64_t stop = 0);
+    bool loadData(BedData& inBedData, uint64_t start = 0, uint64_t stop = 0);
+    bool read(int16_t* out) const;
+    bool read2(double* out) const;
+    bool readAt(int16_t* out, int64_t idxMarker) const;
+    bool read2At(double* out, int64_t idxMarker) const;
+    uint64_t getNSample() const;
+    uint64_t getNMarker() const;
     void operator=(const BedDataIterator& object);
 };
 
 class PolyPedDataIterator : public BaseMarkerIterator
 {
 private:
-    size_t nPloid;
-    short* data;
-    size_t nSample;
+    uint64_t nPloid;
+    int16_t* data;
+    uint64_t nSample;
 public:
     PolyPedDataIterator();
-    PolyPedDataIterator(PolyPedData& inPolyPedData, size_t start = 0, size_t stop = 0);
-    bool loadData(PolyPedData& inPolyPedData, size_t start = 0, size_t stop = 0);
-    bool read(short* out);
-    bool read2(double* out);
+    PolyPedDataIterator(PolyPedData& inPolyPedData, uint64_t start = 0, uint64_t stop = 0);
+    bool loadData(PolyPedData& inPolyPedData, uint64_t start = 0, uint64_t stop = 0);
+    bool read(int16_t* out) const;
+    bool read2(double* out) const;
+    bool readAt(int16_t* out, int64_t idxMarker) const;
+    bool read2At(double* out, int64_t idxMarker) const;
+    uint64_t getNSample() const;
+    uint64_t getNMarker() const;
     void operator=(const PolyPedDataIterator& object);
 };
 
@@ -57,8 +74,8 @@ private:
     BIMNode* data;
 public:
     BIMDataIterator();
-    BIMDataIterator(BIMData& inBIMData, size_t start = 0, size_t stop = 0);
-    bool loadData(BIMData& inBIMData, size_t start = 0, size_t stop = 0);
+    BIMDataIterator(BIMData& inBIMData, uint64_t start = 0, uint64_t stop = 0);
+    bool loadData(BIMData& inBIMData, uint64_t start = 0, uint64_t stop = 0);
     BIMNode* read();
     void operator=(const BIMDataIterator& object);
 };
@@ -69,27 +86,33 @@ private:
     BIMLogPNode* data;
 public:
     BIMLogPDataIterator();
-    BIMLogPDataIterator(BIMLogPData& inBIMLogPData, size_t start = 0, size_t stop = 0);
-    bool loadData(BIMLogPData& inBIMLogPData, size_t start = 0, size_t stop = 0);
+    BIMLogPDataIterator(BIMLogPData& inBIMLogPData, uint64_t start = 0, uint64_t stop = 0);
+    bool loadData(BIMLogPData& inBIMLogPData, uint64_t start = 0, uint64_t stop = 0);
     BIMLogPNode* read();
+    BIMLogPNode* readAt(uint64_t idx);
     void operator=(const BIMLogPDataIterator& object);
 };
 
 class PedDataIteratorSet
 {
 public:
-    int info;
+    FileIterPedClass info;
     double dataNA;
-    short  unassigned;
-    size_t nSample;
-    size_t nScale;
+    int16_t  unassigned;
+    uint64_t nSample;
+    uint64_t nScale;
     BedDataIterator bedIter;
     PolyPedDataIterator ppedIter;
     PedDataIteratorSet();
     PedDataIteratorSet(const PedDataIteratorSet& object);
     void setBedIter(const BedDataIterator& iter);
     void setPPedIter(const PolyPedDataIterator& iter);
-    bool read2(double* out);
+    uint64_t getNSample() const;
+    uint64_t getNMarker() const;
+    bool read(int16_t* out) const;
+    bool read2(double* out) const;
+    bool readAt(int16_t* out, int64_t idxMarker) const;
+    bool read2At(double* out, int64_t idxMarker) const;
     bool next();
     bool isEnd();
     void copy(const PedDataIteratorSet& object);

@@ -9,17 +9,17 @@ StructureParam::StructureParam()
     nPopulation=4;
 }
 
-void StructureParam::setNBurnIn(size_t n)
+void StructureParam::setNBurnIn(uint64_t n)
 {
     if(!n) nBurnIn=n;
 }
 
-void StructureParam::setNRecord(size_t n)
+void StructureParam::setNRecord(uint64_t n)
 {
     if(!n) nRecord=n;
 }
 
-void StructureParam::setNPopulation(size_t n)
+void StructureParam::setNPopulation(uint64_t n)
 {
     if(!n) nPopulation=n;
 }
@@ -41,7 +41,7 @@ Structure::Structure()
     isRecord=false;
 }
 
-Structure::Structure(size_t inNMarker, size_t inNPop, size_t inNAllele, size_t inNSample, size_t inNPloid)
+Structure::Structure(uint64_t inNMarker, uint64_t inNPop, uint64_t inNAllele, uint64_t inNSample, uint64_t inNPloid)
     :Structure()
 {
     setParameter(inNMarker,inNPop,inNAllele,inNSample,inNPloid);
@@ -52,7 +52,7 @@ Structure::~Structure()
     clear();
 }
 
-bool Structure::setParameter(size_t inNMarker, size_t inNPop, size_t inNAllele, size_t inNSample, size_t inNPloid)
+bool Structure::setParameter(uint64_t inNMarker, uint64_t inNPop, uint64_t inNAllele, uint64_t inNSample, uint64_t inNPloid)
 {
     nMarker = inNMarker;
     nPop    = inNPop   ;
@@ -65,7 +65,7 @@ bool Structure::setParameter(size_t inNMarker, size_t inNPop, size_t inNAllele, 
 bool Structure::initialize()
 {
     clear();
-    G=new short[nMarker*nSample*nPloid];
+    G=new int16_t[nMarker*nSample*nPloid];
     P=new double[nMarker*nPop*nAllele];
     Q=new double[nSample*nPop];
     Z=new int[nMarker*nSample*nPloid];
@@ -73,7 +73,7 @@ bool Structure::initialize()
     alpha=new double[nPop];
     sumQ=new double[nSample*nPop];
 
-    size_t i,j;
+    uint64_t i,j;
     for(i=0;i<nPop;++i){
         lambda[i]=1.0;
         alpha[i]=1.0;
@@ -87,7 +87,7 @@ bool Structure::initialize()
 
 bool Structure::randomizeZ()
 {
-    size_t iSample,iMarker,iPloid;
+    uint64_t iSample,iMarker,iPloid;
     std::uniform_int_distribution<int> distribution(0,nPop-1);
     for(iSample=0;iSample<nSample;++iSample){
         for(iMarker=0;iMarker<nMarker;++iMarker){
@@ -106,9 +106,9 @@ bool Structure::randomizeZ()
 
 bool Structure::updateP()
 {
-    size_t iSample,iMarker,iPop,iAllele,iPloid,i;
+    uint64_t iSample,iMarker,iPop,iAllele,iPloid,i;
     int tmpPop,tmpAllele;
-    size_t *alleleNum=new size_t[nAllele*nPop];
+    uint64_t *alleleNum=new uint64_t[nAllele*nPop];
     double *para=new double[nAllele];
     for(iMarker=0;iMarker<nMarker;++iMarker){
         for(i=0;i<nAllele*nPop;++i) alleleNum[i]=0;
@@ -135,7 +135,7 @@ bool Structure::updateP()
 
 bool Structure::updateQ()
 {
-    size_t iSample,iMarker,iPloid,i;
+    uint64_t iSample,iMarker,iPloid,i;
     int tmpPop;
     double *para=new double[nPop];
     for(iSample=0;iSample<nSample;++iSample){
@@ -162,7 +162,7 @@ bool Structure::updateQ()
 
 bool Structure::updateZ()
 {
-    size_t iSample,iMarker,iPop,iPloid;
+    uint64_t iSample,iMarker,iPop,iPloid;
     int tmpAllele;
     double sum=0.0,threshold;
     std::uniform_real_distribution<double> distribution(0.0,1.0);
@@ -199,12 +199,12 @@ bool Structure::updateZ()
     return true;
 }
 
-short *Structure::genotype(size_t iMarker, size_t iSample, size_t iPloid)
+int16_t *Structure::genotype(uint64_t iMarker, uint64_t iSample, uint64_t iPloid)
 {
     return &(G[ZPos(iMarker,iSample,iPloid)]);
 }
 
-double Structure::getSumQ(size_t iSample, size_t iPop)
+double Structure::getSumQ(uint64_t iSample, uint64_t iPop)
 {
     return sumQ[QPos(iSample,iPop)];
 }

@@ -332,6 +332,13 @@ void LogPScatterVisualizeWidget::initializeGL()
 {
     initializeOpenGLFunctions();
 
+    // 启用混合实现透明度
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    // 启用多重采样
+    glEnable(GL_MULTISAMPLE);
+
     pPointsPainter -> initInitializeGL();
 
     update();

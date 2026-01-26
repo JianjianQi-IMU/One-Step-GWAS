@@ -16,9 +16,9 @@ class BSAInterVal
 {
 public:
     int idChr;
-    size_t start;
-    size_t stop;
-    size_t n;
+    uint64_t start;
+    uint64_t stop;
+    uint64_t n;
     double indexH;
     double indexL;
     double val;
@@ -26,7 +26,7 @@ public:
 
     BSAInterVal();
     bool operator<(const BSAInterVal& B) const;
-    double getData(short info);
+    double getData(int16_t info);
 
 };
 
@@ -73,7 +73,7 @@ private:
     BSASpecificRead1 reader1;
     BSAVCFRead       readerVCF;
     char** charChrName;
-    size_t nCharChrName;
+    uint64_t nCharChrName;
 
 public:
 
@@ -82,11 +82,11 @@ public:
     std::vector<std::string> poolName; // poolName[0]:HP; poolName[1]:LP
 
     ValPoints2* points; // the length is nMarkers+1
-    std::vector<size_t> chrStartId; // the length is nChr+1
+    std::vector<uint64_t> chrStartId; // the length is nChr+1
 
     std::vector<std::string> chrName;
 
-    std::vector<size_t> chrLen;
+    std::vector<uint64_t> chrLen;
 
     long maxDepth;
 
@@ -96,11 +96,11 @@ public:
     double threQUAL;
     double pvalue;
 
-    size_t winLength;    // windows length
-    size_t strideLength; // stride length
+    uint64_t winLength;    // windows length
+    uint64_t strideLength; // stride length
 
-    size_t nHP; //the number of samples of HP
-    size_t nLP; //the number of samples of LP
+    uint64_t nHP; //the number of samples of HP
+    uint64_t nLP; //the number of samples of LP
 
     explicit BSAProject();
     ~BSAProject();
@@ -111,14 +111,14 @@ public:
     bool setThreHigh(double inVal);
     bool setThreQUAL(double inVal);
     bool setPValue(double inVal);
-    bool setWinLength(size_t inVal);
-    bool setStrideLength(size_t inVal);
-    bool setNHighPool(size_t inVal);
-    bool setNLowPool(size_t inVal);
+    bool setWinLength(uint64_t inVal);
+    bool setStrideLength(uint64_t inVal);
+    bool setNHighPool(uint64_t inVal);
+    bool setNLowPool(uint64_t inVal);
 
-    size_t searchPointIndex(int inIDChr,size_t inPos) const;
+    uint64_t searchPointIndex(int inIDChr,uint64_t inPos) const;
 
-    size_t getMeanSamples() const;
+    uint64_t getMeanSamples() const;
     long getMaxDepth() const;
     double getPValue() const;
     char** getChrName();

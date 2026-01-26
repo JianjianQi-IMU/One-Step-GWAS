@@ -12,7 +12,7 @@ EMMAX::REML::REML()
 EMMAX::REML::REML(const MML::Kinship& inKin, const MML::Covariates& inCov)
     : REML()
 {
-    read(inKin,inCov);
+    read(inKin, inCov);
 }
 
 EMMAX::REML::~REML()
@@ -20,8 +20,8 @@ EMMAX::REML::~REML()
 
 }
 
-bool EMMAX::REML::sortEigen(size_t* outIndex,size_t inNum){
-    size_t i = 0;
+bool EMMAX::REML::sortEigen(uint64_t* outIndex, uint64_t inNum){
+    uint64_t i = 0;
     for (i = 0; i < inNum; ++i) {
         outIndex[i]=i;
     }
@@ -29,9 +29,9 @@ bool EMMAX::REML::sortEigen(size_t* outIndex,size_t inNum){
     return true;
 }
 
-void EMMAX::REML::qSortEigen(size_t a, size_t b, size_t *outIndex)
+void EMMAX::REML::qSortEigen(uint64_t a, uint64_t b, uint64_t *outIndex)
 {
-    size_t i = 0, j = 0, tmp = 0;
+    uint64_t i = 0, j = 0, tmp = 0;
     if (a < b) {
         i = a, j = b;
         tmp = outIndex[i];
@@ -61,8 +61,8 @@ bool EMMAX::REML::read(const MML::Kinship& inKin, const MML::Covariates& inCov){
     factorN = inCov.getFactorNum();
     MML::Mat K, KtK, KtKi, KKtKi;
     MML::Mat S, V, SV, SVS;
-    size_t i = 0;
-    size_t *indexList = nullptr;
+    uint64_t i = 0;
+    uint64_t *indexList = nullptr;
     K = inCov.getFilterMat();
     V = inKin.getFilterMat();
     for (i = 0; i < filterN; ++i) {
@@ -89,7 +89,7 @@ bool EMMAX::REML::read(const MML::Kinship& inKin, const MML::Covariates& inCov){
         return false;
     }
     rawEigenVal.add(-1.0);
-    indexList = new size_t [filterN];
+    indexList = new uint64_t [filterN];
     sortEigen(indexList, filterN);
     rawEigenVec.sortCols(filterN, indexList);
     rawEigenVal.sortRows(filterN, indexList);
@@ -102,11 +102,11 @@ bool EMMAX::REML::read(const MML::Kinship& inKin, const MML::Covariates& inCov){
 
 bool EMMAX::REML::getDelta(const MML::Phenotype& inPhe, double& outDelta, double& outLLD)
 {
-    if (!(inPhe.isValid) || inPhe.filterN != filterN || !isValid) return false;
+    if (!(inPhe.isValid) || inPhe.getFilterNum() != filterN || !isValid) return false;
     MML::Mat etas, EVect;
     filterEigenVec.t(EVect);
     MML::Mat::XVmul(EVect, inPhe.getFilterVec(), etas);
-    size_t rangeNum = 100, i = 0;
+    uint64_t rangeNum = 100, i = 0;
     double *expRange = new double [rangeNum + 1];
     double *dLL = new double [rangeNum + 1];
     double upVal = 0.0, downVal = 0.0, midVal = 0.0;
@@ -172,7 +172,7 @@ bool EMMAX::REML::dLikelihood(const MML::Mat& etas, double delta, double& outVal
 {
     if (etas.nrow != filterN - factorN) return false;
     double sum1 = 0, sum2 = 0, sum3 = 0;
-    for (size_t i = 0; i < filterN - factorN; i++) {
+    for (uint64_t i = 0; i < filterN - factorN; i++) {
         sum1 += (etas(i) * etas(i) / ((filterEigenVal(i) + delta) * (filterEigenVal(i) + delta)));
         sum2 += (etas(i) * etas(i) / (filterEigenVal(i) + delta));
         sum3 += (1 / (filterEigenVal(i) + delta));
@@ -195,7 +195,7 @@ bool EMMAX::REML::likelihood(const MML::Mat& etas, double delta, double& outVal)
 
 bool EMMAX::REML::getLL(const MML::Phenotype &inPhe, double inDelta, double &outLL)
 {
-    if (!(inPhe.isValid) || inPhe.filterN != filterN || !isValid) return false;
+    if (!(inPhe.isValid) || inPhe.getFilterNum() != filterN || !isValid) return false;
     MML::Mat etas, EVect;
     filterEigenVec.t(EVect);
     MML::Mat::XVmul(EVect, inPhe.getFilterVec(), etas);
@@ -222,14 +222,14 @@ EMMAX::Betas::~Betas()
 
 bool EMMAX::Betas::read(const MML::Phenotype& inPhe, const MML::Kinship& inKin, const MML::Covariates& inCov, double inDelta)
 {
-    if (inPhe.filterN!=inKin.filterN || inPhe.filterN!=inCov.filterN || !(inPhe.isValid) ||
+    if (inPhe.getFilterNum() != inKin.getFilterNum() || inPhe.getFilterNum() != inCov.getFilterNum() || !(inPhe.isValid) ||
        !(inKin.isValid) || !(inCov.isValid) || !(inKin.isEigen)) {
         isValid = false;
         delta = 0.0;
         return false;
     }
-    filterN = inCov.filterN;
-    factorN = inCov.factorN;
+    filterN = inCov.getFilterNum();
+    factorN = inCov.getFactorNum();
     Ut = inKin.getEigenVec();
     Ut.t();
     D = inKin.getEigenVal();
@@ -263,7 +263,7 @@ bool EMMAX::Betas::calculateTstat(const MML::Mat& inMarkers, double& outBetas0, 
 
     double denoTstat = 0.0, VtHiV = 0.0;
     if (!(MML::Mat::XVmul(Ut, inMarkers, Utx))) return false;
-    for (size_t i = 0; i < filterN; ++i) {
+    for (uint64_t i = 0; i < filterN; ++i) {
         UtKx(i, factorN) = Utx(i);
     }
 

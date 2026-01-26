@@ -252,7 +252,7 @@ bool ProjectTreeItemModel::isRootNode(const ProjectTreeItemModelNode *p)
     return p==rootNode;
 }
 
-runState ProjectTreeItemModel::projectState(int id)
+RUN_STATE ProjectTreeItemModel::projectState(int id)
 {
     if(id<0||id>=rowCount()) return RUN_UNKNOWN;
     return (*pUnitList)[id].state;

@@ -19,7 +19,7 @@ private:
 public:
     explicit StrucVisualSettingsWidget(QWidget *parent = nullptr);
     ~StrucVisualSettingsWidget();
-    bool setSampleName(char** inSampleName,size_t n);
+    bool setSampleName(char** inSampleName,uint64_t n);
 
     void setXMargin(int value);
     void setYMargin(int value);

@@ -39,7 +39,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void dealwithToolbarButton(runState state);
+    void dealwithToolbarButton(RUN_STATE state);
 
     void on_actionNewGWASProject_triggered();
 
@@ -90,6 +90,8 @@ private slots:
     void on_actionNormalBSA_triggered();
 
     void on_actionGWASQQVisualization_triggered();
+
+    void on_actionBlink_triggered();
 
 private:
     QQueue<FD::BaseProjectFilesSet*> historyFileSet;

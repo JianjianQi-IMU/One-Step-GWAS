@@ -11,14 +11,14 @@ class BSALabelInterListWidget : public QWidget
 public:
     explicit BSALabelInterListWidget(QWidget *parent = nullptr);
     ~BSALabelInterListWidget();
-    void setInter(FD::BSAInterVal* inInter,size_t inNInter);
+    void setInter(FD::BSAInterVal* inInter,uint64_t inNInter);
     bool setMaxLabelInterNum(int n);
     bool setChrName(char** pName);
 
 
 private:
     FD::BSAInterVal* inter;
-    size_t nInter;
+    uint64_t nInter;
 
     BSALabelInterListView* pLabelView;
 signals:

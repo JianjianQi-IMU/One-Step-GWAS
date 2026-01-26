@@ -82,7 +82,7 @@ void StartPCAVisualizationWidget::createVisualize()
     PCA2DVisualizationWidget* D2Visual=nullptr;
     MML::Mat PCs;
     char** sampleName=nullptr;
-    size_t nSample,i;
+    uint64_t nSample,i;
     if(!QFile::exists(filePathEdit->text())){
         QMessageBox::critical(this,"error","the .file file don\'t exist");
         return;

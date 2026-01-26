@@ -26,15 +26,15 @@ private:
     QDoubleSpinBox*  highThreBox;
     QDoubleSpinBox*  pvalueBox;
     FD::BSAProject*  project;
-    size_t           id;
+    uint64_t           id;
     explicit SetNormalBSAParamWidget(QWidget *parent = nullptr);
 public:
-    SetNormalBSAParamWidget(size_t inId,
+    SetNormalBSAParamWidget(uint64_t inId,
                             FD::BSAProject* inProject,
                             QWidget *parent = nullptr);
     ~SetNormalBSAParamWidget();
 signals:
-    void startNormalBSA(size_t id,int nThread);
+    void startNormalBSA(uint64_t id,int nThread);
 public slots:
     void dealwithContinue();
 };

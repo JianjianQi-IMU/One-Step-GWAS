@@ -68,7 +68,7 @@ void GeneFindListView::insertGeneid(long long *inList, long long n)
     for(long long i=0;i<n;++i){
         pGene=genome->getGene(inList[i]);
         iGeneList.push_back(inList[i]);
-        pModel->setData(pModel->index(i),pGene->name);
+        pModel->setData(pModel->index(i), QString(pGene->name));
     }
     nGene=n;
 }

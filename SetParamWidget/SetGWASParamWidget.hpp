@@ -7,7 +7,7 @@ class SetGWASParamWidget : public QWidget
 {
     Q_OBJECT
 private:
-    size_t id;
+    uint64_t id;
     ThreadRun::AnalyzeClass info;
     QSpinBox* nThreadBox;
     QComboBox* binFormBox;
@@ -15,10 +15,10 @@ private:
     QPushButton* cancelBtn;
     explicit SetGWASParamWidget(QWidget *parent = nullptr);
 public:
-    SetGWASParamWidget(size_t inID,ThreadRun::AnalyzeClass inInfo,QWidget *parent = nullptr);
+    SetGWASParamWidget(uint64_t inID,ThreadRun::AnalyzeClass inInfo,QWidget *parent = nullptr);
     ~SetGWASParamWidget();
 signals:
-    void startGWAS(size_t id,ThreadRun::AnalyzeClass info,int nThread);
+    void startGWAS(uint64_t id,ThreadRun::AnalyzeClass info,int nThread);
 public slots:
     void dealwithContinue();
 };

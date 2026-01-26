@@ -11,7 +11,7 @@ bool GammaFuncMod::initGammaCk()
     if (gammaCk) delete [] gammaCk;
     gammaCk = new double [gammaIterN];
     gammaCk[0] = std::sqrt(2.0 * pi);
-    for (size_t i = 1; i < gammaIterN; ++i) {
+    for (uint64_t i = 1; i < gammaIterN; ++i) {
         gammaCk[i] = std::exp(gammaIterN - i) * std::pow(gammaIterN - i, i - 0.5) / factorialK;
         factorialK *= (-double(i));
     }
@@ -92,7 +92,7 @@ double GammaFuncMod::gamma(double x)
 {
     /*Spouge's approximation*/
     double out = gammaCk[0];
-    for (size_t i = 1; i < gammaIterN; ++i) {
+    for (uint64_t i = 1; i < gammaIterN; ++i) {
         out += gammaCk[i] / (x+i);
     }
     out *= std::exp(-(x + gammaIterN)) * std::pow(x + gammaIterN, x + 0.5);
@@ -103,7 +103,7 @@ double GammaFuncMod::lgamma(double x)
 {
     /*Spouge's approximation*/
     double out = gammaCk[0];
-    for (size_t i = 1; i < gammaIterN; ++i) {
+    for (uint64_t i = 1; i < gammaIterN; ++i) {
         out += gammaCk[i] / (x + i);
     }
     out = std::log(out) - (x + gammaIterN) + (x + 0.5) * std::log(x + gammaIterN) - std::log(x);
@@ -115,7 +115,7 @@ double GammaFuncMod::digamma(double x)
     /*Lanczos approximation*/
     double Ag = lanczosP[0], dAg = 0, out = 0;
     x -= 1.0;
-    for (size_t i = 1; i < lanczosN; ++i) {
+    for (uint64_t i = 1; i < lanczosN; ++i) {
         Ag += lanczosP[i] / (x + i);
         dAg += lanczosP[i] / ((x + i) * (x + i));
     }
@@ -123,7 +123,7 @@ double GammaFuncMod::digamma(double x)
     return out;
 }
 
-double GammaFuncMod::polygamma(size_t k, double x)
+double GammaFuncMod::polygamma(uint64_t k, double x)
 {
     double	brn[] = {
         1.6666666666666666e-01,
@@ -371,10 +371,10 @@ void GammaFuncMod::copy(const GammaFuncMod& object)
         if (!lanczosN) lanczosP=nullptr;
         else lanczosP = new double [lanczosN];
     }
-    for (size_t i = 0; i < gammaIterN; ++i) {
+    for (uint64_t i = 0; i < gammaIterN; ++i) {
         gammaCk[i] = (object.gammaCk)[i];
     }
-    for (size_t i = 0; i < lanczosN; ++i) {
+    for (uint64_t i = 0; i < lanczosN; ++i) {
         lanczosP[i] = (object.lanczosP)[i];
     }
     lanczosG = object.lanczosG;

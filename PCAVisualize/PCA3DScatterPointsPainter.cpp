@@ -124,7 +124,7 @@ bool PCA3DScatterPointsPainter::setPopName(char **inPopName, long long inNPop)
     return true;
 }
 
-void PCA3DScatterPointsPainter::calcuAxisData(short iPC, double &outStart, double &outStride)
+void PCA3DScatterPointsPainter::calcuAxisData(int16_t iPC, double &outStart, double &outStride)
 {
     double tmax,tmin,range;
     double tstride=1,tprobe;

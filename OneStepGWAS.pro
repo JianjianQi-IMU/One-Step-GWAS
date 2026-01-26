@@ -1,6 +1,6 @@
 QT       += core gui svg xml
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets openglwidgets
 
 CONFIG += c++11
 
@@ -9,6 +9,8 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    FarmCPU/BlinkRaw.cpp \
+    FarmCPU/FarmCPUAlgo.cpp \
     AnalyzeInfoWidget/AnalyzeInfoWidget.cpp \
     AnalyzeListView/AnalyzeListView.cpp \
     BSAVisualize/BSAIndexScatterWidget.cpp \
@@ -118,6 +120,9 @@ SOURCES += \
     DataManager/MatrixLib.cpp
 
 HEADERS += \
+    FarmCPU/BlinkRaw.hpp \
+    FarmCPU/FarmCPUFlag.hpp \
+    FarmCPU/FarmCPUAlgo.hpp \
     AnalyzeInfoWidget/AnalyzeInfoWidget.h \
     AnalyzeListView/AnalyzeListView.h \
     BSAVisualize/BSAIndexScatterWidget.hpp \
@@ -129,6 +134,7 @@ HEADERS += \
     BSAanalysis/BSAThreshold.hpp \
     FileDeal/BaseProject.hpp \
     Cluster/Cluster.hpp \
+    DataManager/BaseAlgoTools.hpp \
     DataManager/DataDefine.hpp \
     DataInteractTable/DataInteractTableView.hpp \
     DataInteractTable/DataInteractTableWidget.hpp \

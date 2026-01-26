@@ -24,7 +24,7 @@ public:
     long long nPoints;
     explicit InfoDisplayWidget(QWidget *parent = nullptr);
     void setGenome(GenomeAnnotation* inGenome);
-    void setPoints(ValPoints* inPoints, size_t inNPoints);
+    void setPoints(ValPoints* inPoints, uint64_t inNPoints);
     void displayGeneInfo(long long id);
     void displayPointInfo(long long id, long long iGene1, long long iGene2);
     ~InfoDisplayWidget();

@@ -21,7 +21,7 @@ BSALabelInterListWidget::~BSALabelInterListWidget()
 
 }
 
-void BSALabelInterListWidget::setInter(FD::BSAInterVal *inInter, size_t inNInter)
+void BSALabelInterListWidget::setInter(FD::BSAInterVal *inInter, uint64_t inNInter)
 {
     inter=inInter;
     nInter=inNInter;

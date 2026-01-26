@@ -18,11 +18,11 @@ ChooseGeneModelColorWidget::ChooseGeneModelColorWidget(LogPScatterVisualizeWidge
     ui->CDSColorWidget->setAutoFillBackground(true);
     ui->UTR5ColorWidget->setAutoFillBackground(true);
     ui->UTR3ColorWidget->setAutoFillBackground(true);
-    tPalette.setColor(QPalette::Background, UTR5Color);
+    tPalette.setColor(QPalette::Window, UTR5Color);
     ui->UTR5ColorWidget->setPalette(tPalette);
-    tPalette.setColor(QPalette::Background, UTR3Color);
+    tPalette.setColor(QPalette::Window, UTR3Color);
     ui->UTR3ColorWidget->setPalette(tPalette);
-    tPalette.setColor(QPalette::Background, CDSColor);
+    tPalette.setColor(QPalette::Window, CDSColor);
     ui->CDSColorWidget->setPalette(tPalette);
 }
 
@@ -37,7 +37,7 @@ void ChooseGeneModelColorWidget::on_CDSColorBtn_clicked()
     QPalette tPalette;
     if (color.isValid()) {
         CDSColor = color;
-        tPalette.setColor(QPalette::Background, CDSColor);
+        tPalette.setColor(QPalette::Window, CDSColor);
         ui->CDSColorWidget->setPalette(tPalette);
     }
 }
@@ -49,7 +49,7 @@ void ChooseGeneModelColorWidget::on_UTR5ColorBtn_clicked()
     QPalette tPalette;
     if (color.isValid()) {
         UTR5Color = color;
-        tPalette.setColor(QPalette::Background, UTR5Color);
+        tPalette.setColor(QPalette::Window, UTR5Color);
         ui->UTR5ColorWidget->setPalette(tPalette);
     }
 }
@@ -61,7 +61,7 @@ void ChooseGeneModelColorWidget::on_UTR3ColorBtn_clicked()
     QPalette tPalette;
     if (color.isValid()) {
         UTR3Color = color;
-        tPalette.setColor(QPalette::Background, UTR3Color);
+        tPalette.setColor(QPalette::Window, UTR3Color);
         ui->UTR3ColorWidget->setPalette(tPalette);
     }
 }

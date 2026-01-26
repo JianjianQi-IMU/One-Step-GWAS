@@ -94,7 +94,7 @@ bool BSALabelPointsListModel::setChrName(char **pName)
     return true;
 }
 
-QString BSALabelPointsListModel::getDataInfo(short info) const
+QString BSALabelPointsListModel::getDataInfo(int16_t info) const
 {
     QString out;
     switch (info) {

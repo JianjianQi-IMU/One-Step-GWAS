@@ -7,7 +7,7 @@ class SetKinshipParamWidget : public QWidget
 {
     Q_OBJECT
 protected:
-    size_t id;
+    uint64_t id;
     MML::KinshipParam* para;
     QComboBox* typeBox;
     QPushButton* continueBtn;
@@ -15,10 +15,10 @@ protected:
 protected:
     explicit SetKinshipParamWidget(QWidget *parent = nullptr);
 public:
-    SetKinshipParamWidget(size_t inId, MML::KinshipParam* inPara, QWidget *parent = nullptr);
+    SetKinshipParamWidget(uint64_t inId, MML::KinshipParam* inPara, QWidget *parent = nullptr);
 
 signals:
-    void startKinship(size_t id,int nThread);
+    void startKinship(uint64_t id,int nThread);
 
 public slots:
     void dealwithContinue();

@@ -1,5 +1,7 @@
 #include "ThreadRun.h"
 
+#include <sstream>
+
 ThreadRun::BaseThread::BaseThread()
 {
     isValid=false;
@@ -113,6 +115,18 @@ void ThreadRun::BaseThread::clearFlagList()
     nSubThread = 0;
 }
 
+std::string ThreadRun::BaseThread::timePointToString(const std::chrono::system_clock::time_point &tp)
+{
+    std::time_t time = std::chrono::system_clock::to_time_t(tp);
+
+    std::tm* local_time = std::localtime(&time);
+
+    std::stringstream ss;
+    ss << std::put_time(local_time, "%Y-%m-%d-%H-%M-%S");
+
+    return ss.str();
+}
+
 ThreadRun::BaseThread::~BaseThread()
 {
     clearFlagList();
@@ -219,7 +233,7 @@ bool ThreadRun::GEMMAThread::makeThread()
 ThreadRun::GLMThread::GLMThread()
     :BaseThread()
 {
-    info=GLM_GEMMA;
+    info = GLM_GEMMA;
 }
 
 ThreadRun::GLMThread::GLMThread(FD::GWASProject *inProject)
@@ -238,7 +252,7 @@ ThreadRun::GLMThread::~GLMThread()
 
 bool ThreadRun::GLMThread::saveOutput(const char *outFile)
 {
-    if(isValid&&isThreadStart&&isFinished.load())
+    if (isValid && isThreadStart && isFinished.load())
     {
         project->saveOutput(outFile);
         return true;
@@ -257,7 +271,52 @@ bool ThreadRun::GLMThread::makeThread()
     return true;
 }
 
-size_t ThreadRun::PCAThread::READSCALE = 200;
+ThreadRun::GLMBlinkThread::GLMBlinkThread()
+{
+    info = GLM_BLINK;
+}
+
+ThreadRun::GLMBlinkThread::GLMBlinkThread(FD::GWASProject* inProject)
+    : GLMBlinkThread()
+{
+    if (!inProject) {
+        return;
+    }
+    project = inProject;
+    if (project->isValid) {
+        isValid = true;
+    }
+}
+
+ThreadRun::GLMBlinkThread::~GLMBlinkThread()
+{
+
+}
+
+bool ThreadRun::GLMBlinkThread::saveOutput(const char* outFile)
+{
+    qDebug() << "isValid:" << isValid << "; isThreadStart:" << isThreadStart << "; isFinished:" << isFinished.load();
+    if (isValid && isThreadStart && isFinished.load())
+    {
+        qDebug() << "SAVE OUTPUT";
+        project->saveOutput(outFile);
+        return true;
+    }
+    return false;
+}
+
+void ThreadRun::GLMBlinkThread::run()
+{
+    /* removed */
+}
+
+bool ThreadRun::GLMBlinkThread::makeThread()
+{
+    /* removed */
+    return true;
+}
+
+uint64_t ThreadRun::PCAThread::READSCALE = 200;
 
 ThreadRun::PCAThread::PCAThread()
     :BaseThread()
@@ -279,7 +338,7 @@ ThreadRun::PCAThread::~PCAThread()
 
 }
 
-void ThreadRun::PCAThread::setPCn(size_t n)
+void ThreadRun::PCAThread::setPCn(uint64_t n)
 {
     PCn=n;
 }
@@ -288,7 +347,7 @@ bool ThreadRun::PCAThread::saveOutput(const char *outFile)
 {
     std::fstream oF(outFile,std::ios::out);
     char outLine[FD::MAXLINELEN];
-    size_t i=0,j=0,iByte=0;
+    uint64_t i=0,j=0,iByte=0;
     for(i=0;i<PCs.getNRow();++i)
     {
         iByte=0;
@@ -315,7 +374,7 @@ bool ThreadRun::PCAThread::makeThread()
     return true;
 }
 
-size_t ThreadRun::FastPCAThread::READSCALE = 200;
+uint64_t ThreadRun::FastPCAThread::READSCALE = 200;
 
 ThreadRun::FastPCAThread::FastPCAThread()
     :PCAThread()
@@ -337,7 +396,7 @@ ThreadRun::FastPCAThread::~FastPCAThread()
 
 }
 
-void ThreadRun::FastPCAThread::setPCn(size_t n)
+void ThreadRun::FastPCAThread::setPCn(uint64_t n)
 {
     PCn=n;
 }
@@ -346,7 +405,7 @@ bool ThreadRun::FastPCAThread::saveOutput(const char *outFile)
 {
     std::fstream oF(outFile,std::ios::out);
     char outLine[FD::MAXLINELEN];
-    size_t i=0,j=0,iByte=0;
+    uint64_t i=0,j=0,iByte=0;
     for(i=0;i<PCs.getNRow();++i)
     {
         iByte=0;
@@ -396,13 +455,13 @@ ThreadRun::StructureThread::~StructureThread()
 
 }
 
-void ThreadRun::StructureThread::setRep(size_t inNBurnIn, size_t inNRecord)
+void ThreadRun::StructureThread::setRep(uint64_t inNBurnIn, uint64_t inNRecord)
 {
     nBurnIn=inNBurnIn;
     nRecord=inNRecord;
 }
 
-void ThreadRun::StructureThread::setNPopulation(size_t inNPop)
+void ThreadRun::StructureThread::setNPopulation(uint64_t inNPop)
 {
     if(!inNPop){
         nPopulation=inNPop;
@@ -420,8 +479,8 @@ bool ThreadRun::StructureThread::saveOutput(const char *outFile)
 {
     std::fstream oF(outFile,std::ios::out);
     char outLine[FD::MAXLINELEN];
-    size_t i=0,j=0,iByte=0;
-    size_t nSample=project->phe.getNRow();
+    uint64_t i=0,j=0,iByte=0;
+    uint64_t nSample=project->phe.getNRow();
     for(i=0;i<nSample;++i)
     {
         iByte=0;
@@ -468,7 +527,7 @@ ThreadRun::FastStructureThread::~FastStructureThread()
 
 }
 
-void ThreadRun::FastStructureThread::setNPopulation(size_t inNPop)
+void ThreadRun::FastStructureThread::setNPopulation(uint64_t inNPop)
 {
     nPopulation = inNPop;
 }
@@ -477,8 +536,8 @@ bool ThreadRun::FastStructureThread::saveOutput(const char *outFile)
 {
     std::fstream oF(outFile,std::ios::out);
     char outLine[FD::MAXLINELEN];
-    size_t i=0,j=0,iByte=0;
-    size_t nSample=project->phe.getNRow();
+    uint64_t i=0,j=0,iByte=0;
+    uint64_t nSample=project->phe.getNRow();
     for(i=0;i<nSample;++i)
     {
         iByte=0;
@@ -504,7 +563,7 @@ bool ThreadRun::FastStructureThread::makeThread()
     return true;
 }
 
-size_t ThreadRun::KinshipThread::READSCALE = 200;
+uint64_t ThreadRun::KinshipThread::READSCALE = 200;
 
 ThreadRun::KinshipThread::KinshipThread()
     :BaseThread()
@@ -569,8 +628,8 @@ bool ThreadRun::KinshipThread::saveOutput(const char *outFile)
 {
     std::fstream oF(outFile,std::ios::out);
     char outLine[FD::MAXLINELEN];
-    size_t i=0,j=0,iByte=0;
-    size_t nSample=project->phe.getNRow();
+    uint64_t i=0,j=0,iByte=0;
+    uint64_t nSample=project->phe.getNRow();
     for(i=0;i<nSample;++i)
     {
         iByte=0;
@@ -622,7 +681,7 @@ ThreadRun::NormalBSAThread::~NormalBSAThread()
 bool ThreadRun::NormalBSAThread::saveOutput(const char *outFile)
 {
     std::fstream oF(outFile,std::ios::out);
-    size_t i;
+    uint64_t i;
     oF << std::setprecision(6);
     oF << "#chr\tstart\tstop\tn\t";
     if(!(project->poolName.empty())){

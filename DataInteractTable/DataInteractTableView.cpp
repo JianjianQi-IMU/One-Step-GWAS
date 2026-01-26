@@ -265,7 +265,7 @@ void DataInteractTableView::setEditEnable()
     pModel->setEditFlag(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 }
 
-bool DataInteractTableView::load(double *inMainData, size_t inNRow, size_t inNCol, char **inRowName, char **inColName)
+bool DataInteractTableView::load(double *inMainData, uint64_t inNRow, uint64_t inNCol, char **inRowName, char **inColName)
 {
     if (!inMainData || inNRow == 0 || inNCol == 0) {
         return false;

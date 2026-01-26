@@ -47,20 +47,20 @@ bool split(std::vector<std::string>& list, const std::string& line, const std::s
 bool split(std::vector<std::string>& list, const std::string& line, char sep,long long max);
 bool split(std::vector<std::string>& list, const std::string& line, const std::string& sep, long long max);
 void charCopy(char* object,const char* source);
-void charCopy(char* object,const char* source, size_t len);
-size_t charLen(const char* str);
+void charCopy(char* object,const char* source, uint64_t len);
+uint64_t charLen(const char* str);
 bool charLess(const char* s1, const char* s2);
 
 class BasePopGenoData
 {
 protected:
-    size_t readPoint;
+    uint64_t readPoint;
 
 public:
     bool isValid;
     BasePopGenoData();
     virtual ~BasePopGenoData();
-    virtual bool read2(double* out, size_t nMarkers = 1) = 0;
+    virtual bool read2(double* out, uint64_t nMarkers = 1) = 0;
     virtual bool resetReadPoint();
     virtual void clear() = 0;
 };
@@ -82,27 +82,27 @@ class BedData : public BasePopGenoData
 {
 public:
     char* data;
-    size_t dataSize;
-    size_t nSample;
-    size_t nMarker;
+    uint64_t dataSize;
+    uint64_t nSample;
+    uint64_t nMarker;
     explicit BedData();
     ~BedData();
-    bool read(short* out, size_t nMarkers = 1);
-    bool read2(double* out, size_t nMarkers = 1);
+    bool read(int16_t* out, uint64_t nMarkers = 1);
+    bool read2(double* out, uint64_t nMarkers = 1);
     void clear();
 };
 
 class PolyPedData : public BasePopGenoData
 {
 public:
-    size_t nPloid;
-    short* data;
-    size_t nSample;
-    size_t nMarker;
+    uint64_t nPloid;
+    int16_t* data;
+    uint64_t nSample;
+    uint64_t nMarker;
     PolyPedData();
     ~PolyPedData();
-    bool read(short* out, size_t outNMarkers = 1);
-    bool read2(double* out, size_t outNMarkers = 1);
+    bool read(int16_t* out, uint64_t outNMarkers = 1);
+    bool read2(double* out, uint64_t outNMarkers = 1);
     void clear();
 };
 

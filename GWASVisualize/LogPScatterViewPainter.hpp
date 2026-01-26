@@ -4,6 +4,7 @@
 #include <QRect>
 #include <QPainter>
 #include <QVector3D>
+#include <QDebug>
 
 #include "DataManager/ValPoints.hpp"
 #include "GenomeAnnotation/ChromosomeInfoClass.hpp"
@@ -306,12 +307,16 @@ private:
         int width = displayArea.width(), height = displayArea.height();
         long double positionGapLenF = tmpCurrentRightPosF - tmpCurrentLeftPosF;
         long long* cumChrLen = tmpChrInfo->getCumChrLen();
-        float tx, ty;
+        double tx, ty;
         for (long long i = currentMinPointsi; i <= currentMaxPointsi; ++i) {
-            tx = 2.0 * (float(points[i].pos + cumChrLen[points[i].idchr] - tmpCurrentLeftPosF) * width / positionGapLenF + xpos) / width0 - 1.0;
+            tx = 2.0 * (double(points[i].pos + cumChrLen[points[i].idchr] - tmpCurrentLeftPosF) * width / positionGapLenF + xpos) / width0 - 1.0;
             ty = -2.0 * (height * (1 - points[i].val / (intUpLogP - intDownLogP)) + ypos) / height0 + 1.0;
-            paintPoints[(i - currentMinPointsi) * 2] = tx;
-            paintPoints[(i - currentMinPointsi)  *2 + 1] = ty;
+            // if (i < 5) {
+            //     qDebug() << "adjust (" << tx << ", " << ty << "); intUpLogP is " << intUpLogP << "; intDownLogP is " << intDownLogP << ";";
+            //     qDebug() << "height0 is " << height0 << "; height is " << height << "; points[i].val is " << points[i].val << "; ypos" << ypos;
+            // }
+            paintPoints[(i - currentMinPointsi) * 2] = (GLfloat)tx;
+            paintPoints[(i - currentMinPointsi) * 2 + 1] = (GLfloat)ty;
         }
     }
     inline void adjustPaintPointsColor()

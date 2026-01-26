@@ -112,7 +112,7 @@ public:
     double getMaxPC1() const {return maxPC1;}
     double getMaxPC2() const {return maxPC2;}
     double getMaxPC3() const {return maxPC3;}
-    void calcuAxisData(short iPC, double &outStart, double &outStride);
+    void calcuAxisData(int16_t iPC, double &outStart, double &outStride);
 
     void initInitializeGL();
     long long isClickedPoint(const QPoint& pos){

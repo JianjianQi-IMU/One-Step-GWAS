@@ -28,7 +28,7 @@ SetNormalBSAParamWidget::SetNormalBSAParamWidget(QWidget *parent) : QWidget(pare
     highThreBox       = new QDoubleSpinBox(this);
     pvalueBox         = new QDoubleSpinBox(this);
 
-    QRegExpValidator* posValidator = new QRegExpValidator(QRegExp("[\\d,]*"), this);
+    QRegularExpressionValidator* posValidator = new QRegularExpressionValidator(QRegularExpression("[\\d,]*"), this);
     editWinLen->setValidator(posValidator);
     editStride->setValidator(posValidator);
 
@@ -108,7 +108,7 @@ SetNormalBSAParamWidget::SetNormalBSAParamWidget(QWidget *parent) : QWidget(pare
             this,&SetNormalBSAParamWidget::close);
 }
 
-SetNormalBSAParamWidget::SetNormalBSAParamWidget(size_t inId, FD::BSAProject *inProject, QWidget *parent)
+SetNormalBSAParamWidget::SetNormalBSAParamWidget(uint64_t inId, FD::BSAProject *inProject, QWidget *parent)
     :SetNormalBSAParamWidget(parent)
 {
     id=inId;

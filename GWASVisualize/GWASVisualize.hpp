@@ -49,7 +49,7 @@ public:
     QLabel* intervalLenLabel;
     QPushButton* leftMoveBtn;
     QPushButton* rightMoveBtn;
-    QRegExpValidator* posValidator;
+    QRegularExpressionValidator* posValidator;
 
     QTabWidget* pLeftTabWidget;
 

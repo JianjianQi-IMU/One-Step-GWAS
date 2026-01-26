@@ -214,11 +214,11 @@ private:
     double tiny;
     double eps;
     double pi;
-    size_t gammaIterN;
+    uint64_t gammaIterN;
     double* gammaCk;
 
-    size_t lanczosG;
-    size_t lanczosN;
+    uint64_t lanczosG;
+    uint64_t lanczosN;
     double* lanczosP;
 
     bool initGammaCk();
@@ -232,7 +232,7 @@ public:
     double gamma(double x);
     double lgamma(double x);
     double digamma(double x);
-    double polygamma(size_t k, double x);
+    double polygamma(uint64_t k, double x);
     double impGammaP(double a, double x);
     double impGammaQ(double a, double x);
     double smallXUpperImpGamma(double a, double x);

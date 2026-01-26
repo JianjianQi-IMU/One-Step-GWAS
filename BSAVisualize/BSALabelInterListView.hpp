@@ -39,7 +39,7 @@ public:
     bool setMaxmun(int n);
     bool setChrName(char** pName);
 
-    QString getDataInfo(short info) const;
+    QString getDataInfo(int16_t info) const;
 private:
     QVector<BSAPointID> idList;
     int maxmun;

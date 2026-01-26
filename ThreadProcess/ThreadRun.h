@@ -9,6 +9,7 @@
 #include <cmath>
 #include <string>
 #include <iomanip>
+#include "FileDeal/FileIterator.hpp"
 #include "EMMAXAlgo/EMMAX.hpp"
 #include "GEMMAAlgo/GEMMA.hpp"
 #include "PCAAlgo/FastPCA.hpp"
@@ -18,6 +19,7 @@
 #include "BSAanalysis/BSAProject.hpp"
 #include "BSAanalysis/BSAThreshold.hpp"
 #include "FileDeal/FileDeal.hpp"
+#include "FarmCPU/BlinkRaw.hpp"
 
 #include <QDebug>
 
@@ -34,7 +36,8 @@ enum AnalyzeClass
     STR_STRUCTURE     = 6,
     STR_FASTSTRUCTURE = 7,
     KIN_KINSHIP       = 8,
-    BSA_NORMALBSA     = 9
+    GLM_BLINK         = 9,
+    BSA_NORMALBSA     = 10
 };
 
 class BaseThread
@@ -65,6 +68,7 @@ public:
     void createFlagList();
     void checkFinishedList();
     void clearFlagList();
+    std::string timePointToString(const std::chrono::system_clock::time_point& tp);
     virtual ~BaseThread()=0;
     virtual bool saveOutput(const char*)=0;
     virtual void run()=0;
@@ -133,6 +137,26 @@ public:
     bool makeThread() override;
 };
 
+class GLMBlinkThread : public BaseThread
+{
+protected:
+    GLMBlinkThread();
+public:
+    FD::GWASProject *project;
+    FD::PedDataIteratorSet dataForRun;
+    FD::BIMLogPDataIterator bimForRun;
+    MML::Phenotype phe;
+    MML::Covariates cov;
+    FARMCPU::BlinkParam param;
+    MML::Distribution dis;
+    FARMCPU::BlinkRaw blinkRaw;
+    explicit GLMBlinkThread(FD::GWASProject* inProject);
+    ~GLMBlinkThread();
+    bool saveOutput(const char* outFile) override;
+    void run() override;
+    bool makeThread() override;
+};
+
 class PCAThread : public BaseThread
 {
 protected:
@@ -143,15 +167,15 @@ public:
     MML::Mat CovMat;
     MML::Mat PCs;
     MML::Mat EVal;
-    size_t PCn;
+    uint64_t PCn;
     double sumEVal;
     explicit PCAThread(FD::GWASProject* inProject);
     ~PCAThread();
-    void setPCn(size_t n);
+    void setPCn(uint64_t n);
     bool saveOutput(const char* outFile) override;
     void run() override;
     bool makeThread() override;
-    static size_t READSCALE;
+    static uint64_t READSCALE;
 };
 
 
@@ -164,11 +188,11 @@ public:
     MML::Mat S;
     explicit FastPCAThread(FD::GWASProject* inProject);
     ~FastPCAThread();
-    void setPCn(size_t n);
+    void setPCn(uint64_t n);
     bool saveOutput(const char* outFile) override;
     void run() override;
     bool makeThread() override;
-    static size_t READSCALE;
+    static uint64_t READSCALE;
 };
 
 class StructureThread : public BaseThread
@@ -178,14 +202,14 @@ protected:
 public:
     FD::GWASProject *project;
     MML::Structure structure;
-    size_t nBurnIn;
-    size_t nRecord;
-    size_t nPopulation;
+    uint64_t nBurnIn;
+    uint64_t nRecord;
+    uint64_t nPopulation;
     MML::Mat out;
     explicit StructureThread(FD::GWASProject* inProject);
     ~StructureThread();
-    void setRep(size_t inNBurnIn,size_t inNRecord);
-    void setNPopulation(size_t inNPop);
+    void setRep(uint64_t inNBurnIn,uint64_t inNRecord);
+    void setNPopulation(uint64_t inNPop);
     void setPara(const MML::StructureParam& inPara);
     bool saveOutput(const char* outFile) override;
     void run() override;
@@ -201,13 +225,13 @@ public:
     MML::FastStructureParam param;
     MML::FastStructure structure;
     MML::FastStructurePrior prior;
-    size_t nPopulation;
-    size_t nCV;
+    uint64_t nPopulation;
+    uint64_t nCV;
     MML::Mat out;
     std::vector<double> meanDev;
     explicit FastStructureThread(FD::GWASProject* inProject);
     ~FastStructureThread();
-    void setNPopulation(size_t inNPop);
+    void setNPopulation(uint64_t inNPop);
     bool saveOutput(const char* outFile) override;
     void run() override;
     bool makeThread() override;
@@ -229,7 +253,7 @@ public:
     bool saveOutput(const char* outFile) override;
     void run() override;
     bool makeThread() override;
-    static size_t READSCALE;
+    static uint64_t READSCALE;
 };
 
 class NormalBSAThread : public BaseThread
@@ -240,14 +264,14 @@ public:
     FD::BSAProject *project;
     BSAThresholdCalculatorF2 calculatorF2;
     FD::BSAInterVal* inter;
-    size_t nInter;
+    uint64_t nInter;
     double* markerThre;
     explicit NormalBSAThread(FD::BSAProject* inProject);
     ~NormalBSAThread();
     bool saveOutput(const char* outFile) override;
     void run() override;
     bool makeThread() override;
-    static size_t READSCALE;
+    static uint64_t READSCALE;
 };
 
 void deleteThreadRun(const BaseThread* p);

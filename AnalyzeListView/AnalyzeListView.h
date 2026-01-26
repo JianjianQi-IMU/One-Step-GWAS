@@ -12,7 +12,7 @@
 #include "ThreadProcess/QThreadRun.hpp"
 #include "FileDeal/ProjectFilesRecord.hpp"
 
-enum runState
+enum RUN_STATE
 {
     RUN_UNKNOWN = 0,
     RUN_DEFAULT = 1,
@@ -25,7 +25,7 @@ enum runState
 class AnalyzeUnitInfo
 {
 public:
-    QVector<size_t>  ldataList;
+    QVector<uint64_t>  ldataList;
     QVector<QString> ldataName;
     QVector<QString> ldataIcon;
 
@@ -33,37 +33,30 @@ public:
     QVector<QString> sdataName;
     QVector<QString> sdataIcon;
 
-    runState state;
+    RUN_STATE state;
     AnalyzeUnitInfo();
-    AnalyzeUnitInfo(const QString& inPhe,
-                    const QString& inBed,
-                    const QString& inBim,
-                    const QString& inCov,
-                    const QString& inKin);
-    AnalyzeUnitInfo(const QString& inPhe,
-                    const QString& inBed,
-                    const QString& inBim,
-                    const QString& inCov);
+    AnalyzeUnitInfo(const QString& inPhe, const QString& inBed, const QString& inBim, const QString& inCov, const QString& inKin);
+    AnalyzeUnitInfo(const QString& inPhe, const QString& inBed, const QString& inBim, const QString& inCov);
     void setNFile(int n);
     void setNNumber(int n);
-    void setRunState(runState inState);
+    void setRunState(RUN_STATE inState);
 
     int getNFile() const;
     int getNNumber() const;
     QString getIFile(int id) const;
     QString getIFileName(int id) const;
     QString getINumberName(int id) const;
-    size_t  getINumber(int id) const;
+    uint64_t getINumber(int id) const;
     QString getINumberIcon(int id) const;
     QString getIFileIcon(int id) const;
     QString& getIFile(int id);
     QString& getIFileName(int id);
     QString& getINumberName(int id);
-    size_t&  getINumber(int id);
+    uint64_t& getINumber(int id);
     QString& getINumberIcon(int id);
     QString& getIFileIcon(int id);
     void addFile(const QString& file, const QString& name, const QString& icon);
-    void addNumber(size_t n, const QString& name, const QString& icon);
+    void addNumber(uint64_t n, const QString& name, const QString& icon);
     void clear();
 };
 
@@ -94,7 +87,7 @@ public:
     void init();
     void clear();
 signals:
-    void signalProjectStateChanged(int i, runState state);
+    void signalProjectStateChanged(int i, RUN_STATE state);
     void signalProjectFinished(int i);
     void signalProjectLogUpdate(int i);
 public slots:
@@ -229,7 +222,7 @@ signals:
     void projectChanged(int row);
     void projectRemoved(int row);
     void projectSelected(int row);
-    void projectSelectedState(runState state);
+    void projectSelectedState(RUN_STATE state);
     void projectLogUpdate(int row);
     void projectAdd();
     void allRemoved();
@@ -245,6 +238,7 @@ public slots:
     void runFastStructure();
     void runKinship();
     void runNormalBSA();
+    void runBlink();
     void removeCurrent();//pro_removeAt
     void stopCurrent();//pro_stopAt
     void removeAll(bool isWarning = true); //pro_removeAt
@@ -258,14 +252,14 @@ public slots:
     void editCov();
     void editKin();
     void startVisualization();
-    void startGWAS(size_t id, ThreadRun::AnalyzeClass info, int nThread);
-    void startStructure(size_t id, int nThread);
-    void startFastStructure(size_t id, int nThread);
-    void startKinship(size_t id, int nThread);
-    void startNormalBSA(size_t id, int nThread);
+    void startGWAS(uint64_t id, ThreadRun::AnalyzeClass info, int nThread);
+    void startStructure(uint64_t id, int nThread);
+    void startFastStructure(uint64_t id, int nThread);
+    void startKinship(uint64_t id, int nThread);
+    void startNormalBSA(uint64_t id, int nThread);
     void selectProject(int id);
     void pauseOrContinueSelectedProject();
-    void receiveProjectStateChanged(int id, runState state);
+    void receiveProjectStateChanged(int id, RUN_STATE state);
     void receiveProjectFinished(int id);
     void receiveProjectLogUpdate(int id);
     void menuExec(const QPoint& pos);

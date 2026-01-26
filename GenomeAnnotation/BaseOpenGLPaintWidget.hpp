@@ -5,6 +5,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_4_5_Core>
 #include <QOpenGLShaderProgram>
+#include <QSurfaceFormat>
 #include <QList>
 
 class BaseOpenGLPaintWidget : public QOpenGLWidget, public QOpenGLFunctions_4_5_Core

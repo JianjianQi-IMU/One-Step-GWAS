@@ -5,11 +5,6 @@ MML::Phenotype::Phenotype()
 {
     dataNA = DATA_NA;
     eps = EPS;
-    rawData = nullptr;
-    filterData = nullptr;
-    filterIndex = nullptr;
-    rawN = 0;
-    filterN = 0;
     isValid = false;
 }
 
@@ -18,98 +13,66 @@ MML::Phenotype::Phenotype(const Phenotype &object) :Phenotype()
     copy(object);
 }
 
-MML::Phenotype::Phenotype(size_t inSampleNumber, const double* inData)
+MML::Phenotype::Phenotype(uint64_t inSampleNumber, const double* inData)
     : Phenotype()
 {
-    if (!inData || inSampleNumber == 0) return;
-    rawData = new double [inSampleNumber];
-    rawN = inSampleNumber;
-    filterN = 0;
-    size_t j = 0;
-    for (size_t i = 0; i < rawN; ++i) {
-        rawData[i] = inData[i];
-        if (rawData[i] != dataNA) ++filterN;
-    }
-    if (filterN == 0) {
-        filterData = nullptr;
-        filterIndex = nullptr;
-        isValid = false;
-        return ;
-    }
-    filterData = new double [filterN];
-    filterIndex = new size_t [filterN];
-    for (size_t i = 0; i < rawN; ++i) {
-        if (rawData[i] != dataNA) {
-            filterData[j] = rawData[i];
-            filterIndex[j] = i;
-            ++j;
-        }
-    }
-    filterVec.setData(filterN, 1, filterData, _colvec);
-    isValid = true;
+    read(inSampleNumber, inData);
 }
 
 MML::Phenotype::~Phenotype()
 {
-    if (rawData) delete [] rawData;
-    if (filterData) delete [] filterData;
-    if (filterIndex) delete [] filterIndex;
+
 }
 
-bool MML::Phenotype::read(size_t inSampleNumber, const double* inData)
+bool MML::Phenotype::read(uint64_t inSampleNumber, const double* inData)
 {
     if (!inData || inSampleNumber == 0) {
-        rawData = nullptr;
-        filterData = nullptr;
-        filterIndex = nullptr;
-        rawN = 0;
-        filterN = 0;
-        isValid = false;
         return false;
     }
-    if (rawN != inSampleNumber) {
-        if (rawData) delete [] rawData;
-        rawData = new double [inSampleNumber];
-        rawN = inSampleNumber;
-    }
-    filterN = 0;
-    size_t j = 0;
-    for (size_t i = 0; i < rawN; ++i) {
-        rawData[i] = inData[i];
-        if (rawData[i] != dataNA) ++filterN;
+    rawData.resize(inSampleNumber, 1);
+    rawData.setMatClass(MML::_colvec);
+    uint64_t filterN = 0;
+    for (uint64_t i = 0; i < inSampleNumber; ++i) {
+        rawData(i) = inData[i];
+        if (rawData(i) != dataNA) {
+            ++filterN;
+        }
     }
     if (filterN == 0) {
-        filterData = nullptr;
-        filterIndex = nullptr;
         isValid = false;
         return false;
     }
-    if (filterData) delete [] filterData;
-    if (filterIndex) delete [] filterIndex;
-    filterData = new double [filterN];
-    filterIndex = new size_t [filterN];
-    for (size_t i = 0; i < rawN; ++i) {
-        if (rawData[i] != dataNA) {
-            filterData[j] = rawData[i];
+    uint64_t *filterIndex = new uint64_t [filterN];
+    uint64_t j = 0;
+    for (uint64_t i = 0; i < inSampleNumber; ++i) {
+        if (rawData(i) != dataNA) {
             filterIndex[j] = i;
             ++j;
         }
     }
-    filterVec.setData(filterN, 1, filterData, _colvec);
+    filterList.SetData(filterIndex, filterN);
+    filterData = rawData;
+    filterData.setRows(filterN, filterList.GetFilterIdx());
     isValid = true;
+    delete [] filterIndex;
+    filterIndex = nullptr;
     return true;
 }
 
-bool MML::Phenotype::filterMarkers(const Mat& inVec, Mat& outVec){
-    if (!isValid) return false;
-    size_t i, validN = 0;
+bool MML::Phenotype::filterMarkers(const Mat& inVec, Mat& outVec)
+{
+    if (!isValid) {
+        return false;
+    }
+    uint64_t i, validN = 0;
+    uint64_t filterN = filterList.Length();
     double S = 0, E;
     outVec.resize(filterN, 1);
     outVec.info = _colvec;
     bool good = false;
-    double last = inVec(filterIndex[0]);
+    filterList.FilterVec(inVec, outVec);
+    double last = outVec(0);
     for (i = 0; i < filterN; ++i) {
-        outVec(i) = inVec(filterIndex[i]);
         if (outVec(i) != dataNA) {
             if (last != dataNA && std::fabs(last - outVec(i)) > eps) {
                 good = true;
@@ -119,7 +82,9 @@ bool MML::Phenotype::filterMarkers(const Mat& inVec, Mat& outVec){
             ++validN;
         }
     }
-    if (!good) return false;
+    if (!good) {
+        return false;
+    }
     E = S / validN;
     for (i = 0; i < filterN; ++i) {
         if (outVec(i) == dataNA) {
@@ -129,52 +94,34 @@ bool MML::Phenotype::filterMarkers(const Mat& inVec, Mat& outVec){
     return true;
 }
 
-const MML::Mat& MML::Phenotype::getFilterVec() const
+const MML::Mat &MML::Phenotype::getFilterVec() const
 {
-    return filterVec;
+    return filterData;
 }
 
-const size_t* MML::Phenotype::getFilterIndex() const
+const MML::DataFilter<uint64_t> &MML::Phenotype::getFilterList() const
 {
-    return filterIndex;
+    return filterList;
 }
 
-size_t MML::Phenotype::getFilterNum() const
+uint64_t MML::Phenotype::getRawNum() const
 {
-    return filterN;
+    return rawData.getNRow();
+}
+
+uint64_t MML::Phenotype::getFilterNum() const
+{
+    return filterList.Length();
 }
 
 void MML::Phenotype::copy(const Phenotype &object)
 {
     dataNA = object.dataNA;
     eps = object.eps;
-    if (object.rawN != rawN) {
-        if (rawData) delete [] rawData;
-        rawN = object.rawN;
-        if (!rawN) rawData = nullptr;
-        else rawData = new double [rawN];
-    }
-    if (filterN != object.filterN) {
-        if (filterData) delete [] filterData;
-        if (filterIndex) delete [] filterIndex;
-        filterN = object.filterN;
-        if (!filterN) {
-            filterData = nullptr;
-            filterIndex = nullptr;
-        } else {
-            filterData = new double [filterN];
-            filterIndex = new size_t [filterN];
-        }
-    }
+    rawData = object.rawData;
+    filterList = object.filterList;
     isValid = object.isValid;
-    for (size_t i = 0; i < rawN; ++i) {
-        rawData[i] = (object.rawData)[i];
-    }
-    for (size_t i = 0; i < filterN; ++i) {
-        filterData[i] = (object.filterData)[i];
-        filterIndex[i] = (object.filterIndex)[i];
-    }
-    filterVec = object.filterVec;
+    filterData = object.filterData;
 }
 
 void MML::Phenotype::operator=(const Phenotype &object)
@@ -182,20 +129,16 @@ void MML::Phenotype::operator=(const Phenotype &object)
     copy(object);
 }
 
-MML::Kinship::Kinship(size_t inSampleNumber, const double* inData, const size_t* inFilterIndex,
-                      size_t inFilterNum)
+MML::Kinship::Kinship(uint64_t inSampleNumber, const double* inData, const DataFilter<uint64_t> &inFilterList)
     : Kinship()
 {
-    read(inSampleNumber, inData, inFilterIndex, inFilterNum);
+    read(inSampleNumber, inData, inFilterList);
 }
 
 MML::Kinship::Kinship()
 {
     isValid = false;
     isEigen = false;
-    rawN = 0;
-    filterN = 0;
-    filterIndex = nullptr;
 }
 
 MML::Kinship::Kinship(const Kinship &object)
@@ -206,32 +149,24 @@ MML::Kinship::Kinship(const Kinship &object)
 
 MML::Kinship::~Kinship()
 {
-    if (filterIndex) delete [] filterIndex;
+
 }
 
-bool MML::Kinship::read(size_t inSampleNumber, const double* inData, const size_t* inFilterIndex,
-                        size_t inFilterNum)
+bool MML::Kinship::read(uint64_t inSampleNumber, const double* inData, const DataFilter<uint64_t> &inFilterList)
 {
-    if (!inData || inSampleNumber == 0 || inFilterNum == 0) {
+    if (!inData || inSampleNumber == 0 || inFilterList.Length() == 0) {
         isValid = false;
         isEigen = false;
-        rawN = 0;
-        filterN = 0;
-        filterIndex = nullptr;
         return false;
     }
-    if (filterIndex) delete [] filterIndex;
-    rawN = inSampleNumber;
+
+    uint64_t rawN = inSampleNumber;
+    filterList = inFilterList;
     rawMat.setData(rawN, rawN, inData);
     filterMat = rawMat;
-    filterMat.setCols(inFilterNum, inFilterIndex);
-    filterMat.setRows(inFilterNum, inFilterIndex);
+    filterMat.setCols(filterList.Length(), filterList.GetFilterIdx());
+    filterMat.setRows(filterList.Length(), filterList.GetFilterIdx());
     filterMat.toSym('L');
-    filterN = inFilterNum;
-    filterIndex = new size_t [inFilterNum];
-    for (size_t i = 0; i < inFilterNum; ++i) {
-        filterIndex[i] = inFilterIndex[i];
-    }
     isValid = true;
     isEigen = false;
     return true;
@@ -253,9 +188,9 @@ const MML::Mat& MML::Kinship::getFilterMat() const
     return filterMat;
 }
 
-size_t MML::Kinship::getFilterNum() const
+uint64_t MML::Kinship::getFilterNum() const
 {
-    return filterN;
+    return filterList.Length();
 }
 
 const MML::Mat& MML::Kinship::getEigenVec() const
@@ -268,29 +203,20 @@ const MML::Mat& MML::Kinship::getEigenVal() const
     return eigenVal;
 }
 
-const size_t* MML::Kinship::getFilterIndex() const
+const MML::DataFilter<uint64_t> &MML::Kinship::getFilterList() const
 {
-    return filterIndex;
+    return filterList;
 }
 
 void MML::Kinship::copy(const Kinship &object)
 {
-    if (filterN != object.filterN) {
-        if (filterIndex) delete [] filterIndex;
-        filterN = object.filterN;
-        if (!filterN) filterIndex = nullptr;
-        else filterIndex = new size_t [filterN];
-    }
-    for (size_t i = 0; i < filterN; ++i) {
-        filterIndex[i] = (object.filterIndex)[i];
-    }
     rawMat = object.rawMat;
     filterMat = object.filterMat;
-    rawN = object.rawN;
     eigenVec = object.eigenVec;
     eigenVal = object.eigenVal;
     isValid = object.isValid;
     isEigen = object.isEigen;
+    filterList = object.filterList;
 }
 
 void MML::Kinship::operator=(const Kinship &object)
@@ -298,25 +224,20 @@ void MML::Kinship::operator=(const Kinship &object)
     copy(object);
 }
 
-MML::Covariates::Covariates(size_t inSampleNumber, size_t inFactorNumber, const double* inData,
-                            const size_t* inFilterIndex, size_t inFilterNum)
+MML::Covariates::Covariates(uint64_t inSampleNumber, uint64_t inFactorNumber, const double* inData, const DataFilter<uint64_t> &inFilterList)
     : Covariates()
 {
-    read(inSampleNumber, inFactorNumber, inData, inFilterIndex, inFilterNum);
+    read(inSampleNumber, inFactorNumber, inData, inFilterList);
 }
 
-MML::Covariates::Covariates(size_t inSampleNumber, const size_t* inFilterIndex, size_t inFilterNum)
+MML::Covariates::Covariates(uint64_t inSampleNumber, const DataFilter<uint64_t> &inFilterList)
     : Covariates()
 {
-    read(inSampleNumber, inFilterIndex, inFilterNum);
+    read(inSampleNumber, inFilterList);
 }
 
 MML::Covariates::Covariates()
 {
-    rawN = 0;
-    filterN = 0;
-    factorN = 0;
-    filterIndex = nullptr;
     isValid = false;
 }
 
@@ -328,50 +249,32 @@ MML::Covariates::Covariates(const Covariates &object)
 
 MML::Covariates::~Covariates()
 {
-    if (filterIndex) delete [] filterIndex;
+
 }
 
-bool MML::Covariates::read(size_t inSampleNumber, size_t inFactorNumber, const double* inData,
-                           const size_t* inFilterIndex, size_t inFilterNum)
+bool MML::Covariates::read(uint64_t inSampleNumber, uint64_t inFactorNumber, const double* inData, const DataFilter<uint64_t> &inFilterList)
 {
-    if (!inData || inSampleNumber == 0 || inFactorNumber == 0 || inFilterNum == 0) {
-        rawN = 0;
-        filterN = 0;
-        factorN = 0;
-        filterIndex = nullptr;
+    if (!inData || inSampleNumber == 0 || inFactorNumber == 0 || inFilterList.Length() == 0) {
         isValid = false;
         return false;
     }
-    if (filterIndex) delete [] filterIndex;
     rawMat.setData(inSampleNumber, inFactorNumber, inData);
     filterMat = rawMat;
-    filterMat.setRows(inFilterNum, inFilterIndex);
-    rawN = inSampleNumber;
-    factorN = inFactorNumber;
-    filterN = inFilterNum;
-    filterIndex = new size_t [inFilterNum];
-    for (size_t i = 0; i < inFilterNum; ++i) {
-        filterIndex[i] = inFilterIndex[i];
-    }
+    filterList = inFilterList;
+    filterMat.setRows(filterList.Length(), filterList.GetFilterIdx());
     isValid = true;
     return true;
 }
 
-bool MML::Covariates::read(size_t inSampleNumber, const size_t* inFilterIndex, size_t inFilterNum)
+bool MML::Covariates::read(uint64_t inSampleNumber, const DataFilter<uint64_t> &inFilterList)
 {
-    if (inSampleNumber == 0 || inFilterNum == 0) {
+    if (inSampleNumber == 0 || inFilterList.Length() == 0) {
         isValid = false;
         return false;
     }
-    if (filterIndex) delete [] filterIndex;
-    for (size_t i = 0; i < inFilterNum; ++i) {
-        filterIndex[i] = inFilterIndex[i];
-    }
-    rawN = inSampleNumber;
-    filterN = inFilterNum;
-    factorN = 1;
+    filterList = inFilterList;
     rawMat.setData(inSampleNumber, 1, 1);
-    filterMat.setData(inFilterNum, 1, 1);
+    filterMat.setData(filterList.Length(), 1, 1);
     isValid = true;
     return true;
 }
@@ -381,37 +284,27 @@ const MML::Mat& MML::Covariates::getFilterMat() const
     return filterMat;
 }
 
-size_t MML::Covariates::getFilterNum() const
+uint64_t MML::Covariates::getFilterNum() const
 {
-    return filterN;
+    return filterList.Length();
 }
 
-size_t MML::Covariates::getFactorNum() const
+uint64_t MML::Covariates::getFactorNum() const
 {
-    return factorN;
+    return rawMat.getNCol();
 }
 
-const size_t* MML::Covariates::getFilterIndex() const
+const MML::DataFilter<uint64_t> &MML::Covariates::getFilterList() const
 {
-    return filterIndex;
+    return filterList;
 }
 
 void MML::Covariates::copy(const Covariates &object)
 {
-    if (filterN != object.filterN) {
-        if (filterIndex) delete [] filterIndex;
-        filterN = object.filterN;
-        if (!filterN) filterIndex = nullptr;
-        else filterIndex = new size_t [filterN];
-    }
-    for (size_t i = 0; i < filterN; ++i) {
-        filterIndex[i] = (object.filterIndex)[i];
-    }
     rawMat = object.rawMat;
     filterMat = object.filterMat;
-    rawN = object.rawN ;
-    factorN = object.factorN;
     isValid = object.isValid;
+    filterList = object.filterList;
 }
 
 void MML::Covariates::operator=(const Covariates &object)
@@ -419,7 +312,7 @@ void MML::Covariates::operator=(const Covariates &object)
     copy(object);
 }
 
-MML::Distribution::Distribution(size_t inBetaIterN)
+MML::Distribution::Distribution(uint64_t inBetaIterN)
     : betaIterN(inBetaIterN)
 {
     dataNA = DATA_NA;
@@ -463,7 +356,7 @@ double MML::Distribution::digamma(double x)
     return gammaMod.digamma(x);
 }
 
-double MML::Distribution::polygamma(size_t k, double x)
+double MML::Distribution::polygamma(uint64_t k, double x)
 {
     return gammaMod.polygamma(k, x);
 }
@@ -529,12 +422,12 @@ double MML::Distribution::fcdfTri(double f, double df1, double df2)
     return ibeta(0.5 * df2, 0.5 * df1, 1.0 - x);
 }
 
-bool MML::Distribution::genGammaRandom(double alpha, double beta, double *out, size_t n)
+bool MML::Distribution::genGammaRandom(double alpha, double beta, double *out, uint64_t n)
 {
     if (n == 0) return false;
     std::default_random_engine generator(std::chrono::steady_clock::now().time_since_epoch().count());
     std::gamma_distribution<double> distribution(alpha, beta);
-    size_t i = 0;
+    uint64_t i = 0;
     for (i = 0; i < n; ++i) {
         out[i] = distribution(generator);
     }
@@ -548,10 +441,10 @@ double MML::Distribution::genGammaRandom(double alpha, double beta)
     return distribution(generator);
 }
 
-bool MML::Distribution::genDirichletRandom(double *para, double *out, size_t n)
+bool MML::Distribution::genDirichletRandom(double *para, double *out, uint64_t n)
 {
     if (n == 0) return false;
-    size_t i = 0;
+    uint64_t i = 0;
     double sum = 0.0;
     for (i = 0; i < n; ++i) {
         out[i] = genGammaRandom(para[i], 1);
@@ -621,17 +514,17 @@ const MML::Distribution& MML::Distribution::operator=(const Distribution &object
     return *this;
 }
 
-bool MML::CopyDataIMatToMat(const IMat &inMat, Mat &outMat)
+bool MML::CopyDataIMatToMat(const SIMat &inMat, Mat &outMat)
 {
     if (inMat.getMatClass() == MML::_null) {
         return false;
     }
     outMat.clear();
-    size_t nCol = inMat.getNCol();
-    size_t nRow = inMat.getNRow();
+    uint64_t nCol = inMat.getNCol();
+    uint64_t nRow = inMat.getNRow();
     outMat.setData(nRow, nCol, (double)0, inMat.getMatClass());
-    for (size_t i = 0; i < nRow; ++i) {
-        for (size_t j = 0; j < nCol; ++j) {
+    for (uint64_t i = 0; i < nRow; ++i) {
+        for (uint64_t j = 0; j < nCol; ++j) {
             if (inMat(i, j) == UNASSIGNED) {
                 outMat(i, j) = DATA_NA;
             } else {
@@ -647,10 +540,10 @@ bool MML::MulDataMat(Mat &inMat, double val)
     if (inMat.getMatClass() == MML::_null) {
         return false;
     }
-    size_t nCol = inMat.getNCol();
-    size_t nRow = inMat.getNRow();
-    for (size_t i = 0; i < nRow; ++i) {
-        for (size_t j = 0; j < nCol; ++j) {
+    uint64_t nCol = inMat.getNCol();
+    uint64_t nRow = inMat.getNRow();
+    for (uint64_t i = 0; i < nRow; ++i) {
+        for (uint64_t j = 0; j < nCol; ++j) {
             if (inMat(i, j) != DATA_NA) {
                 inMat(i, j) = inMat(i, j) * val;
             }

@@ -14,11 +14,11 @@ enum FastStructurePrior
 class FastStructureParam
 {
 public:
-    size_t nMarker;
-    size_t nPop;
-    size_t nAllele;
-    size_t nSample;
-    size_t nPloid;
+    uint64_t nMarker;
+    uint64_t nPop;
+    uint64_t nAllele;
+    uint64_t nSample;
+    uint64_t nPloid;
     FastStructurePrior prior;
     explicit FastStructureParam();
 };
@@ -51,15 +51,15 @@ public:
 class FastStructure
 {
 private:
-    size_t nMarker;
-    size_t nPop;
-    size_t nAllele;
-    size_t nSample;
-    size_t nPloid;
+    uint64_t nMarker;
+    uint64_t nPop;
+    uint64_t nAllele;
+    uint64_t nSample;
+    uint64_t nPloid;
 
     FastStructurePrior prior;
 
-    short* G;
+    int16_t* G;
     Mat PBeta;
     Mat PGamma;
     Mat PMu;
@@ -100,26 +100,26 @@ public:
     void updateQ2();
     void updatePHyper(bool noLambda);
     double marginalLikelihood();
-    short* genotype(size_t iMarker,
-                    size_t iSample,
-                    size_t iPloid);
+    int16_t* genotype(uint64_t iMarker,
+                    uint64_t iSample,
+                    uint64_t iPloid);
     void batchInit(FastStructurePData& outP,
                    FastStructureQData& outQ);
     void getQ(MML::Mat &outQ);
-    const short* getG() const;
+    const int16_t* getG() const;
     void clear();
 
     static double expectGenotype(const FastStructurePData& P,
                                  const FastStructureQData& Q,
                                  const FastStructureParam& Para,
-                                 size_t n,
-                                 size_t l);
-    static void calcuCV(const short *G,
+                                 uint64_t n,
+                                 uint64_t l);
+    static void calcuCV(const int16_t *G,
                         const FastStructurePData &P,
                         const FastStructureQData &Q,
                         const FastStructureParam &Para,
                         std::vector<double> &outMeanDeviance,
-                        size_t nCV);
+                        uint64_t nCV);
 };
 
 }

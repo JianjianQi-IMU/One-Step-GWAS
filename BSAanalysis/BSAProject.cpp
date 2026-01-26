@@ -16,7 +16,7 @@ bool BSAInterVal::operator<(const BSAInterVal &B) const
     return start<B.start;
 }
 
-double BSAInterVal::getData(short info)
+double BSAInterVal::getData(int16_t info)
 {
     double out = MML::DATA_NA;
     switch (info) {
@@ -85,11 +85,11 @@ bool BSAVCFRead::readAll(MML::Mat &data, std::vector<std::string> &poolName,
     chrName.clear();
     file.clear();
     file.seekg(0,std::ios::beg);
-    std::map<std::string, size_t> idChrMap;
+    std::map<std::string, uint64_t> idChrMap;
     std::vector<std::string> lineList, adList, formatList, infoList, gtList;
     std::string line;
     bool header = false;
-    size_t iMarker = 0, idChr = 0, tAD1, tAD2, i;
+    uint64_t iMarker = 0, idChr = 0, tAD1, tAD2, i;
     int iAD = -1, iGT = -1, iFormat;
     while (std::getline(file, line)) {
         strip(line);
@@ -231,11 +231,11 @@ bool BSASpecificRead1::readAll(MML::Mat &data, std::vector<std::string> &poolNam
     chrName.clear();
     file.clear();
     file.seekg(0,std::ios::beg);
-    std::map<std::string, size_t> idChrMap;
+    std::map<std::string, uint64_t> idChrMap;
     std::vector<std::string> lineList, tList;
     std::string line;
     bool header = false;
-    size_t iMarker = 0, idChr = 0;
+    uint64_t iMarker = 0, idChr = 0;
     while (std::getline(file, line)) {
         strip(line);
         if (line.empty()) continue;
@@ -306,7 +306,7 @@ BSAProject::~BSAProject()
 {
     if (points) delete [] points;
     if (charChrName) {
-        for (size_t i = 0; i < nCharChrName; ++i) {
+        for (uint64_t i = 0; i < nCharChrName; ++i) {
             delete [] charChrName[i];
         }
         delete [] charChrName;
@@ -359,44 +359,44 @@ bool BSAProject::setPValue(double inVal)
     return true;
 }
 
-bool BSAProject::setWinLength(size_t inVal)
+bool BSAProject::setWinLength(uint64_t inVal)
 {
     winLength = inVal;
     return true;
 }
 
-bool BSAProject::setStrideLength(size_t inVal)
+bool BSAProject::setStrideLength(uint64_t inVal)
 {
     strideLength = inVal;
     return true;
 }
 
-bool BSAProject::setNHighPool(size_t inVal)
+bool BSAProject::setNHighPool(uint64_t inVal)
 {
     nHP = inVal;
     return true;
 }
 
-bool BSAProject::setNLowPool(size_t inVal)
+bool BSAProject::setNLowPool(uint64_t inVal)
 {
     nLP = inVal;
     return true;
 }
 
-size_t BSAProject::searchPointIndex(int inIDChr, size_t inPos) const
+uint64_t BSAProject::searchPointIndex(int inIDChr, uint64_t inPos) const
 {
     if (inIDChr >= chrName.size() || inIDChr < 0) {
         return SIZE_MAX;
     }
-    size_t chrStartIndex = chrStartId[inIDChr];
-    size_t chrEndIndex = chrStartId[inIDChr+1];
+    uint64_t chrStartIndex = chrStartId[inIDChr];
+    uint64_t chrEndIndex = chrStartId[inIDChr+1];
     ValPoints2* iter = std::lower_bound(&(points[chrStartIndex]), &(points[chrEndIndex]), inPos);
     return std::distance(&points[0], iter);
 }
 
-size_t BSAProject::getMeanSamples() const
+uint64_t BSAProject::getMeanSamples() const
 {
-    return size_t((nHP + nLP) / 2);
+    return uint64_t((nHP + nLP) / 2);
 }
 
 long BSAProject::getMaxDepth() const
@@ -417,7 +417,7 @@ char **BSAProject::getChrName()
         }
         nCharChrName = chrName.size();
         charChrName = new char*[nCharChrName];
-        for (size_t i = 0; i < nCharChrName; ++i) {
+        for (uint64_t i = 0; i < nCharChrName; ++i) {
             charChrName[i] = new char[FD::MAXELEMLEN];
             FD::charCopy(charChrName[i], chrName[i].data());
         }
@@ -431,10 +431,10 @@ bool BSAProject::sortPoints()
     if (!readPoints) {
         return false;
     }
-    size_t* idList = new size_t[data.getNRow() + 1];
+    uint64_t* idList = new uint64_t[data.getNRow() + 1];
     std::iota(&(idList[0]), &(idList[data.getNRow()]), 0);
     std::sort(&(idList[0]), &(idList[data.getNRow()]),
-        [&] (size_t a, size_t b) {
+        [&] (uint64_t a, uint64_t b) {
             return points[a] < points[b];
         }
     );
@@ -442,7 +442,7 @@ bool BSAProject::sortPoints()
     delete [] idList;
     chrStartId.resize(chrName.size() + 1);
     int preChrId = chrName.size();
-    for (size_t iMarker = 0; iMarker < data.getNRow(); ++iMarker) {
+    for (uint64_t iMarker = 0; iMarker < data.getNRow(); ++iMarker) {
         if (points[iMarker].idchr != preChrId) {
             preChrId = points[iMarker].idchr;
             chrStartId[preChrId] = iMarker;
@@ -463,9 +463,9 @@ bool BSAProject::readChrFile(const char *inFile)
     std::ifstream file(inFile, std::ios::in);
     std::vector<std::string> lineList;
     std::string line;
-    std::map<std::string,size_t> idChrMap;
+    std::map<std::string,uint64_t> idChrMap;
     std::set<std::string> chrSet;
-    for (size_t i = 0; i < chrName.size(); ++i) {
+    for (uint64_t i = 0; i < chrName.size(); ++i) {
         idChrMap[chrName[i]] = i;
     }
     chrLen.resize(chrName.size());
@@ -501,7 +501,7 @@ bool BSAProject::readFileVCF(const char *inFile)
         return false;
     }
     maxDepth = 0;
-    for (size_t iMarker = 0; iMarker < data.getNRow(); ++iMarker) {
+    for (uint64_t iMarker = 0; iMarker < data.getNRow(); ++iMarker) {
         maxDepth = std::max(std::lround(data(iMarker, 0) + data(iMarker, 1)), maxDepth);
         maxDepth = std::max(std::lround(data(iMarker, 2) + data(iMarker, 3)), maxDepth);
     }
@@ -521,7 +521,7 @@ bool BSAProject::readFile1(const char *inFile)
         return false;
     }
     maxDepth = 0;
-    for (size_t iMarker = 0; iMarker < data.getNRow(); ++iMarker) {
+    for (uint64_t iMarker = 0; iMarker < data.getNRow(); ++iMarker) {
         maxDepth = std::max(std::lround(data(iMarker, 0) + data(iMarker, 1)), maxDepth);
         maxDepth = std::max(std::lround(data(iMarker, 2) + data(iMarker, 3)), maxDepth);
     }

@@ -40,8 +40,8 @@ QWidget *BaseFileSaveDialog::init_SaveAndCancel()
     cancelBtn = new QPushButton("Cancel", this);
     QWidget* outWidget = new QWidget(this);
     QHBoxLayout* outLayout = new QHBoxLayout(outWidget);
-    outLayout -> addWidget(saveBtn);
-    outLayout -> addWidget(cancelBtn);
+    outLayout->addWidget(saveBtn);
+    outLayout->addWidget(cancelBtn);
 
     saveBtn -> setFixedWidth(100);
     cancelBtn -> setFixedWidth(100);
@@ -62,14 +62,14 @@ QWidget *BaseFileSaveDialog::init_SavePath()
     }
     savePathEdit = new QLineEdit(this);
     chooseSavePathBtn = new QPushButton(QIcon(":/icon/openIcon.png"), "", this);
-    chooseSavePathBtn -> setFixedWidth(25);
+    chooseSavePathBtn->setFixedWidth(25);
     QLabel *pLabel = new QLabel("Save Path:",this);
     QWidget* outWidget = new QWidget(this);
     QHBoxLayout* outLayout = new QHBoxLayout(outWidget);
-    outLayout -> addWidget(pLabel);
-    outLayout -> addWidget(savePathEdit);
-    outLayout -> addWidget(chooseSavePathBtn);
-    outWidget -> setFixedHeight(54);
+    outLayout->addWidget(pLabel);
+    outLayout->addWidget(savePathEdit);
+    outLayout->addWidget(chooseSavePathBtn);
+    outWidget->setFixedHeight(54);
 
     connect(chooseSavePathBtn, &QPushButton::clicked, this, &BaseFileSaveDialog::do_OpenSavePath);
 
@@ -85,7 +85,7 @@ QWidget *BaseFileSaveDialog::init_FileFormChoose()
         delete fileFormBox;
     }
     fileFormLook = new QPushButton(QIcon(":/icon/openIcon.png"), "", this);
-    fileFormLook -> setFixedWidth(25);
+    fileFormLook->setFixedWidth(25);
     fileFormBox = new QComboBox(this);
     QLabel *pLabel = new QLabel("File Format:", this);
     QWidget* outWidget = new QWidget(this);
@@ -115,7 +115,7 @@ QWidget *BaseFileSaveDialog::init_SizeSettings(bool flag)
     if (sizeValidator != nullptr) {
         delete sizeValidator;
     }
-    sizeValidator = new QRegExpValidator(QRegExp("[\\d,.]*"), this);
+    sizeValidator = new QRegularExpressionValidator(QRegularExpression("[\\d,.]*"), this);
     widthEdit  = new QLineEdit(this);
     heightEdit = new QLineEdit(this);
     QLabel *preLabel = new QLabel("(Width x Height):", this);
@@ -280,7 +280,7 @@ void PlotFileSaveDialog::do_LookFileForm()
 
 void PlotFileSaveDialog::do_SizeChanged()
 {
-    switch (fileFormBox -> currentIndex()) {
+    switch (fileFormBox->currentIndex()) {
         default:
         case 0: {
             QSizeF tSize = getSizeF();
@@ -298,7 +298,7 @@ void PlotFileSaveDialog::do_SizeChanged()
 
 void PlotFileSaveDialog::do_FileFormChanged()
 {
-    switch (fileFormBox -> currentIndex()) {
+    switch (fileFormBox->currentIndex()) {
         default:
         case 0: {
             QSizeF tSize = QSizeF(7.5,4.5);

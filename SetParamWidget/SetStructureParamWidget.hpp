@@ -7,7 +7,7 @@ class SetStructureParamWidget : public QWidget
 {
     Q_OBJECT
 private:
-    size_t id;
+    uint64_t id;
     MML::StructureParam* para;
     QSpinBox* burinBox;
     QSpinBox* recordBox;
@@ -16,10 +16,10 @@ private:
     QPushButton* cancelBtn;
     explicit SetStructureParamWidget(QWidget *parent = nullptr);
 public:
-    SetStructureParamWidget(size_t inId, MML::StructureParam* inPara, QWidget *parent = nullptr);
+    SetStructureParamWidget(uint64_t inId, MML::StructureParam* inPara, QWidget *parent = nullptr);
     ~SetStructureParamWidget();
 signals:
-    void startStructure(size_t id,int nThread);
+    void startStructure(uint64_t id,int nThread);
 public slots:
     void dealwithContinue();
 };

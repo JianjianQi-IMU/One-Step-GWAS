@@ -9,24 +9,24 @@ class StructureParam
 {
 public:
     explicit StructureParam();
-    size_t nBurnIn;
-    size_t nRecord;
-    size_t nPopulation;
-    void setNBurnIn(size_t n);
-    void setNRecord(size_t n);
-    void setNPopulation(size_t n);
+    uint64_t nBurnIn;
+    uint64_t nRecord;
+    uint64_t nPopulation;
+    void setNBurnIn(uint64_t n);
+    void setNRecord(uint64_t n);
+    void setNPopulation(uint64_t n);
 };
 
 class Structure
 {
 public:
-    size_t nMarker;
-    size_t nPop;
-    size_t nAllele;
-    size_t nSample;
-    size_t nPloid;
+    uint64_t nMarker;
+    uint64_t nPop;
+    uint64_t nAllele;
+    uint64_t nSample;
+    uint64_t nPloid;
     Distribution dis;
-    short*  G;
+    int16_t*  G;
     double* P;
     double* Q;
     int*    Z;
@@ -36,26 +36,26 @@ public:
     bool isRecord;
     std::default_random_engine generator;
     explicit Structure();
-    Structure(size_t inNMarker,
-              size_t inNPop,
-              size_t inNAllele,
-              size_t inNSample,
-              size_t inNPloid  );
+    Structure(uint64_t inNMarker,
+              uint64_t inNPop,
+              uint64_t inNAllele,
+              uint64_t inNSample,
+              uint64_t inNPloid  );
     ~Structure();
-    bool setParameter(size_t inNMarker,
-                      size_t inNPop,
-                      size_t inNAllele,
-                      size_t inNSample,
-                      size_t inNPloid  );
+    bool setParameter(uint64_t inNMarker,
+                      uint64_t inNPop,
+                      uint64_t inNAllele,
+                      uint64_t inNSample,
+                      uint64_t inNPloid  );
     bool initialize();
     bool randomizeZ();
     bool updateP();
     bool updateQ();
     bool updateZ();
-    short* genotype(size_t iMarker,
-                    size_t iSample,
-                    size_t iPloid);
-    double getSumQ(size_t iSample,size_t iPop);
+    int16_t* genotype(uint64_t iMarker,
+                    uint64_t iSample,
+                    uint64_t iPloid);
+    double getSumQ(uint64_t iSample,uint64_t iPop);
     void setRecord(bool state);
     void clear();
     void onlyResult();

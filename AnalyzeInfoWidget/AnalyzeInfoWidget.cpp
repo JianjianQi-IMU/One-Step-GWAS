@@ -5,7 +5,7 @@ AnalyzeInfoWidget::AnalyzeInfoWidget(QWidget *parent) : QWidget(parent)
     pProjectList = nullptr;
     pTab = new QTabWidget(this);
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(pTab);
 }
 
@@ -28,7 +28,9 @@ void AnalyzeInfoWidget::addNew()
 
 void AnalyzeInfoWidget::removeOne(int i)
 {
-    if (i >= browserList.size()) return;
+    if (i >= browserList.size()) {
+        return;
+    }
     pTab->removeTab(i);
     delete browserList[i];
     browserList.removeAt(i);
@@ -49,12 +51,16 @@ void AnalyzeInfoWidget::removeAll()
 
 void AnalyzeInfoWidget::updateText(int i)
 {
-    if (i >= browserList.size()) return;
+    if (i >= browserList.size()) {
+        return;
+    }
     browserList[i]->setText((*pProjectList)[i]->logInfo.c_str());
 }
 
 void AnalyzeInfoWidget::selectProject(int i)
 {
-    if (i >= browserList.size()) return;
+    if (i >= browserList.size()) {
+        return;
+    }
     pTab->setCurrentIndex(i);
 }

@@ -73,7 +73,7 @@ public:
                                                const QModelIndex &parent = QModelIndex());
     void clearRoot();
     bool isRootNode(const ProjectTreeItemModelNode* p);
-    runState projectState(int id);
+    RUN_STATE projectState(int id);
 private:
    ProjectTreeItemModelNode* rootNode;
    QList<AnalyzeUnitInfo>* pUnitList;
@@ -105,7 +105,7 @@ signals:
     void sendLoadProject(int id,FD::ProjectInfo info);
     void sendAddNewProject();
     void sendSelectProject(int id);
-    void sendSelectProjectState(runState state);
+    void sendSelectProjectState(RUN_STATE state);
 public slots:
     void removeProject();
     void loadGWASProject();

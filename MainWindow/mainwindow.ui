@@ -45,6 +45,7 @@
     <addaction name="actionGLM"/>
     <addaction name="actionEMMAX"/>
     <addaction name="actionGEMMA"/>
+    <addaction name="actionBlink"/>
     <addaction name="separator"/>
     <addaction name="actionPCA"/>
     <addaction name="separator"/>
@@ -338,6 +339,21 @@
    </property>
    <property name="menuRole">
     <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="actionBlink">
+   <property name="icon">
+    <iconset resource="../Res.qrc">
+     <normaloff>:/icon/GWASIcon.png</normaloff>:/icon/GWASIcon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Blink</string>
+   </property>
+   <property name="toolTip">
+    <string>Blink</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>

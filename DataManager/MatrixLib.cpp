@@ -3,330 +3,6 @@
 #include "openblas/lapacke.h"
 #include "openblas/cblas.h"
 
-MML::IMat::IMat() : IMat(0, 0, nullptr, _null)
-{
-}
-
-MML::IMat::IMat(const IMat &inMatrix)
-{
-    ncol = inMatrix.ncol;
-    nrow = inMatrix.nrow;
-    if (ncol <= 0 || nrow <= 0 || (!(inMatrix.data))) {
-        ncol = 0;
-        nrow = 0;
-        data = nullptr;
-        info = _null;
-        return;
-    }
-    data = new short [ncol * nrow];
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
-            data[i * ncol + j] = inMatrix.data[i * ncol + j];
-        }
-    }
-    info = inMatrix.info;
-}
-
-MML::IMat::IMat(IMat &&inMatrix)
-{
-    data = inMatrix.data;
-    inMatrix.data = nullptr;
-    ncol = inMatrix.ncol;
-    nrow = inMatrix.nrow;
-    info = inMatrix.info;
-}
-
-MML::IMat::IMat(size_t inNRow, size_t inNCol, short init, matClass inInfo)
- : nrow(inNRow), ncol(inNCol)
-{
-    if (inNRow == 0 || inNCol == 0) {
-        data = nullptr;
-        info = _null;
-        return;
-    }
-    size_t ncounts = inNRow * inNCol;
-    data = new short [ncounts];
-    for (size_t i = 0; i < ncounts; ++i) {
-        data[i] = init;
-    }
-    info = inInfo;
-}
-
-MML::IMat::IMat(size_t inNRow, size_t inNCol, const short *inData, matClass inInfo)
- : nrow(inNRow), ncol(inNCol)
-{
-    if (inNRow == 0 || inNCol == 0 || inData == nullptr) {
-        data = nullptr;
-        info = _null;
-        return;
-    }
-    size_t ncounts = inNRow * inNCol;
-    data = new short [ncounts];
-    for (size_t i = 0; i < ncounts; ++i) {
-        data[i] = inData[i];
-    }
-    info = inInfo;
-}
-
-MML::IMat::~IMat()
-{
-    if (data) {
-        delete [] data;
-    }
-    info = _null;
-    ncol = 0;
-    nrow = 0;
-    data = nullptr;
-}
-
-void MML::IMat::print() const
-{
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
-            printf("\t%d", data[i * ncol + j]);
-        }
-        printf("\n");
-    }
-}
-
-void MML::IMat::print(const char *output) const
-{
-    printf("%s\n", output);
-    print();
-}
-
-void MML::IMat::print(std::fstream &output) const
-{
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0;j < ncol; ++j) {
-            output << '\t' << data[i * ncol + j];
-        }
-        output << '\n';
-    }
-}
-
-bool MML::IMat::setMatClass(matClass inInfo)
-{
-    info = inInfo;
-    return true;
-}
-
-bool MML::IMat::setData(size_t inNRow, size_t inNCol, const short *inData, matClass inInfo)
-{
-    if (inNCol == 0 || inNRow == 0) {
-        return false;
-    }
-    if (ncol != inNCol || nrow != inNRow) {
-        if (data) {
-            delete [] data;
-        }
-        data = new short [inNRow*inNCol];
-    }
-    for (size_t i = 0; i < inNRow; ++i) {
-        for (size_t j = 0; j < inNCol; ++j) {
-            data[i * inNCol + j] = inData[i * inNCol + j];
-        }
-    }
-    ncol = inNCol;
-    nrow = inNRow;
-    info = inInfo;
-    return true;
-}
-
-bool MML::IMat::setData(size_t inNRow, size_t inNCol, short init, matClass inInfo)
-{
-    if (inNCol == 0 || inNRow == 0) {
-        return false;
-    }
-    if (ncol != inNCol || nrow != inNRow) {
-        if (data) {
-            delete [] data;
-        }
-        data = new short [inNRow * inNCol];
-    }
-    for (size_t i = 0; i < inNRow; ++i) {
-        for (size_t j = 0; j < inNCol; ++j) {
-            data[i * inNCol + j] = init;
-        }
-    }
-    ncol = inNCol;
-    nrow = inNRow;
-    info = inInfo;
-    return true;
-}
-
-size_t MML::IMat::getNCol() const
-{
-    return ncol;
-}
-
-size_t MML::IMat::getNRow() const
-{
-    return nrow;
-}
-
-MML::matClass MML::IMat::getMatClass() const
-{
-    return info;
-}
-
-short &MML::IMat::operator()(size_t irow, size_t icol)
-{
-    return data[ncol*irow+icol];
-}
-
-short MML::IMat::operator()(size_t irow,size_t icol) const
-{
-    return data[ncol*irow+icol];
-}
-
-short &MML::IMat::operator()(size_t index)
-{
-    return data[index];
-}
-
-short MML::IMat::operator()(size_t index) const
-{
-    return data[index];
-}
-
-MML::IMat MML::IMat::operator()(size_t irow1, size_t icol1, size_t irow2, size_t icol2) const
-{
-    if (irow1 > irow2 || icol1 > icol2 || info == _null) {
-        return IMat();
-    }
-    size_t oncol = icol2 - icol1 + 1;
-    size_t onrow = irow2 - irow1 + 1;
-    short *values = new short[oncol * onrow];
-    for (size_t i = irow1; i <= irow2; ++i) {
-        for (size_t j = icol1; j <= icol2; ++j) {
-            values[(i - irow1) * oncol + j - icol1] = data[i * ncol + j];
-        }
-    }
-    IMat out;
-    out.data = values;
-    out.ncol = oncol;
-    out.nrow = onrow;
-    out.info = _general;
-    return out;
-}
-
-MML::IMat& MML::IMat::operator=(const IMat& inMatrix)
-{
-    if (inMatrix.info == _null) {
-        info = _null;
-        if (data) {
-            delete [] data;
-        }
-        data = nullptr;
-        ncol = 0, nrow=0;
-        return *this;
-    }
-    if (ncol != inMatrix.ncol || nrow != inMatrix.nrow) {
-        if (data) {
-            delete [] data;
-        }
-        ncol = inMatrix.ncol;
-        nrow = inMatrix.nrow;
-        data = new short [ncol * nrow];
-    }
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
-            data[i * ncol + j] = (inMatrix.data)[i * ncol + j];
-        }
-    }
-    info = inMatrix.info;
-    return *this;
-}
-
-bool MML::IMat::resize(size_t nRow, size_t nCol)
-{
-    if (ncol == nCol && nrow == nRow) return false;
-    if (ncol * nrow == nCol * nRow) {
-        ncol = nCol;
-        nrow = nRow;
-        return true;
-    }
-    if (data) delete [] data;
-    if (nRow == 0 || nCol == 0) {
-        data = nullptr;
-        info = _null;
-        return false;
-    }
-    data = new short [nRow * nCol];
-    ncol = nCol;
-    nrow = nRow;
-    info = _general;
-    return true;
-}
-
-bool MML::IMat::t()
-{
-    if (info == _null) {
-        return false;
-    }
-    short* toBe = new short[ncol * nrow];
-    size_t tmp;
-    for (size_t i = 0; i < ncol; ++i) {
-        for (size_t j = 0; j < nrow; ++j) {
-            toBe[i * nrow + j] = data[j * ncol + i];
-        }
-    }
-    if (data) {
-        delete [] data;
-    }
-    data = toBe;
-    tmp = ncol;
-    ncol = nrow;
-    nrow = tmp;
-    if (info == _rowvec) {
-        info = _colvec;
-    } else if (info == _colvec) {
-        info=_rowvec;
-    }
-    return true;
-}
-
-bool MML::IMat::t(IMat &outMatrix)
-{
-    if (info == _null) {
-        return false;
-    }
-    if (outMatrix.ncol * outMatrix.nrow != ncol * nrow) {
-        if (outMatrix.data) {
-            delete [] outMatrix.data;
-        }
-        outMatrix.data = new short [ncol*nrow];
-    }
-    for (size_t i = 0; i < ncol; ++i) {
-        for (size_t j = 0; j < nrow; ++j){
-            outMatrix.data[i * nrow + j] = data[j * ncol + i];
-        }
-    }
-    outMatrix.ncol = nrow;
-    outMatrix.nrow = ncol;
-    outMatrix.info = _general;
-    if (info == _rowvec) {
-        outMatrix.info = _colvec;
-    } else if (info == _colvec) {
-        outMatrix.info = _rowvec;
-    }
-    return true;
-}
-
-MML::IMat& MML::IMat::operator=(IMat&& inMatrix)
-{
-    if (data) {
-        delete [] data;
-    }
-    data = inMatrix.data;
-    inMatrix.data = nullptr;
-    ncol = inMatrix.ncol;
-    nrow = inMatrix.nrow;
-    info = inMatrix.info;
-    return *this;
-}
-
 MML::Mat::Mat():Mat(0, 0, nullptr, _null)
 {
 
@@ -344,8 +20,8 @@ MML::Mat::Mat(const Mat& inMatrix)
         return;
     }
     data = new double [ncol * nrow];
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             data[i * ncol + j] = inMatrix.data[i * ncol + j];
         }
     }
@@ -361,7 +37,7 @@ MML::Mat::Mat(Mat &&inMatrix)
     nrow = inMatrix.nrow;
 }
 
-MML::Mat::Mat(size_t nRow, size_t nCol, double init, matClass inInfo)
+MML::Mat::Mat(uint64_t nRow, uint64_t nCol, double init, matClass inInfo)
     : nrow(nRow), ncol(nCol)
 {
     if (nRow == 0 || nCol == 0) {
@@ -369,15 +45,15 @@ MML::Mat::Mat(size_t nRow, size_t nCol, double init, matClass inInfo)
         info = _null;
         return;
     }
-    size_t ncounts = nRow * nCol;
+    uint64_t ncounts = nRow * nCol;
     data = new double [ncounts];
-    for (size_t i = 0; i < ncounts; ++i) {
+    for (uint64_t i = 0; i < ncounts; ++i) {
         data[i] = init;
     }
     info = inInfo;
 }
 
-MML::Mat::Mat(size_t nRow, size_t nCol, const double* inData, matClass inInfo)
+MML::Mat::Mat(uint64_t nRow, uint64_t nCol, const double* inData, matClass inInfo)
     : nrow(nRow), ncol(nCol)
 {
     if (nRow == 0 || nCol == 0 || !inData) {
@@ -385,9 +61,9 @@ MML::Mat::Mat(size_t nRow, size_t nCol, const double* inData, matClass inInfo)
         info = _null;
         return;
     }
-    size_t ncounts = nRow * nCol;
+    uint64_t ncounts = nRow * nCol;
     data = new double [ncounts];
-    for (size_t i = 0; i < ncounts; ++i) {
+    for (uint64_t i = 0; i < ncounts; ++i) {
         data[i] = inData[i];
     }
     info = inInfo;
@@ -404,12 +80,12 @@ MML::Mat::~Mat()
     data = nullptr;
 }
 
-size_t MML::Mat::getNCol() const
+uint64_t MML::Mat::getNCol() const
 {
     return ncol;
 }
 
-size_t MML::Mat::getNRow() const
+uint64_t MML::Mat::getNRow() const
 {
     return nrow;
 }
@@ -421,8 +97,8 @@ MML::matClass MML::Mat::getMatClass() const
 
 void MML::Mat::print() const
 {
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             printf("\t%f", data[i * ncol + j]);
         }
         printf("\n");
@@ -437,8 +113,8 @@ void MML::Mat::print(const char* output) const
 
 void MML::Mat::print(std::fstream &output) const
 {
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             output << '\t' << data[i * ncol + j];
         }
         output << '\n';
@@ -451,7 +127,7 @@ bool MML::Mat::setMatClass(matClass inInfo)
     return true;
 }
 
-bool MML::Mat::setData(size_t inNRow, size_t inNCol, const double* inData, matClass inInfo)
+bool MML::Mat::setData(uint64_t inNRow, uint64_t inNCol, const double* inData, matClass inInfo)
 {
     if (inNCol == 0 || inNRow == 0) {
         return false;
@@ -460,8 +136,8 @@ bool MML::Mat::setData(size_t inNRow, size_t inNCol, const double* inData, matCl
         if (data) delete [] data;
         data = new double [inNRow * inNCol];
     }
-    for (size_t i = 0; i < inNRow; ++i) {
-        for (size_t j = 0; j < inNCol; ++j) {
+    for (uint64_t i = 0; i < inNRow; ++i) {
+        for (uint64_t j = 0; j < inNCol; ++j) {
             data[i * inNCol + j] = inData[i * inNCol + j];
         }
     }
@@ -471,7 +147,7 @@ bool MML::Mat::setData(size_t inNRow, size_t inNCol, const double* inData, matCl
     return true;
 }
 
-bool MML::Mat::setData(size_t inNRow, size_t inNCol, double inValues, matClass inInfo)
+bool MML::Mat::setData(uint64_t inNRow, uint64_t inNCol, double inValues, matClass inInfo)
 {
     if (inNCol == 0 || inNRow == 0) {
         return false;
@@ -482,8 +158,8 @@ bool MML::Mat::setData(size_t inNRow, size_t inNCol, double inValues, matClass i
         }
         data = new double [inNRow * inNCol];
     }
-    for (size_t i = 0; i < inNRow; ++i) {
-        for (size_t j = 0; j < inNCol; ++j) {
+    for (uint64_t i = 0; i < inNRow; ++i) {
+        for (uint64_t j = 0; j < inNCol; ++j) {
             data[i * inNCol + j] = inValues;
         }
     }
@@ -493,36 +169,36 @@ bool MML::Mat::setData(size_t inNRow, size_t inNCol, double inValues, matClass i
     return true;
 }
 
-double& MML::Mat::operator()(size_t irow, size_t icol)
+double& MML::Mat::operator()(uint64_t irow, uint64_t icol)
 {
     return data[ncol * irow + icol];
 }
 
-double MML::Mat::operator()(size_t irow, size_t icol) const
+double MML::Mat::operator()(uint64_t irow, uint64_t icol) const
 {
     return data[ncol * irow + icol];
 }
 
-double& MML::Mat::operator()(size_t index)
+double& MML::Mat::operator()(uint64_t index)
 {
     return data[index];
 }
 
-double MML::Mat::operator()(size_t index) const
+double MML::Mat::operator()(uint64_t index) const
 {
     return data[index];
 }
 
-MML::Mat MML::Mat::operator()(size_t irow1, size_t icol1, size_t irow2, size_t icol2) const
+MML::Mat MML::Mat::operator()(uint64_t irow1, uint64_t icol1, uint64_t irow2, uint64_t icol2) const
 {
     if (irow1 > irow2 || icol1 > icol2 || info == _null) {
         return Mat();
     }
-    size_t oncol = icol2 - icol1 + 1;
-    size_t onrow = irow2 - irow1 + 1;
+    uint64_t oncol = icol2 - icol1 + 1;
+    uint64_t onrow = irow2 - irow1 + 1;
     double *values = new double[oncol * onrow];
-    for (size_t i = irow1; i <= irow2; ++i){
-        for (size_t j = icol1; j <= icol2; ++j){
+    for (uint64_t i = irow1; i <= irow2; ++i){
+        for (uint64_t j = icol1; j <= icol2; ++j){
             values[(i - irow1) * oncol + j - icol1] = data[i * ncol + j];
         }
     }
@@ -553,8 +229,8 @@ MML::Mat& MML::Mat::operator=(const Mat& inMatrix)
         nrow = inMatrix.nrow;
         data = new double [ncol * nrow];
     }
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             data[i * ncol + j] = (inMatrix.data)[i * ncol + j];
         }
     }
@@ -575,7 +251,7 @@ MML::Mat& MML::Mat::operator=(Mat&& inMatrix)
     return *this;
 }
 
-MML::Mat& MML::Mat::operator=(const IMat& inMatrix)
+MML::Mat& MML::Mat::operator=(const SIMat& inMatrix)
 {
     if (inMatrix.getMatClass() == _null) {
         info = _null;
@@ -592,8 +268,8 @@ MML::Mat& MML::Mat::operator=(const IMat& inMatrix)
     ncol = inMatrix.getNCol();
     nrow = inMatrix.getNRow();
     data = new double [ncol * nrow];
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             data[i * ncol + j] = (double)inMatrix(i, j);
         }
     }
@@ -601,7 +277,7 @@ MML::Mat& MML::Mat::operator=(const IMat& inMatrix)
     return *this;
 }
 
-bool MML::Mat::resize(size_t nRow,size_t nCol)
+bool MML::Mat::resize(uint64_t nRow,uint64_t nCol)
 {
     if (ncol == nCol && nrow == nRow) return false;
     if (ncol * nrow == nCol * nRow) {
@@ -628,9 +304,9 @@ bool MML::Mat::t()
         return false;
     }
     double* toBe = new double[ncol * nrow];
-    size_t tmp;
-    for (size_t i = 0; i < ncol; ++i) {
-        for (size_t j = 0; j < nrow; ++j) {
+    uint64_t tmp;
+    for (uint64_t i = 0; i < ncol; ++i) {
+        for (uint64_t j = 0; j < nrow; ++j) {
             toBe[i * nrow + j] = data[j * ncol + i];
         }
     }
@@ -660,8 +336,8 @@ bool MML::Mat::t(Mat& outMatrix)
         }
         outMatrix.data = new double [ncol*nrow];
     }
-    for (size_t i = 0; i < ncol; ++i) {
-        for (size_t j = 0; j < nrow; ++j){
+    for (uint64_t i = 0; i < ncol; ++i) {
+        for (uint64_t j = 0; j < nrow; ++j){
             outMatrix.data[i * nrow + j] = data[j * ncol + i];
         }
     }
@@ -679,9 +355,9 @@ bool MML::Mat::t(Mat& outMatrix)
 double MML::Mat::sum() const
 {
     if (info == _null) return 0;
-    size_t N = ncol * nrow;
+    uint64_t N = ncol * nrow;
     double out = 0;
-    for (size_t i = 0; i < N; ++i) {
+    for (uint64_t i = 0; i < N; ++i) {
         out += data[i];
     }
     return out;
@@ -690,8 +366,8 @@ double MML::Mat::sum() const
 bool MML::Mat::add(double values)
 {
     if (info == _null) return false;
-    size_t N = ncol * nrow;
-    for (size_t i = 0; i < N; ++i) {
+    uint64_t N = ncol * nrow;
+    for (uint64_t i = 0; i < N; ++i) {
         data[i] += values;
     }
     return true;
@@ -700,8 +376,8 @@ bool MML::Mat::add(double values)
 bool MML::Mat::mul(double values)
 {
     if (info == _null) return false;
-    size_t N = ncol * nrow;
-    for (size_t i = 0; i < N; ++i) {
+    uint64_t N = ncol * nrow;
+    for (uint64_t i = 0; i < N; ++i) {
         data[i] *= values;
     }
     return true;
@@ -710,20 +386,20 @@ bool MML::Mat::mul(double values)
 bool MML::Mat::toSym(char target)
 {
     if (info == _null || (target != 'L' && target != 'U')) return false;
-    size_t lim = ncol > nrow ? nrow : ncol;
+    uint64_t lim = ncol > nrow ? nrow : ncol;
     double* toBe = nullptr;
     if (ncol != nrow) {
         toBe = new double[lim * lim];
         if (target == 'L') {
-            for (size_t i = 0; i < lim; ++i) {
-                for (size_t j = i; j < lim; ++j) {
+            for (uint64_t i = 0; i < lim; ++i) {
+                for (uint64_t j = i; j < lim; ++j) {
                     toBe[i * lim + j] = data[j * lim + i];
                     toBe[j * lim + i] = data[j * lim + i];
                 }
             }
         } else {
-            for (size_t i = 0; i < lim; ++i) {
-                for (size_t j = i; j < lim; ++j) {
+            for (uint64_t i = 0; i < lim; ++i) {
+                for (uint64_t j = i; j < lim; ++j) {
                     toBe[i * lim + j] = data[i * lim + j];
                     toBe[j * lim + i] = data[i * lim + j];
                 }
@@ -733,14 +409,14 @@ bool MML::Mat::toSym(char target)
         data = toBe;
     } else {
         if (target == 'L') {
-            for (size_t i = 0; i < lim; ++i) {
-                for (size_t j = i + 1; j < lim; ++j) {
+            for (uint64_t i = 0; i < lim; ++i) {
+                for (uint64_t j = i + 1; j < lim; ++j) {
                     data[i * lim + j] = data[j * lim + i];
                 }
             }
         } else {
-            for (size_t i = 0; i < lim; ++i) {
-                for (size_t j = i + 1; j < lim; ++j) {
+            for (uint64_t i = 0; i < lim; ++i) {
+                for (uint64_t j = i + 1; j < lim; ++j) {
                     data[j * lim + i] = data[i * lim + j];
                 }
             }
@@ -755,8 +431,8 @@ bool MML::Mat::toSym(char target)
 bool MML::Mat::toUpper()
 {
     if (info == _null) return false;
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < i; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < i; ++j) {
             data[i * ncol + j] = 0;
         }
     }
@@ -767,8 +443,8 @@ bool MML::Mat::toUpper()
 bool MML::Mat::toLower()
 {
     if (info == _null) return false;
-    for (size_t i = 0; i < nrow && i < ncol; ++i) {
-        for (size_t j = i + 1; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow && i < ncol; ++i) {
+        for (uint64_t j = i + 1; j < ncol; ++j) {
             data[i * ncol + j] = 0;
         }
     }
@@ -797,18 +473,18 @@ bool MML::Mat::toRowVec()
 bool MML::Mat::toDiag()
 {
     if (info == _null) return false;
-    size_t lim = ncol > nrow ? nrow : ncol;
+    uint64_t lim = ncol > nrow ? nrow : ncol;
     double* toBe = nullptr;
     if (ncol != nrow) {
         toBe = new double[lim * lim]();
-        for (size_t i = 0; i < lim; ++i) {
+        for (uint64_t i = 0; i < lim; ++i) {
             toBe[i * lim + i] = data[i * lim + i];
         }
         if (data) delete [] data;
         data = toBe;
     } else {
-        for (size_t i = 0; i < lim; ++i) {
-            for (size_t j = 0; j < lim; ++j) {
+        for (uint64_t i = 0; i < lim; ++i) {
+            for (uint64_t j = 0; j < lim; ++j) {
                 if (i != j) data[j * lim + i] = 0;
             }
         }
@@ -822,19 +498,19 @@ bool MML::Mat::toDiag()
 bool MML::Mat::toSym(char target, Mat& outMatrix)
 {
     if (info == _null || (target != 'L' && target != 'U')) return false;
-    size_t lim = ncol > nrow ? nrow : ncol;
+    uint64_t lim = ncol > nrow ? nrow : ncol;
     double* toBe = nullptr;
     toBe = new double[lim * lim];
     if (target == 'L') {
-        for (size_t i = 0; i < lim; ++i) {
-            for (size_t j = i; j < lim; ++j) {
+        for (uint64_t i = 0; i < lim; ++i) {
+            for (uint64_t j = i; j < lim; ++j) {
                 toBe[i * lim + j] = data[j * lim + i];
                 toBe[j * lim + i] = data[j * lim + i];
             }
         }
     } else {
-        for (size_t i = 0; i < lim; ++i) {
-            for (size_t j = i; j < lim; ++j) {
+        for (uint64_t i = 0; i < lim; ++i) {
+            for (uint64_t j = i; j < lim; ++j) {
                 toBe[i * lim + j] = data[i * lim + j];
                 toBe[j * lim + i] = data[i * lim + j];
             }
@@ -853,8 +529,8 @@ bool MML::Mat::toUpper(Mat& outMatrix)
     if (info == _null) return false;
     double* toBe = nullptr;
     toBe = new double[ncol * nrow]();
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             if (i > j) toBe[i * ncol + j] = 0;
             else toBe[i * ncol + j] = data[i * ncol + j];
         }
@@ -872,8 +548,8 @@ bool MML::Mat::toLower(Mat& outMatrix)
     if (info == _null) return false;
     double* toBe = nullptr;
     toBe = new double[ncol * nrow]();
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = i; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = i; j < ncol; ++j) {
             if (j > i) toBe[i * ncol + j] = 0;
             else toBe[i * ncol + j] = data[i * ncol + j];
         }
@@ -894,7 +570,7 @@ bool MML::Mat::toColVec(Mat& outMatrix)
     outMatrix.info = _colvec;
     if (outMatrix.data) delete [] outMatrix.data;
     outMatrix.data = new double[outMatrix.nrow];
-    for (size_t i = 0; i < outMatrix.nrow; ++i) {
+    for (uint64_t i = 0; i < outMatrix.nrow; ++i) {
         (outMatrix.data)[i] = data[i];
     }
     return true;
@@ -908,7 +584,7 @@ bool MML::Mat::toRowVec(Mat& outMatrix)
     outMatrix.info = _rowvec;
     if (outMatrix.data) delete [] outMatrix.data;
     outMatrix.data = new double[outMatrix.ncol];
-    for (size_t i = 0; i < outMatrix.ncol; ++i) {
+    for (uint64_t i = 0; i < outMatrix.ncol; ++i) {
         (outMatrix.data)[i] = data[i];
     }
     return true;
@@ -917,10 +593,10 @@ bool MML::Mat::toRowVec(Mat& outMatrix)
 bool MML::Mat::toDiag(Mat& outMatrix)
 {
     if (info == _null) return false;
-    size_t lim = ncol > nrow ? nrow : ncol;
+    uint64_t lim = ncol > nrow ? nrow : ncol;
     double* toBe = nullptr;
     toBe = new double[lim * lim]();
-    for (size_t i = 0; i < lim; ++i) {
+    for (uint64_t i = 0; i < lim; ++i) {
         toBe[i * lim + i] = data[i * lim + i];
     }
     if (outMatrix.data) delete [] outMatrix.data;
@@ -1012,12 +688,12 @@ bool MML::Mat::symEig(Mat& EVector, Mat& EValues) const
     return re;
 }
 
-bool MML::Mat::setRows(size_t N, const size_t* inIndex)
+bool MML::Mat::setRows(uint64_t N, const uint64_t* inIndex)
 {
     if (N == 0 || !inIndex || info == _null) return false;
     double* toBe = new double [N * ncol];
-    for (size_t i = 0; i < N; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < N; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             toBe[i * ncol + j] = data[inIndex[i] * ncol + j];
         }
     }
@@ -1027,12 +703,12 @@ bool MML::Mat::setRows(size_t N, const size_t* inIndex)
     return true;
 }
 
-bool MML::Mat::setCols(size_t N, const size_t* inIndex)
+bool MML::Mat::setCols(uint64_t N, const uint64_t* inIndex)
 {
     if (N == 0 || !inIndex || info == _null) return false;
     double* toBe = new double [N * nrow];
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < N; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < N; ++j) {
             toBe[i * N + j] = data[i * ncol + inIndex[j]];
         }
     }
@@ -1042,17 +718,17 @@ bool MML::Mat::setCols(size_t N, const size_t* inIndex)
     return true;
 }
 
-bool MML::Mat::sortRows(size_t N, const size_t* inIndex)
+bool MML::Mat::sortRows(uint64_t N, const uint64_t* inIndex)
 {
     if (N != nrow) return false;
     bool isDiff = false;
     double** pTmp = new double*[N];
-    size_t M = ncol;
-    for (size_t i = 0; i < N; ++i) {
+    uint64_t M = ncol;
+    for (uint64_t i = 0; i < N; ++i) {
         if (inIndex[i] != i) {
             isDiff = true;
             pTmp[i] = new double[M];
-            for (size_t j = 0; j < M; ++j) {
+            for (uint64_t j = 0; j < M; ++j) {
                 pTmp[i][j] = data[i * M + j];
             }
         } else {
@@ -1063,31 +739,31 @@ bool MML::Mat::sortRows(size_t N, const size_t* inIndex)
         delete [] pTmp;
         return false;
     }
-    for (size_t i = 0; i < N; ++i) {
+    for (uint64_t i = 0; i < N; ++i) {
         if (inIndex[i] != i) {
-            for (size_t j = 0; j < M; ++j) {
+            for (uint64_t j = 0; j < M; ++j) {
                 data[i * M + j] = pTmp[inIndex[i]][j];
             }
         }
     }
-    for (size_t i = 0; i < N; ++i) {
+    for (uint64_t i = 0; i < N; ++i) {
         if (pTmp[i]) delete [] pTmp[i];
     }
     delete [] pTmp;
     return true;
 }
 
-bool MML::Mat::sortCols(size_t N, const size_t* inIndex)
+bool MML::Mat::sortCols(uint64_t N, const uint64_t* inIndex)
 {
     if (N != ncol) return false;
     bool isDiff = false;
     double** pTmp = new double*[N];
-    size_t M = nrow;
-    for (size_t i = 0; i < N; ++i) {
+    uint64_t M = nrow;
+    for (uint64_t i = 0; i < N; ++i) {
         if (inIndex[i] != i) {
             isDiff = true;
             pTmp[i] = new double[M];
-            for (size_t j = 0; j < M; ++j) {
+            for (uint64_t j = 0; j < M; ++j) {
                 pTmp[i][j] = data[j * N + i];
             }
         } else {
@@ -1098,32 +774,32 @@ bool MML::Mat::sortCols(size_t N, const size_t* inIndex)
         delete [] pTmp;
         return false;
     }
-    for (size_t i = 0; i < N; ++i) {
+    for (uint64_t i = 0; i < N; ++i) {
         if (inIndex[i] != i) {
-            for (size_t j = 0; j < M; ++j) {
+            for (uint64_t j = 0; j < M; ++j) {
                 data[j * N + i] = pTmp[inIndex[i]][j];
             }
         }
     }
-    for (size_t i = 0; i < N; ++i) {
+    for (uint64_t i = 0; i < N; ++i) {
         if (pTmp[i]) delete [] pTmp[i];
     }
     delete [] pTmp;
     return true;
 }
 
-bool MML::Mat::copyToRows(size_t istart, size_t istop, Mat& outMatrix)
+bool MML::Mat::copyToRows(uint64_t istart, uint64_t istop, Mat& outMatrix)
 {
     if (info == _null || istop >= nrow || istop < istart) return false;
     if (outMatrix.info != _null) {
         if (outMatrix.data) delete [] outMatrix.data;
     }
-    size_t ilen = istop - istart + 1;
+    uint64_t ilen = istop - istart + 1;
     outMatrix.data = new double [ncol * ilen];
     outMatrix.info = _general;
     outMatrix.nrow = ilen;
     outMatrix.ncol = ncol;
-    size_t i = 0, j = 0;
+    uint64_t i = 0, j = 0;
     for (i = 0; i < outMatrix.nrow; ++i) {
         for (j = 0; j < ncol; ++j) {
             outMatrix.data[i * ncol + j] = data[(i + istart) * ncol + j];
@@ -1132,18 +808,18 @@ bool MML::Mat::copyToRows(size_t istart, size_t istop, Mat& outMatrix)
     return true;
 }
 
-bool MML::Mat::copyToCols(size_t istart, size_t istop, Mat& outMatrix)
+bool MML::Mat::copyToCols(uint64_t istart, uint64_t istop, Mat& outMatrix)
 {
     if (info == _null || istop >= ncol || istop < istart) return false;
     if (outMatrix.info != _null) {
         if (outMatrix.data) delete [] outMatrix.data;
     }
-    size_t ilen = istop - istart + 1;
+    uint64_t ilen = istop - istart + 1;
     outMatrix.data = new double [nrow * ilen];
     outMatrix.info = _general;
     outMatrix.ncol = ilen;
     outMatrix.nrow = nrow;
-    size_t i = 0, j = 0;
+    uint64_t i = 0, j = 0;
     for (i = 0; i < nrow; ++i) {
         for (j = 0; j < ilen; ++j) {
             outMatrix.data[i * ilen + j] = data[i * ncol + j + istart];
@@ -1152,12 +828,12 @@ bool MML::Mat::copyToCols(size_t istart, size_t istop, Mat& outMatrix)
     return true;
 }
 
-bool MML::Mat::appendRows(size_t nRows)
+bool MML::Mat::appendRows(uint64_t nRows)
 {
     if (info == _null || nRows <= 0) return false;
     double *toBe = new double [(nRows + nrow) * ncol];
-    for (size_t i = 0; i < nrow; ++i) {
-        for(size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for(uint64_t j = 0; j < ncol; ++j) {
             toBe[i * ncol + j] = data[i * ncol + j];
         }
     }
@@ -1167,12 +843,12 @@ bool MML::Mat::appendRows(size_t nRows)
     return true;
 }
 
-bool MML::Mat::appendCols(size_t nCols)
+bool MML::Mat::appendCols(uint64_t nCols)
 {
     if (info == _null || nCols <= 0) return false;
     double *toBe = new double [nrow * (ncol + nCols)];
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             toBe[i * (ncol + nCols) + j] = data[i * ncol + j];
         }
     }
@@ -1185,8 +861,8 @@ bool MML::Mat::appendCols(size_t nCols)
 bool MML::Mat::anyNan()
 {
     if (info == _null || ncol == 0 || nrow == 0) return false;
-    for (size_t i = 0; i < nrow; ++i) {
-        for (size_t j = 0; j < ncol; ++j) {
+    for (uint64_t i = 0; i < nrow; ++i) {
+        for (uint64_t j = 0; j < ncol; ++j) {
             if (std::isnan(data[i * ncol + j])) return true;
         }
     }
@@ -1199,6 +875,29 @@ void MML::Mat::clear()
     data = nullptr;
     ncol = 0;
     nrow = 0;
+}
+
+bool MML::Mat::MatSub(const Mat& X, const Mat& Y, Mat& outMat, bool isAdd)
+{
+    if (X.info == _null || Y.info == _null) {
+        return false;
+    }
+    if (X.ncol != Y.ncol || X.nrow != Y.nrow) {
+        return false;
+    }
+    if (X.ncol == 0 || X.nrow == 0) {
+        return false;
+    }
+    int m = X.ncol;
+    int n = X.nrow;
+    int i, j;
+    outMat.resize(m, n);
+    for (i = 0; i < m; ++i) {
+        for (j = 0; j < n; ++j) {
+            outMat.data[i * n + j] = X.data[i * n + j] - Y.data[i * n + j];
+        }
+    }
+    return true;
 }
 
 bool MML::Mat::XYmul(const Mat& X, const Mat& Y, Mat& outMatrix, bool isAdd)
@@ -1283,8 +982,8 @@ bool MML::Mat::XtDiXmul(const Mat& X, const Mat& D, Mat& outMatrix, bool isAdd)
         return false;
     }
     double *XtDi = new double[X.ncol * X.nrow];
-    for (size_t i = 0; i < X.nrow; ++i) {
-        for (size_t j = 0; j < X.ncol; ++j) {
+    for (uint64_t i = 0; i < X.nrow; ++i) {
+        for (uint64_t j = 0; j < X.ncol; ++j) {
             XtDi[i + j * X.nrow] = X.data[i * X.ncol + j] / D.data[i];
         }
     }
@@ -1314,7 +1013,7 @@ bool MML::Mat::XtDiVmul(const Mat& X, const Mat& D, const Mat& V, Mat& outVec, b
     int M = X.ncol, N = X.nrow;
     double alpha = 1.0, beta = 0.0;
     double *DiV = new double[N];
-    for (size_t i = 0; i < N; ++i) {
+    for (uint64_t i = 0; i < N; ++i) {
         DiV[i] = V.data[i] / D.data[i];
     }
     if (isAdd) {
@@ -1339,7 +1038,7 @@ bool MML::Mat::VtUmul(const Mat& V, const Mat& U, double& outVal, bool isAdd)
         return false;
     }
     if (!isAdd) outVal = 0.0;
-    for (size_t i = 0; i < V.ncol * V.nrow; ++i) {
+    for (uint64_t i = 0; i < V.ncol * V.nrow; ++i) {
         outVal += V.data[i] * U.data[i];
     }
     return true;
@@ -1368,7 +1067,7 @@ bool MML::Mat::XVmul(const Mat& X, const Mat& V, Mat& outVec, bool isAdd)
 
 bool MML::Mat::VtXmul(const Mat& V, const Mat& X, Mat& outVec, bool isAdd)
 {
-    if ((V.info != _colvec && V.info != _rowvec) || X.ncol != V.ncol * V.nrow) {
+    if ((V.info != _colvec && V.info != _rowvec) || X.nrow != V.ncol * V.nrow) {
         return false;
     }
     int M = X.nrow, N = X.ncol;
@@ -1396,7 +1095,7 @@ bool MML::Mat::VtDiUmul(const Mat& V, const Mat& D, const Mat& U, double& outVal
     }
     double tmp = .0;
     int N = V.ncol * V.nrow;
-    for (size_t i = 0; i < N; ++i) {
+    for (uint64_t i = 0; i < N; ++i) {
         tmp += V.data[i] * U.data[i] / D.data[i];
     }
     if (!isAdd) outVal = tmp;
@@ -1416,7 +1115,7 @@ bool MML::Mat::VtXUmul(const Mat& V, const Mat& X, const Mat& U, double& outVal,
     double* XU = new double [M];
     cblas_dgemv(CblasRowMajor, CblasNoTrans,
                 M, N, alpha, X.data, N, U.data, 1, beta, XU, 1);
-    for (size_t i = 0; i < M; ++i) {
+    for (uint64_t i = 0; i < M; ++i) {
         tmp += V.data[i] * XU[i];
     }
     delete [] XU;
@@ -1425,12 +1124,12 @@ bool MML::Mat::VtXUmul(const Mat& V, const Mat& X, const Mat& U, double& outVal,
     return true;
 }
 
-void MML::_reQuickSortEigen(size_t* index, Mat &EVal, size_t a, size_t b, bool isLess)
+void MML::_reQuickSortEigen(uint64_t* index, Mat &EVal, uint64_t a, uint64_t b, bool isLess)
 {
     if (a < b) {
         double tval = EVal(a);
-        size_t tind = index[a];
-        size_t i = a, j = b;
+        uint64_t tind = index[a];
+        uint64_t i = a, j = b;
         while (a < b) {
             if (isLess) {
                 while (a < b && tval < EVal(b)) --b;
@@ -1459,9 +1158,9 @@ bool MML::quickSortEigen(Mat &EVec, Mat &EVal, bool isLess)
         EVec.getNCol() != EVal.getNCol() * EVal.getNRow()) {
         return false;
     }
-    size_t nCol = EVec.getNCol();
-    size_t* index = new size_t[nCol];
-    for (size_t i = 0; i < nCol; ++i) {
+    uint64_t nCol = EVec.getNCol();
+    uint64_t* index = new uint64_t[nCol];
+    for (uint64_t i = 0; i < nCol; ++i) {
         index[i] = i;
     }
     _reQuickSortEigen(index, EVal, 0, nCol - 1, isLess);

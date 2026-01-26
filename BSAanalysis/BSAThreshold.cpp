@@ -9,10 +9,10 @@ double BSAThresholdCalculatorF2::getSNPIndex(int iDep, double ratio)
 double BSAThresholdCalculatorF2::getDeltaIndex(int iDep)
 {
     std::binomial_distribution<int> dis(ploid * indN, 0.5);
-    size_t i = 0;
+    uint64_t i = 0;
     std::vector<double> testList;
     double tmp = 0;
-    size_t pindex = size_t((1 - pv / 2) * testn);
+    uint64_t pindex = uint64_t((1 - pv / 2) * testn);
     if (pindex == testn) {
         --pindex;
     }
@@ -31,12 +31,12 @@ BSAThresholdCalculatorF2::BSAThresholdCalculatorF2()
     testn = 10000;
 }
 
-BSAThresholdCalculatorF2::BSAThresholdCalculatorF2(size_t inIndN, size_t inDepN, double inPv)
+BSAThresholdCalculatorF2::BSAThresholdCalculatorF2(uint64_t inIndN, uint64_t inDepN, double inPv)
 {
     setPara(inIndN, inDepN, inPv);
 }
 
-void BSAThresholdCalculatorF2::setPara(size_t inIndN, size_t inDepN, double inPv)
+void BSAThresholdCalculatorF2::setPara(uint64_t inIndN, uint64_t inDepN, double inPv)
 {
     indN = inIndN;
     depN = inDepN;
@@ -49,7 +49,7 @@ bool BSAThresholdCalculatorF2::calcuThreshold(std::vector<double> &out)
     if (!indN || !depN || pv < 0 || pv > 1) {
         return false;
     }
-    size_t i;
+    uint64_t i;
     out.push_back(0);
     for (i = 1; i <= depN; ++i) {
         out.push_back(getDeltaIndex(i));

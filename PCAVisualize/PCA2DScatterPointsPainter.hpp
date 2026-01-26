@@ -124,7 +124,7 @@ public:
     double getMaxPC2() const {return maxPC2;}
 
     void initInitializeGL();
-    void calcuAxisData(short iPC, double &outStart, double &outStride);
+    void calcuAxisData(int16_t iPC, double &outStart, double &outStride);
     inline bool isClicked(const QPoint& pos)
     {
         int xpos = pos.x(), ypos = pos.y();

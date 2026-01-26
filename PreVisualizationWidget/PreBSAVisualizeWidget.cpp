@@ -137,9 +137,9 @@ void PreBSAVisualizeWidget::createVisualize()
 {
     FD::BSAProject* project = thread->project;
     FD::BSAInterVal* inter = thread->inter;
-    size_t nInter = thread->nInter;
+    uint64_t nInter = thread->nInter;
     BSAVisualize* pVisualization=nullptr;
-    size_t* chrLenList = nullptr;
+    uint64_t* chrLenList = nullptr;
     int nChr = 0;
 
     bool isTsv=true;
@@ -166,7 +166,7 @@ void PreBSAVisualizeWidget::createVisualize()
             QMessageBox::critical(this,"error","genome annotation file reading error");
             return;
         }
-        chrLenList = new size_t[nChr];
+        chrLenList = new uint64_t[nChr];
         for(int i=0;i<nChr;++i){
             chrLenList[i] = (project->chrLen)[i];
         }

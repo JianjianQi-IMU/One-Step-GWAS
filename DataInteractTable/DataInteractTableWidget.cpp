@@ -20,7 +20,7 @@ DataInteractTableWidget::~DataInteractTableWidget()
 {
 }
 
-bool DataInteractTableWidget::load(double *inMainData, size_t inNRow, size_t inNCol, char **inRowName, char **inColName)
+bool DataInteractTableWidget::load(double *inMainData, uint64_t inNRow, uint64_t inNCol, char **inRowName, char **inColName)
 {
     return pView->load(inMainData, inNRow, inNCol, inRowName, inColName);
 }

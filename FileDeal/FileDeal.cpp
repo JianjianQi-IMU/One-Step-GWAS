@@ -98,7 +98,7 @@ bool FD::BEDread::load(const char* inFile)
     file.open(inFile, std::ios::in | std::ios::binary);
     isValid = true;
     file.read(tilte, 3);
-    if ((tilte[0] ^ 0b01101100) != 0 || (tilte[1] ^ 0b00011011) != 0 || short(tilte[2]) != 1) {
+    if ((tilte[0] ^ 0b01101100) != 0 || (tilte[1] ^ 0b00011011) != 0 || int16_t(tilte[2]) != 1) {
         fileTest = 0;
     } else {
         fileTest = 1;
@@ -107,24 +107,24 @@ bool FD::BEDread::load(const char* inFile)
     return isValid;
 }
 
-bool FD::BEDread::statNum(size_t inNSample, size_t &outNum)
+bool FD::BEDread::statNum(uint64_t inNSample, uint64_t &outNum)
 {
     if (!inNSample) return false;
-    size_t endPos = 0;
+    uint64_t endPos = 0;
     if (!isValid) return false;
     file.clear();
     file.seekg(0, std::ios_base::end);
-    endPos = static_cast<size_t>(file.tellg());
+    endPos = static_cast<uint64_t>(file.tellg());
     file.clear();
     file.seekg(3, std::ios_base::beg);
     outNum = (endPos - 3) / ((inNSample + 3) / 4);
     return true;
 }
 
-bool FD::BEDread::readAll(size_t inNSample, BedData& out)
+bool FD::BEDread::readAll(uint64_t inNSample, BedData& out)
 {
     if (!isValid || fileTest != 1 || !file.is_open()) return false;
-    size_t nMarker = 0, nSample = inNSample, dataSize;
+    uint64_t nMarker = 0, nSample = inNSample, dataSize;
     if (!statNum(nSample, nMarker)) {
         return false;
     }
@@ -144,7 +144,7 @@ bool FD::BEDread::readAll(size_t inNSample, BedData& out)
 
     // read bed data
     char* pData = out.data;
-    size_t remainSize = dataSize;
+    uint64_t remainSize = dataSize;
     while (remainSize > ReadScaleSize) {
         file.read(pData, ReadScaleSize);
         pData += ReadScaleSize;
@@ -190,11 +190,11 @@ bool FD::TPolyPedread::readAll(PolyPedData &pData)
     std::string line;
     file.clear();
     file.seekg(0, std::ios::beg);
-    size_t nMarker = 0, iMarker = 0;
-    size_t nSample = 0, iSample = 0;
-    size_t nPloid = 0, iPloid = 0;
-    short* data = nullptr;
-    short  tGeno;
+    uint64_t nMarker = 0, iMarker = 0;
+    uint64_t nSample = 0, iSample = 0;
+    uint64_t nPloid = 0, iPloid = 0;
+    int16_t* data = nullptr;
+    int16_t  tGeno;
     bool   isMissing = false;
     pData.clear();
     while (std::getline(file, line)) {
@@ -233,7 +233,7 @@ bool FD::TPolyPedread::readAll(PolyPedData &pData)
     }
     file.clear();
     file.seekg(0, std::ios::beg);
-    pData.data = new short[nSample * nMarker];
+    pData.data = new int16_t[nSample * nMarker];
     data = pData.data;
     while (std::getline(file, line)) {
         strip(line);
@@ -300,7 +300,7 @@ bool FD::BIMLogPread::readAll(BIMLogPData& out)
     if (!isValid) return false;
     char line[MAXLINELEN];
     char* lineList[6];
-    size_t i = 0, imarkers = 0;
+    uint64_t i = 0, imarkers = 0;
     for (i = 0; i < 6; ++i) lineList[i] = new char[MAXELEMLEN];
     std::set<std::string> chrSet;
     std::map<std::string,int> chrMap;
@@ -314,7 +314,7 @@ bool FD::BIMLogPread::readAll(BIMLogPData& out)
     if (out.data) delete [] out.data;
     out.data = nullptr;
     out.isValid = false;
-    size_t nMarker = 0, nChr = 0;
+    uint64_t nMarker = 0, nChr = 0;
     bool errorFlag = false;
     int nLineList = 0;
     while (!(file.eof())) {
@@ -380,7 +380,7 @@ bool FD::BIMread::readAll(BIMData& out)
     if (!isValid) return false;
     char line[MAXLINELEN];
     char* lineList[6];
-    size_t i = 0, imarkers = 0;
+    uint64_t i = 0, imarkers = 0;
     if (out.chrName) {
         for (int j = 0; j < out.nChr; ++j) {
             delete [] out.chrName[j];
@@ -396,7 +396,7 @@ bool FD::BIMread::readAll(BIMData& out)
     }
     std::set<std::string> chrSet;
     std::map<std::string, int> chrMap;
-    size_t nMarker = 0;
+    uint64_t nMarker = 0;
     int nChr = 0;
     bool errorFlag = false;
     int nLineList = 0;
@@ -589,13 +589,13 @@ bool FD::VCFread::readAll(PolyPedData& pData,BIMLogPData& bimData)
     std::string line,GTStr;
     file.clear();
     file.seekg(0, std::ios::beg);
-    size_t iFormat = 0, idGT = 0;
-    size_t nMarker = 0, iMarker = 0;
-    size_t nSample = 0, iSample = 0;
-    size_t nPloid = 0, iPloid = 0;
-    size_t nChr = 0, iChr = 0;
-    short* data = nullptr;
-    short  tGeno, tGenoOne;
+    uint64_t iFormat = 0, idGT = 0;
+    uint64_t nMarker = 0, iMarker = 0;
+    uint64_t nSample = 0, iSample = 0;
+    uint64_t nPloid = 0, iPloid = 0;
+    uint64_t nChr = 0, iChr = 0;
+    int16_t* data = nullptr;
+    int16_t  tGeno, tGenoOne;
     pData.clear();
     bimData.clear();
     while (std::getline(file, line)) {
@@ -616,7 +616,7 @@ bool FD::VCFread::readAll(PolyPedData& pData,BIMLogPData& bimData)
     }
     file.clear();
     file.seekg(0, std::ios::beg);
-    pData.data = new short[nSample*nMarker];
+    pData.data = new int16_t[nSample*nMarker];
     data = pData.data;
     nChr = chrSet.size();
     bimData.chrName = new char*[nChr];
@@ -743,7 +743,7 @@ bool FD::genomeRead::readTsv()
     if (!isValid) return false;
     if (genome) delete genome;
     bool errorFlag = false;
-    size_t i, iGenes = 0, nGenes = 0;
+    uint64_t i, iGenes = 0, nGenes = 0;
     long long nList;
     char line[MAXLINELEN];
     char** lineList = new char*[6];
@@ -924,7 +924,7 @@ bool FD::pheRead(const char *inFile, MML::Mat &out)
 {
     std::ifstream iF(inFile, std::ios::in);
     char line[MAXLINELEN];
-    size_t nSam = 0, iSam = 0;
+    uint64_t nSam = 0, iSam = 0;
     while (!(iF.eof())) {
         iF.getline(line, MAXLINELEN, '\n');
         if (line[0] == '\0') continue;
@@ -955,7 +955,7 @@ bool FD::kinRead(const char *inFile, MML::Mat &out)
     std::ifstream iF(inFile, std::ios::in);
     char line[MAXLINELEN];
     char** lineList;
-    size_t nSam = 0, iSam = 0, i = 0;
+    uint64_t nSam = 0, iSam = 0, i = 0;
     while (!(iF.eof())) {
         iF.getline(line, MAXLINELEN, '\n');
         if (line[0] == '\0') continue;
@@ -988,7 +988,7 @@ bool FD::covRead(const char *inFile, MML::Mat &out)
     std::ifstream iF(inFile, std::ios::in);
     char line[MAXLINELEN];
     char** lineList;
-    size_t nSam = 0, iSam = 0, nDim = 0, i = 0;
+    uint64_t nSam = 0, iSam = 0, nDim = 0, i = 0;
     while (!(iF.eof())) {
         iF.getline(line, MAXLINELEN, '\n');
         if (line[0] == '\0') continue;
@@ -1036,7 +1036,7 @@ FD::ChrLenReadTsvState FD::chrLenReadTsv(const char *inFile,
     if (!file.is_open()) {
         return CHRLENREADTSV_FILEPATHNULL;
     }
-    size_t i, nList;
+    uint64_t i, nList;
     char line[MAXLINELEN];
     char** lineList = new char*[2];
     for (i = 0; i < 2; ++i) {
@@ -1151,7 +1151,7 @@ bool FD::PCAOutread(const char *inFile, MML::Mat &out, int nPC)
     std::ifstream iF(inFile, std::ios::in);
     char line[MAXLINELEN];
     char** lineList;
-    size_t nSam = 0, iSam = 0, i = 0;
+    uint64_t nSam = 0, iSam = 0, i = 0;
     int nLineList;
     bool errorFlag = false;
     while (!(iF.eof())) {
@@ -1229,7 +1229,7 @@ bool FD::GWASOutread::readAll()
 {
     char line[MAXLINELEN];
     char** lineList = nullptr;
-    size_t i,iMarkers = 0;
+    uint64_t i,iMarkers = 0;
     int nCol = 0;
     bool errorFlag = false;
     if (!file.is_open() || !isValid) return false;
@@ -1271,7 +1271,7 @@ bool FD::GWASOutread::readAll()
     return true;
 }
 
-double FD::GWASOutread::getValueAt(size_t id)
+double FD::GWASOutread::getValueAt(uint64_t id)
 {
     if (isValid && id<nMarkers) return data[id];
     return -1.0;
@@ -1291,23 +1291,23 @@ FD::GWASProject::GWASProject()
     proInfo = PROJECT_GWAS;
 }
 
-size_t FD::GWASProject::getNSample() const
+uint64_t FD::GWASProject::getNSample() const
 {
     if (isPolyploid) return pData.nSample;
     return bed.nSample;
 }
 
-size_t FD::GWASProject::getNMarker() const
+uint64_t FD::GWASProject::getNMarker() const
 {
     return bim.nMarker;
 }
 
-size_t FD::GWASProject::getNFactor() const
+uint64_t FD::GWASProject::getNFactor() const
 {
     return cov.getNCol();
 }
 
-size_t FD::GWASProject::getNPolyploid() const
+uint64_t FD::GWASProject::getNPolyploid() const
 {
     if (isPolyploid) {
         return pData.nPloid;
@@ -1321,7 +1321,7 @@ FD::ReadState FD::GWASProject::read(const char* nameBed, const char* nameBim, co
 {
     BEDread bedR;
     BIMLogPread bimR;
-    size_t BedNum = 0, BimNum = 0;
+    uint64_t BedNum = 0, BimNum = 0;
     isValid = false;
     isKinValid = false;
     isPolyploid = false;
@@ -1446,7 +1446,7 @@ FD::ReadState FD::GWASProject::readTPolyPed(const char *nameTPed, const char *na
 {
 
     BIMLogPread bimR;
-    size_t BimNum = 0;
+    uint64_t BimNum = 0;
     isValid = false;
     isKinValid = false;
     TPolyPedread reader;
@@ -1520,7 +1520,7 @@ bool FD::GWASProject::saveOutput(const char *outFile)
     if (!isValid) return false;
     char outLine[MAXLINELEN];
     std::ofstream oF(outFile, std::ios::out);
-    size_t i = 0, nMarkers = bim.nMarker;
+    uint64_t i = 0, nMarkers = bim.nMarker;
     const BIMLogPNode* pList = bim.data;
     for (i = 0; i < nMarkers; ++i) {
         if (pList[i].statValue == MML::DATA_NA) {

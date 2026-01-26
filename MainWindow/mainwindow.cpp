@@ -98,7 +98,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::dealwithToolbarButton(runState state)
+void MainWindow::dealwithToolbarButton(RUN_STATE state)
 {
     switch (state) {
     case RUN_UNKNOWN:
@@ -185,6 +185,11 @@ void MainWindow::on_actionGEMMA_triggered()
 void MainWindow::on_actionGLM_triggered()
 {
     pAnalyzeListView->runGLM();
+}
+
+void MainWindow::on_actionBlink_triggered()
+{
+    pAnalyzeListView->runBlink();
 }
 
 void MainWindow::on_actionPCA_triggered()
@@ -311,5 +316,3 @@ void MainWindow::on_actiontest3_triggered()
     pWidget->load(vec);
     pWidget->show();
 }
-
-

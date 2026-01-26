@@ -77,6 +77,23 @@ signals:
 
 };
 
+class QGLMBlinkThread : public QObject, public GLMBlinkThread
+{
+    Q_OBJECT
+private:
+    explicit QGLMBlinkThread(QObject *parent = nullptr);
+    void finishedProc();
+public:
+    explicit QGLMBlinkThread(FD::GWASProject* inProject,QObject *parent = nullptr);
+
+    void run() override;
+    bool makeThread() override;
+signals:
+    void logUpdate();
+    void taskFinished();
+
+};
+
 class QPCAThread : public QObject,public PCAThread
 {
     Q_OBJECT

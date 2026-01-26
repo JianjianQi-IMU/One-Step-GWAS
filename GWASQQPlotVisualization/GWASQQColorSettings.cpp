@@ -50,7 +50,7 @@ void GWASQQPointsColorChooseWidget::setChoosedColor(const QColor &inCol)
 {
     colChoosed = inCol;
     QPalette pte = displayWidget -> palette();
-    pte.setColor(QPalette::Background, colChoosed);
+    pte.setColor(QPalette::Window, colChoosed);
     displayWidget -> setPalette(pte);
     update();
 }
@@ -115,7 +115,7 @@ void GWASQQDiagonalLineColorChooseWidget::setChoosedColor(const QColor &inCol)
 {
     colChoosed = inCol;
     QPalette pte = displayWidget -> palette();
-    pte.setColor(QPalette::Background, colChoosed);
+    pte.setColor(QPalette::Window, colChoosed);
     displayWidget -> setPalette(pte);
     update();
 }

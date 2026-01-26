@@ -26,7 +26,7 @@ public:
     StartGWASVisualizationLessWithLogP();
     StartGWASVisualizationLessWithLogP(double* inCompList);
     void setCompList(double* inCompList);
-    bool operator () (size_t a,size_t b);
+    bool operator () (uint64_t a,uint64_t b);
 };
 
 class StartGWASVisualizationWidget : public QWidget

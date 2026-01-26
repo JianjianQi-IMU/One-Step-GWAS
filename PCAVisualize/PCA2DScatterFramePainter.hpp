@@ -141,7 +141,7 @@ public:
     {
         xGridValue.clear();
         double t,tstride,tmax;
-        size_t i;
+        uint64_t i;
         i=0,tstride=inPC1Stride,t=inPC1Start,tmax=inMaxPC1+0.6*(inMaxPC1-inMinPC1);
         while(t<tmax){
             if(std::abs(t)<MML::EPS){
@@ -157,7 +157,7 @@ public:
     {
         yGridValue.clear();
         double t,tstride,tmax;
-        size_t i;
+        uint64_t i;
         i=0,tstride=inPC2Stride,t=inPC2Start,tmax=inMaxPC2+0.6*(inMaxPC2-inMinPC2);
         while(t<tmax){
             if(std::abs(t)<MML::EPS){

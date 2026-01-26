@@ -15,7 +15,7 @@ public:
     DataInteractTableView* pView;
     explicit DataInteractTableWidget(QWidget *parent = nullptr, bool isEditable = false);
     ~DataInteractTableWidget();
-    bool load(double* inMainData, size_t inNRow, size_t inNCol, char** inRowName = nullptr, char** inColName = nullptr);
+    bool load(double* inMainData, uint64_t inNRow, uint64_t inNCol, char** inRowName = nullptr, char** inColName = nullptr);
 
 signals:
 

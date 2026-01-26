@@ -71,8 +71,8 @@ class DataInteractTableView : public QTableView
     Q_OBJECT
 public:
     double* mainData;
-    size_t nRow;
-    size_t nCol;
+    uint64_t nRow;
+    uint64_t nCol;
     char** rowName;
     char** colName;
     QMenu* pMenu;
@@ -80,7 +80,7 @@ public:
     DataInteractTableModel* pModel;
     explicit DataInteractTableView(QWidget *parent = nullptr);
     void setEditEnable();
-    bool load(double* inMainData, size_t inNRow, size_t inNCol, char** inRowName = nullptr, char** inColName = nullptr);
+    bool load(double* inMainData, uint64_t inNRow, uint64_t inNCol, char** inRowName = nullptr, char** inColName = nullptr);
     bool pasteData(const QString& text, int iRow, int iCol);
     QString copyData(int iRow1,int iCol1, int iRow2, int iCol2);
     bool event(QEvent* e) override;

@@ -13,13 +13,13 @@ class NewtonPara
 public:
     double min;
     double max;
-    size_t n;
-    size_t maxTimes;
+    uint64_t n;
+    uint64_t maxTimes;
     double* limList;
     double* dll1List;
     double* uList;
     double* dList;
-    NewtonPara(double iMin, double iMax, size_t iN, size_t iMaxTimes);
+    NewtonPara(double iMin, double iMax, uint64_t iN, uint64_t iMaxTimes);
     NewtonPara();
     NewtonPara(const NewtonPara& inPara);
     ~NewtonPara();
@@ -32,19 +32,19 @@ class VecList
 public:
     double** data;
     bool isValid;
-    size_t vecN;
-    size_t vecLen;
+    uint64_t vecN;
+    uint64_t vecLen;
     VecList();
     VecList(const VecList& inVecList);
-    VecList(size_t inVecN, size_t inVecLen);
+    VecList(uint64_t inVecN, uint64_t inVecLen);
     ~VecList();
-    bool resize(size_t inVecN, size_t inVecLen);
-    size_t getVecN();
-    size_t getVecLen();
+    bool resize(uint64_t inVecN, uint64_t inVecLen);
+    uint64_t getVecN();
+    uint64_t getVecLen();
     void copy(const VecList& object);
-    double* operator()(size_t Index);
-    double& operator()(size_t Index1, size_t Index2);
-    const double& operator()(size_t Index1, size_t Index2) const;
+    double* operator()(uint64_t Index);
+    double& operator()(uint64_t Index1, uint64_t Index2);
+    const double& operator()(uint64_t Index1, uint64_t Index2) const;
     const VecList& operator=(const VecList& inVecList);
 };
 
@@ -53,8 +53,8 @@ class MLM
 public:
     double eps;
     double pi;
-    size_t factorN;
-    size_t filterN;
+    uint64_t factorN;
+    uint64_t filterN;
     MML::Mat Ut;
     MML::Mat UtK;
     MML::Mat Uty;
@@ -91,8 +91,8 @@ class GLM
 {
 public:
     double eps;
-    size_t factorN;
-    size_t filterN;
+    uint64_t factorN;
+    uint64_t filterN;
     bool isValid;
     MML::Mat K;
     MML::Mat Kt;

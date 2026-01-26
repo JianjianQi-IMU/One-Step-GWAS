@@ -20,11 +20,11 @@ ChooseGeneColorWidget::ChooseGeneColorWidget(LogPScatterVisualizeWidget *inLogPC
     ui->forwardColorWidget->setAutoFillBackground(true);
     ui->reverseColorWidget->setAutoFillBackground(true);
     ui->geneColorWidget->setAutoFillBackground(true);
-    tPalette.setColor(QPalette::Background, forwardGeneColor);
+    tPalette.setColor(QPalette::Window, forwardGeneColor);
     ui->forwardColorWidget->setPalette(tPalette);
-    tPalette.setColor(QPalette::Background, reverseGeneColor);
+    tPalette.setColor(QPalette::Window, reverseGeneColor);
     ui->reverseColorWidget->setPalette(tPalette);
-    tPalette.setColor(QPalette::Background, geneColor);
+    tPalette.setColor(QPalette::Window, geneColor);
     ui->geneColorWidget->setPalette(tPalette);
 }
 
@@ -39,7 +39,7 @@ void ChooseGeneColorWidget::on_forwardColorBtn_clicked()
     QPalette tPalette;
     if (color.isValid()) {
         forwardGeneColor = color;
-        tPalette.setColor(QPalette::Background, forwardGeneColor);
+        tPalette.setColor(QPalette::Window, forwardGeneColor);
         ui->forwardColorWidget->setPalette(tPalette);
     }
 }
@@ -51,7 +51,7 @@ void ChooseGeneColorWidget::on_reverseColorBtn_clicked()
     QPalette tPalette;
     if (color.isValid()) {
         reverseGeneColor = color;
-        tPalette.setColor(QPalette::Background, reverseGeneColor);
+        tPalette.setColor(QPalette::Window, reverseGeneColor);
         ui->reverseColorWidget->setPalette(tPalette);
     }
 }
@@ -78,7 +78,7 @@ void ChooseGeneColorWidget::on_geneColorBtn_clicked()
     QPalette tPalette;
     if (color.isValid()) {
         geneColor = color;
-        tPalette.setColor(QPalette::Background, geneColor);
+        tPalette.setColor(QPalette::Window, geneColor);
         ui->geneColorWidget->setPalette(tPalette);
     }
 }

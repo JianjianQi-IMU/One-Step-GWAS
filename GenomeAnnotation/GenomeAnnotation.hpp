@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <list>
 #include <vector>
+#include <cstdint>
 
 //#include <QDebug>
 //#include <QString>
@@ -62,7 +63,7 @@ private:
     GeneAnnotation*    genes;
     long long*         firstI;
     long long*         lastI;
-    short*             isNull;
+    int16_t*           isNull;
     long long          nGenes;
     int                nChr;
     bool               isGeneModel;
@@ -91,16 +92,16 @@ public:
     GeneAnnotation* getGene(long long i);
     long long search(const char* inKeywords) const;
     long long search(const char* inKeywords, long long* outListI, long long& outNum, long long outMaxN) const;
-    long long search(int inChrI, long double position, unsigned short mode = GA_START) const; // find the first gene whose position
-    long long search(int inChrI, long long position, unsigned short mode = GA_START) const; // is bigger than or equal to
-    long long searchLower(int inChrI, long double position, unsigned short mode = GA_START) const; // find the last gene whose position
-    long long searchLower(int inChrI, long long position, unsigned short mode = GA_START) const; // is smaller than or equal to
+    long long search(int inChrI, long double position, uint16_t mode = GA_START) const; // find the first gene whose position
+    long long search(int inChrI, long long position, uint16_t mode = GA_START) const; // is bigger than or equal to
+    long long searchLower(int inChrI, long double position, uint16_t mode = GA_START) const; // find the last gene whose position
+    long long searchLower(int inChrI, long long position, uint16_t mode = GA_START) const; // is smaller than or equal to
     bool haveGeneModel() const;
     void setGeneModel(bool flag);
     void clear();
     GenomeAnnotation& operator=(const GenomeAnnotation& inGenome);
-    static const unsigned short GA_START = 0;
-    static const unsigned short GA_STOP = 1;
+    static const uint16_t GA_START = 0;
+    static const uint16_t GA_STOP = 1;
 
     static int chrNameMaxLen;
 
@@ -126,8 +127,8 @@ public:
     char* getSeq(int iChr, long double iPosition);
     void clear();
     static int chrNameMaxLen;
-    static short Base2Value(char  inBase);
-    static char  Value2Base(short inValue);
+    static int16_t Base2Value(char  inBase);
+    static char Value2Base(int16_t inValue);
 
     void write(const char* file, long long ip = 1);
 };

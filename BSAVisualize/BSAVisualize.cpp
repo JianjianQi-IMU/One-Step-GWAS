@@ -22,12 +22,12 @@ BSAVisualize::BSAVisualize(QWidget *parent) :
     rightMoveBtn           = new QPushButton(areaSearchToolBar);
     QWidget* retainWidget  = new QWidget(areaSearchToolBar);
     QFrame* line1          = new QFrame(areaSearchToolBar);
-    posValidator = new QRegExpValidator(QRegExp("[\\d,]*"), this);
+    posValidator = new QRegularExpressionValidator(QRegularExpression("[\\d,]*"), this);
 
     leftChrPosBox->setValidator(posValidator);
     rightChrPosBox->setValidator(posValidator);
 
-    areaSearchToolBarLayout->setMargin(0);
+    areaSearchToolBarLayout->setContentsMargins(0, 0, 0, 0);
     areaSearchToolBarLayout->addWidget(leftMoveBtn);
     areaSearchToolBarLayout->addWidget(rightMoveBtn);
     areaSearchToolBarLayout->addWidget(line1);
@@ -54,7 +54,7 @@ BSAVisualize::BSAVisualize(QWidget *parent) :
     rightMoveBtn->setIcon(QIcon(":/icon/rightMoveIcon.png"));
 }
 
-BSAVisualize::BSAVisualize(size_t *inChrLen, char **inChrName, int inNChr, FD::BSAInterVal *inInter, size_t inNInter,ValPoints2* inMarkers,size_t inNMarkers, QWidget *parent)
+BSAVisualize::BSAVisualize(uint64_t *inChrLen, char **inChrName, int inNChr, FD::BSAInterVal *inInter, uint64_t inNInter,ValPoints2* inMarkers,uint64_t inNMarkers, QWidget *parent)
     :BSAVisualize(parent)
 {
     pIndexChart=new BSAIndexScatterWidget(inChrLen,inChrName,inNChr,inInter,inNInter,inMarkers,inNMarkers,this);

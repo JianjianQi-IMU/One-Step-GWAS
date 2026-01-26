@@ -17,14 +17,14 @@ KinDis::~KinDis()
 
 void KinDis::setData(const MML::Mat &inKin)
 {
-    size_t n = inKin.getNRow();
+    uint64_t n = inKin.getNRow();
     double tmp = 0.0;
     dis.resize(n, n);
     val.resize(n, 1);
-    for (size_t i = 0; i < n - 1; ++i) {
-        for (size_t j = i + 1; j < n; ++j) {
+    for (uint64_t i = 0; i < n - 1; ++i) {
+        for (uint64_t j = i + 1; j < n; ++j) {
             tmp = 0.0;
-            for (size_t k = 0; k < n; ++k) {
+            for (uint64_t k = 0; k < n; ++k) {
                 tmp += inKin(i, k) - inKin(j, k);
             }
             tmp = std::abs(tmp);
@@ -33,9 +33,9 @@ void KinDis::setData(const MML::Mat &inKin)
             dis(j, i) = tmp;
         }
     }
-    for (size_t i = 0; i < n - 1; ++i) {
+    for (uint64_t i = 0; i < n - 1; ++i) {
         tmp = 0.0;
-        for (size_t j = i + 1; j < n; ++j) {
+        for (uint64_t j = i + 1; j < n; ++j) {
             tmp += inKin(i, j);
         }
         val(i) = tmp;

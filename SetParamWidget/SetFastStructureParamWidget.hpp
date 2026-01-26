@@ -7,17 +7,17 @@ class SetFastStructureParamWidget : public QWidget
 {
     Q_OBJECT
 private:
-    size_t id;
+    uint64_t id;
     MML::FastStructureParam* para;
     QSpinBox* popBox;
     QPushButton* continueBtn;
     QPushButton* cancelBtn;
     explicit SetFastStructureParamWidget(QWidget *parent = nullptr);
 public:
-    SetFastStructureParamWidget(size_t inId, MML::FastStructureParam* inPara, QWidget *parent = nullptr);
+    SetFastStructureParamWidget(uint64_t inId, MML::FastStructureParam* inPara, QWidget *parent = nullptr);
     ~SetFastStructureParamWidget();
 signals:
-    void startFastStructure(size_t id,int nThread);
+    void startFastStructure(uint64_t id,int nThread);
 public slots:
     void dealwithContinue();
 };

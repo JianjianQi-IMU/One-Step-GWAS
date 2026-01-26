@@ -19,10 +19,14 @@ QVariant IndividualSearchOutListModel::data(const QModelIndex &index, int role) 
 {
     if (!index.isValid())
         return QVariant();
-    int row=index.row();
-    if(row<0||row>=idDisplayList.size()) return QVariant();
-    if(idDisplayList[index.row()]<0||idDisplayList[index.row()]>=nameList.size()) return QVariant();
-    if(role==Qt::DisplayRole){
+    int row = index.row();
+    if (row < 0 || row >= idDisplayList.size()) {
+        return QVariant();
+    }
+    if (idDisplayList[index.row()] < 0 || idDisplayList[index.row()] >= nameList.size()) {
+        return QVariant();
+    }
+    if (role==Qt::DisplayRole) {
         return nameList[idDisplayList[index.row()]];
     }
 //    else if(role==Qt::DecorationRole){
@@ -34,9 +38,11 @@ QVariant IndividualSearchOutListModel::data(const QModelIndex &index, int role) 
 
 bool IndividualSearchOutListModel::insertRows(int row, int count, const QModelIndex &parent)
 {
-    if(row<0||row>idDisplayList.size()||count<=0) return false;
+    if (row < 0 || row > idDisplayList.size() || count <= 0) {
+        return false;
+    }
     beginInsertRows(parent, row, row + count - 1);
-    idDisplayList.insert(row,count,-1);
+    idDisplayList.insert(row, count, -1);
     // FIXME: Implement me!
     endInsertRows();
     return true;
@@ -52,15 +58,15 @@ bool IndividualSearchOutListModel::removeRows(int row, int count, const QModelIn
     return true;
 }
 
-bool IndividualSearchOutListModel::loadNameList(char **inNameList, size_t n)
+bool IndividualSearchOutListModel::loadNameList(char **inNameList, uint64_t n)
 {
     if(!inNameList||!n) return false;
     nameList.clear();
-    for(size_t i=0;i<n;++i) nameList.append(inNameList[i]);
+    for(uint64_t i=0;i<n;++i) nameList.append(inNameList[i]);
     return true;
 }
 
-bool IndividualSearchOutListModel::setIDList(const QModelIndex &index, size_t id, int role)
+bool IndividualSearchOutListModel::setIDList(const QModelIndex &index, uint64_t id, int role)
 {
     if (!index.isValid()) return false;
     int row=index.row();
@@ -70,7 +76,7 @@ bool IndividualSearchOutListModel::setIDList(const QModelIndex &index, size_t id
     return true;
 }
 
-size_t IndividualSearchOutListModel::getIDSample(int row) const
+uint64_t IndividualSearchOutListModel::getIDSample(int row) const
 {
     if(row<0||row>=idDisplayList.size()) return SIZE_MAX;
     return idDisplayList[row];
@@ -94,7 +100,7 @@ IndividualSearchOutListView::~IndividualSearchOutListView()
 
 }
 
-bool IndividualSearchOutListView::loadNameList(char **inNameList, size_t n)
+bool IndividualSearchOutListView::loadNameList(char **inNameList, uint64_t n)
 {
     return pModel -> loadNameList(inNameList,n);
 }
@@ -104,7 +110,7 @@ void IndividualSearchOutListView::clearList()
     pModel -> removeRows(0,pModel->rowCount());
 }
 
-void IndividualSearchOutListView::setIDDisplayList(const QVector<size_t> &inList)
+void IndividualSearchOutListView::setIDDisplayList(const QVector<uint64_t> &inList)
 {
     clearList();
     if(!(inList.size())) return ;
@@ -140,7 +146,7 @@ IndividualSearchWidget::IndividualSearchWidget(QWidget *parent)
     topInputLayout->addWidget(pEdit);
     topInputLayout->addWidget(pSearchBtn);
     topInputLayout->addWidget(new QWidget(this));
-    topInputLayout->setMargin(0);
+    topInputLayout->setContentsMargins(0, 0, 0, 0);
     connect(pSearchBtn,&QPushButton::clicked,this,&IndividualSearchWidget::doSearchSample);
 
     //listview setting
@@ -169,21 +175,21 @@ IndividualSearchWidget::IndividualSearchWidget(QWidget *parent)
 IndividualSearchWidget::~IndividualSearchWidget()
 {
     if(nameList){
-        for(size_t i=0;i<nSample;++i) delete [] nameList[i];
+        for(uint64_t i=0;i<nSample;++i) delete [] nameList[i];
         delete [] nameList;
     }
 }
 
-bool IndividualSearchWidget::loadNameList(char **inNameList, size_t n)
+bool IndividualSearchWidget::loadNameList(char **inNameList, uint64_t n)
 {
     if(!inNameList||!n) return false;
     if(nameList){
-        for(size_t i=0;i<nSample;++i) delete [] nameList[i];
+        for(uint64_t i=0;i<nSample;++i) delete [] nameList[i];
         delete [] nameList;
     }
     nSample = n;
     nameList = new char*[nSample];
-    for(size_t i=0;i<nSample;++i){
+    for(uint64_t i=0;i<nSample;++i){
         nameList[i] = new char[FD::MAXELEMLEN];
         FD::charCopy(nameList[i],inNameList[i]);
     }
@@ -191,7 +197,7 @@ bool IndividualSearchWidget::loadNameList(char **inNameList, size_t n)
     return true;
 }
 
-void IndividualSearchWidget::searchSample(const char *inKeywords, QVector<size_t> &outList,long long outMaxN) const
+void IndividualSearchWidget::searchSample(const char *inKeywords, QVector<uint64_t> &outList,long long outMaxN) const
 {
     outList.clear();
     if(!inKeywords) return ;
@@ -257,7 +263,7 @@ void IndividualSearchWidget::doSearchSample()
 {
     QString name=pEdit->text();
     if(name.isEmpty()) return ;
-    QVector<size_t> tList;
+    QVector<uint64_t> tList;
     searchSample(name.toLatin1().data(),tList,10000);
     pList->setIDDisplayList(tList);
 }

@@ -99,5 +99,7 @@
         <file>icon/MainWindowsIcon.png</file>
         <file>icon/QQPlotIcon.png</file>
         <file>icon/pointSizeIcon.png</file>
+        <file>shader/PPointsFragment.shader</file>
+        <file>shader/PPointsVertex.shader</file>
     </qresource>
 </RCC>

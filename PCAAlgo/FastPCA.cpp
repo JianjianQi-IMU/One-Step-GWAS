@@ -12,9 +12,9 @@ namespace MML {
 //    }
 
 //    QString OS;
-//    for(size_t i=0;i<inX.nrow;++i){
+//    for(uint64_t i=0;i<inX.nrow;++i){
 //        OS.clear();
-//        for(size_t j=0;j<inX.ncol;++j){
+//        for(uint64_t j=0;j<inX.ncol;++j){
 //            OS+=QString::number(inX.data[i*inX.ncol+j])+'\t';
 //        }
 //        qDebug()<< OS;
@@ -30,12 +30,12 @@ FastPCA::FastPCA()
 
 }
 
-bool FastPCA::calcuPC(const Mat &inQ, const Mat &inS, Mat &outPC, size_t d)
+bool FastPCA::calcuPC(const Mat &inQ, const Mat &inS, Mat &outPC, uint64_t d)
 {
     if(inQ.info==_null||
        inS.info!=_sym||
        inQ.getNCol()!=inS.getNRow()) return false;
-    size_t n=inQ.getNRow();
+    uint64_t n=inQ.getNRow();
     Mat EVec,EVal,Ud;
     double lambdad=0.0;
     if(!inS.symEig(EVec,EVal)) return false;
@@ -43,9 +43,9 @@ bool FastPCA::calcuPC(const Mat &inQ, const Mat &inS, Mat &outPC, size_t d)
 //    MML::printMat(EVal,"val:");
     if(!Mat::XYmul(inQ,EVec(0,0,ranNCol-1,d-1),Ud)) return false;
     outPC.resize(n,d);
-    for(size_t i=0;i<d;++i){
+    for(uint64_t i=0;i<d;++i){
         lambdad=std::sqrt(EVal(i)/(n-1));
-        for(size_t j=0;j<n;++j){
+        for(uint64_t j=0;j<n;++j){
             outPC(j,i)=EVec(j,i)*lambdad;
         }
     }
@@ -59,7 +59,7 @@ bool FastPCA::IterativeRun(const Mat &covMat, Mat &Y)
     if(covMat.info==_null||
        Y.info==_null     ||
        covMat.getNCol()!=Y.getNRow()) return false;
-    for(size_t i=0;i<MAXITERTIMES;++i){
+    for(uint64_t i=0;i<MAXITERTIMES;++i){
         Mat::XYmul(covMat,Y,CY);
         normalizeCol(CY);
         Y=CY;
@@ -120,11 +120,11 @@ bool FastPCA::addIterMat(const Mat &inX, Mat &outMat)
 {
     std::default_random_engine generator(std::chrono::steady_clock::now().time_since_epoch().count());
     if(inX.info==_null) return false;
-    size_t XNCol=inX.getNCol();
+    uint64_t XNCol=inX.getNCol();
     ranMat.resize(XNCol,ranNCol);
     std::uniform_real_distribution<double> distribution(-.5,.5);
-    for(size_t i=0;i<XNCol;++i){
-        for(size_t j=0;j<ranNCol;++j) ranMat(i,j)=distribution(generator);
+    for(uint64_t i=0;i<XNCol;++i){
+        for(uint64_t j=0;j<ranNCol;++j) ranMat(i,j)=distribution(generator);
     }
     return addIterMat(inX, ranMat, outMat);
 }
@@ -160,9 +160,9 @@ bool FastPCA::addSmallMat(const Mat &inQ, const Mat &inX, Mat& outS)
 bool FastPCA::standardizeCol(Mat &inMat,double factor)
 {
     if(inMat.info==_null) return false;
-    size_t nRow=inMat.getNRow(),nCol=inMat.getNCol();
+    uint64_t nRow=inMat.getNRow(),nCol=inMat.getNCol();
     double sum=0.0,mean=0.0,d2=0.0,d=0.0;
-    size_t i,j,n=0;
+    uint64_t i,j,n=0;
     for(i=0;i<nCol;++i){
         sum=0.0;
         n=0;
@@ -197,9 +197,9 @@ bool FastPCA::standardizeCol(Mat &inMat,double factor)
 bool FastPCA::normalizeCol(Mat &inMat)
 {
     if(inMat.info==_null) return false;
-    size_t nRow=inMat.getNRow(),nCol=inMat.getNCol();
+    uint64_t nRow=inMat.getNRow(),nCol=inMat.getNCol();
     double sum2=0.0,stdev=0.0;
-    size_t i,j;
+    uint64_t i,j;
     for(i=0;i<nCol;++i){
         sum2=0.0;
         for(j=0;j<nRow;++j){

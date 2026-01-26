@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QComboBox>
+#include <QRegularExpressionValidator>
 
 #include <QDebug>
 
@@ -102,7 +103,7 @@ protected:
     QLineEdit*   heightEdit;
     QComboBox*   fileFormBox;
     RectSizeDisplayWidget* sizeDisplayWidget;
-    QRegExpValidator* sizeValidator;
+    QRegularExpressionValidator* sizeValidator;
 
 public:
     explicit BaseFileSaveDialog(QWidget *parent = nullptr);

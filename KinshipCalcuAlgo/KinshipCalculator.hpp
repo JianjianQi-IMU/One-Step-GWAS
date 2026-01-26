@@ -14,9 +14,9 @@ enum KinshipMode{
 class KinshipParam
 {
 public:
-    size_t nSamples;
-    size_t nMarkers;
-    size_t nPloid;
+    uint64_t nSamples;
+    uint64_t nMarkers;
+    uint64_t nPloid;
     KinshipMode mode;
     explicit KinshipParam();
 };
@@ -25,10 +25,10 @@ class KinshipCalculator
 {
 protected:
     Mat kin;
-    size_t nPloid;
-    size_t nSamples;
-    size_t nMarkers;
-    size_t nValidMarkers;
+    uint64_t nPloid;
+    uint64_t nSamples;
+    uint64_t nMarkers;
+    uint64_t nValidMarkers;
     bool isPolyploid;
     KinshipMode mode;
     bool isValid;
@@ -37,13 +37,13 @@ public:
     virtual ~KinshipCalculator();
     bool standardizeCol(Mat& inMat, double factor = 1.0);
     bool zeroCenterCol(Mat& inMat, double factor = 1.0);
-    virtual bool addMat(const IMat& inX);
+    virtual bool addMat(const SIMat& inX);
     virtual bool getKinship(Mat& outMat);
-    size_t getNValidMarkers();
+    uint64_t getNValidMarkers();
     KinshipMode getMode();
-    bool setNPloid(size_t inNPloid);
+    bool setNPloid(uint64_t inNPloid);
     bool setIsPolyploid(bool inIsPolyploid);
-    bool setNSamples(size_t inNSamples);
+    bool setNSamples(uint64_t inNSamples);
     bool setMode(KinshipMode inMode);
     void reset();
     void clear();
@@ -56,12 +56,12 @@ class KinshipIBSMatCalculator : public KinshipCalculator
 {
 protected:
     bool fillCol(Mat &inMat);
-    bool fillColBi(const IMat &inMat, Mat &outMat);
+    bool fillColBi(const SIMat &inMat, Mat &outMat);
 
 public:
     KinshipIBSMatCalculator();
     ~KinshipIBSMatCalculator();
-    bool addMat(const IMat& inX);
+    bool addMat(const SIMat& inX);
     bool getKinship(Mat& outMat);
 };
 

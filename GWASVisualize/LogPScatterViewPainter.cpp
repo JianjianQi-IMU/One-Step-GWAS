@@ -1,5 +1,7 @@
 #include "LogPScatterViewPainter.hpp"
 
+#include <QDebug>
+
 LogPScatterViewPainter::LogPScatterViewPainter()
 {
     displayArea                         = QRect();
@@ -112,6 +114,8 @@ bool LogPScatterViewPainter::loadPoints(ValPoints *inPoints, long long inNPoints
 
 void LogPScatterViewPainter::initInitializeGL()
 {
+    tmpPaintWidget->glEnable(GL_POINT_SMOOTH);
+
     tmpPaintWidget->glGenBuffers(1, &idPointsVBO);
     tmpPaintWidget->glGenBuffers(1, &idColorVBO);
     tmpPaintWidget->glGenVertexArrays(1, &idPointsVAO);
@@ -128,8 +132,8 @@ void LogPScatterViewPainter::initInitializeGL()
     tmpPaintWidget->glVertexAttribPointer(1, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(GLuint), (void*)0);
     tmpPaintWidget->glEnableVertexAttribArray(1);
 
-    tmpPaintWidget->setGLShaderProgram(":/shader/pointsVertex.shader", ":/shader/pointsFragment.shader");
-    tmpPaintWidget->glPointSize(10);
+    tmpPaintWidget->setGLShaderProgram(":/shader/PPointsVertex.shader", ":/shader/PPointsFragment.shader");
+    tmpPaintWidget->glPointSize(6);
 
     tmpPaintWidget->glBindVertexArray(0);
     tmpPaintWidget->glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -157,9 +161,14 @@ void LogPScatterViewPainter::paintLogPScatterView(QPainter *painter)
     sendPointsToBuffer();
 
     if (tmpCurrentLeftPosF >= 0 && tmpCurrentRightPosF >= 0 && nPaintPoints != 0) {
+        // qDebug() << "nPaintPoints is " << nPaintPoints;
+        // for (uint32_t i = 0; i < 5; ++i) {
+        //     qDebug() << "(" << paintPoints[2 * i] << ", " << paintPoints[2 * i + 1] << ")";
+        // }
+        // tmpPaintWidget->glPointSize(pointSize);
         tmpPaintWidget->glBindVertexArray(idPointsVAO);
         tmpPaintWidget->shaderProgramBind();
-        tmpPaintWidget->setUniformValueArray("colorList", pointColor, 8);
+        // tmpPaintWidget->setUniformValueArray("colorList", pointColor, 8);
         tmpPaintWidget->setUniformValue("pSize", pointSize);
         tmpPaintWidget->setUniformValue("iResolution", tmpPaintWidget->iResolution);
         tmpPaintWidget->glDrawArrays(GL_POINTS, 0, nPaintPoints);

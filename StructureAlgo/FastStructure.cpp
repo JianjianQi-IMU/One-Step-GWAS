@@ -31,8 +31,8 @@ void FastStructurePData::initialize(const FastStructureParam &inParam)
     PVarGamma.resize(inParam.nMarker,inParam.nPop);
     PZetaBeta.resize(inParam.nMarker,inParam.nPop);
     PZetaGamma.resize(inParam.nMarker,inParam.nPop);
-    for(size_t iMarker=0;iMarker<inParam.nMarker;++iMarker){
-        for(size_t iPop=0;iPop<inParam.nPop;++iPop){
+    for(uint64_t iMarker=0;iMarker<inParam.nMarker;++iMarker){
+        for(uint64_t iPop=0;iPop<inParam.nPop;++iPop){
             tVarBetaVal=0.1*uniDis(generator)+1.0;
             tVarGammaVal=0.1*uniDis(generator)+10.0;
             PVarBeta(iMarker,iPop)=tVarBetaVal;
@@ -57,14 +57,14 @@ void FastStructureQData::initialize(const FastStructureParam &inParam)
     alpha.setData(inParam.nPop,1,1.0/inParam.nPop);
     Q.resize(inParam.nSample,inParam.nPop);
     QXi.resize(inParam.nSample,inParam.nPop);
-    for(size_t iSample=0;iSample<inParam.nSample;++iSample){
+    for(uint64_t iSample=0;iSample<inParam.nSample;++iSample){
         tSumQVal=0.0;
-        for(size_t iPop=0;iPop<inParam.nPop;++iPop){
+        for(uint64_t iPop=0;iPop<inParam.nPop;++iPop){
             Q(iSample,iPop)=0.1*uniDis(generator)+1.0;
             tSumQVal+=Q(iSample,iPop);
         }
         tdiSumQVal=dis.digamma(tSumQVal);
-        for(size_t iPop=0;iPop<inParam.nPop;++iPop){
+        for(uint64_t iPop=0;iPop<inParam.nPop;++iPop){
             QXi(iSample,iPop)=std::exp(dis.digamma(Q(iSample,iPop))-tdiSumQVal);
         }
     }
@@ -74,7 +74,7 @@ void FastStructureQData::initialize(const FastStructureParam &inParam)
 
 void FastStructure::updatePSimple()
 {
-    size_t iMarker,iSample,iPloid,iPop;
+    uint64_t iMarker,iSample,iPloid,iPop;
     double sumThetaBeta=0.0,sumThetaGamma=0.0;
     double tGeno=0.0;
     double tVarBetaVal=0.0,tVarGammaVal=0.0;
@@ -162,8 +162,8 @@ void FastStructure::resetP()
     PVarGamma.resize(nMarker,nPop);
     PZetaBeta.resize(nMarker,nPop);
     PZetaGamma.resize(nMarker,nPop);
-    for(size_t iMarker=0;iMarker<nMarker;++iMarker){
-        for(size_t iPop=0;iPop<nPop;++iPop){
+    for(uint64_t iMarker=0;iMarker<nMarker;++iMarker){
+        for(uint64_t iPop=0;iPop<nPop;++iPop){
             tVarBetaVal=0.1*uniDis(generator)+1.0;
             tVarGammaVal=0.1*uniDis(generator)+10.0;
             PVarBeta(iMarker,iPop)=tVarBetaVal;
@@ -181,14 +181,14 @@ void FastStructure::resetQ()
     alpha.setData(nPop,1,1.0/nPop);
     Q.resize(nSample,nPop);
     QXi.resize(nSample,nPop);
-    for(size_t iSample=0;iSample<nSample;++iSample){
+    for(uint64_t iSample=0;iSample<nSample;++iSample){
         tSumQVal=0.0;
-        for(size_t iPop=0;iPop<nPop;++iPop){
+        for(uint64_t iPop=0;iPop<nPop;++iPop){
             Q(iSample,iPop)=0.1*uniDis(generator)+1.0;
             tSumQVal+=Q(iSample,iPop);
         }
         tdiSumQVal=dis.digamma(tSumQVal);
-        for(size_t iPop=0;iPop<nPop;++iPop){
+        for(uint64_t iPop=0;iPop<nPop;++iPop){
             QXi(iSample,iPop)=std::exp(dis.digamma(Q(iSample,iPop))-tdiSumQVal);
         }
     }
@@ -198,7 +198,7 @@ void FastStructure::initialize()
 {
     clear();
 
-    G=new short[nMarker*nSample*nPloid];
+    G=new int16_t[nMarker*nSample*nPloid];
     tmpVarBeta  = new double[nPop];
     tmpVarGamma = new double[nPop];
 
@@ -274,7 +274,7 @@ void FastStructure::updateP2()
 {
     Mat tVB1,tVB2,tVB3,tVG1,tVG2,tVG3;
     Mat dVB1,dVB2,dVG1,dVG2;
-    size_t iMarker,iPop;
+    uint64_t iMarker,iPop;
     double vt=0.0,sumFabsdVB1=0.0,sumFabsdVB2=0.0;
     double sumFabsdVG1=0.0,sumFabsdVG2=0.0;
     bool flag=false,isLess=false;
@@ -334,7 +334,7 @@ void FastStructure::updateP2()
 
 void FastStructure::updateQ()
 {
-    size_t iMarker,iSample,iPloid,iPop;
+    uint64_t iMarker,iSample,iPloid,iPop;
     double sumThetaBeta=0.0,sumThetaGamma=0.0;
     double tGeno=0.0;
     double tSumQVal=0.0,tdiSumQVal=0.0;
@@ -376,7 +376,7 @@ void FastStructure::updateQ()
                 tSumQVal += Q(iSample,iPop);
             }
             tdiSumQVal=dis.digamma(tSumQVal);
-            for(size_t iPop=0;iPop<nPop;++iPop){
+            for(uint64_t iPop=0;iPop<nPop;++iPop){
                 QXi(iSample,iPop)=std::exp(dis.digamma(Q(iSample,iPop))-tdiSumQVal);
             }
         }
@@ -387,7 +387,7 @@ void FastStructure::updateQ2()
 {
     Mat tQ1,tQ2,tQ3;
     Mat dQ1,dQ2;
-    size_t iSample,iPop;
+    uint64_t iSample,iPop;
     double vt=0.0,sumFabsdQ1=0.0,sumFabsdQ2=0.0;
     double tSumQVal=0.0,tdiSumQVal=0.0;
     bool flag=false,isLess=false;
@@ -430,7 +430,7 @@ void FastStructure::updateQ2()
             tSumQVal += Q(iSample,iPop);
         }
         tdiSumQVal=dis.digamma(tSumQVal);
-        for(size_t iPop=0;iPop<nPop;++iPop){
+        for(uint64_t iPop=0;iPop<nPop;++iPop){
             QXi(iSample,iPop)=std::exp(dis.digamma(Q(iSample,iPop))-tdiSumQVal);
         }
     }
@@ -438,7 +438,7 @@ void FastStructure::updateQ2()
 
 void FastStructure::updatePHyper(bool noLambda)
 {
-    size_t iMarker,iPop;
+    uint64_t iMarker,iPop;
     double sumLambda=0.0,tmp=0.0;
     Mat tDat,tDiff;
     if(prior == FS_LOGISTIC){
@@ -476,7 +476,7 @@ void FastStructure::updatePHyper(bool noLambda)
 
 double FastStructure::marginalLikelihood()
 {
-    size_t iMarker,iSample,iPloid,iPop;
+    uint64_t iMarker,iSample,iPloid,iPop;
     bool isMissing;
     double sumThetaBeta=0.0,sumThetaGamma=0.0;
     double lnSumThetaBeta=0.0,lnSumThetaGamma=0.0;
@@ -552,7 +552,7 @@ double FastStructure::marginalLikelihood()
     return out;
 }
 
-short *FastStructure::genotype(size_t iMarker, size_t iSample, size_t iPloid)
+int16_t *FastStructure::genotype(uint64_t iMarker, uint64_t iSample, uint64_t iPloid)
 {
     return &(G[GPos(iMarker,iSample,iPloid)]);
 }
@@ -562,7 +562,7 @@ void FastStructure::batchInit(FastStructurePData &outP,
 {
     FastStructurePData tPData;
     double LL,tLL,tolIter=1e300;
-    size_t iter=0,i;
+    uint64_t iter=0,i;
     updateQ();
     updateP();
     LL=marginalLikelihood();
@@ -583,7 +583,7 @@ void FastStructure::batchInit(FastStructurePData &outP,
 
 void FastStructure::getQ(Mat &outQ)
 {
-    size_t iSample,iPop;
+    uint64_t iSample,iPop;
     double tSum=0.0;
     outQ.resize(nSample,nPop);
     for(iSample=0;iSample<nSample;++iSample){
@@ -597,7 +597,7 @@ void FastStructure::getQ(Mat &outQ)
     }
 }
 
-const short *FastStructure::getG() const
+const int16_t *FastStructure::getG() const
 {
     return G;
 }
@@ -616,16 +616,16 @@ void FastStructure::clear()
 double FastStructure::expectGenotype(const FastStructurePData &P,
                                      const FastStructureQData &Q,
                                      const FastStructureParam &Para,
-                                     size_t n,
-                                     size_t l)
+                                     uint64_t n,
+                                     uint64_t l)
 {
-//    size_t nMarker           = Para.nMarker;
-    size_t nPop              = Para.nPop   ;
-//    size_t nAllele           = Para.nAllele;
-//    size_t nSample           = Para.nSample;
-//    size_t nPloid            = Para.nPloid ;
+//    uint64_t nMarker           = Para.nMarker;
+    uint64_t nPop              = Para.nPop   ;
+//    uint64_t nAllele           = Para.nAllele;
+//    uint64_t nSample           = Para.nSample;
+//    uint64_t nPloid            = Para.nPloid ;
 //    FastStructurePrior prior = Para.prior  ;
-    size_t iPop=0;
+    uint64_t iPop=0;
     double sumQXin=0.0,tPVal=0.0,out=0.0;
     Mat QXin,QXini,PB,PG,PBi,PGi,PP;
 
@@ -669,27 +669,27 @@ double FastStructure::expectGenotype(const FastStructurePData &P,
     return out;
 }
 
-void FastStructure::calcuCV(const short *G,
+void FastStructure::calcuCV(const int16_t *G,
                             const FastStructurePData &P,
                             const FastStructureQData &Q,
                             const FastStructureParam &Para,
                             std::vector<double> &outMeanDeviance,
-                            size_t nCV)
+                            uint64_t nCV)
 {
-    size_t nMarker           = Para.nMarker;
-    size_t nPop              = Para.nPop   ;
-    size_t nAllele           = Para.nAllele;
-    size_t nSample           = Para.nSample;
-    size_t nPloid            = Para.nPloid ;
+    uint64_t nMarker           = Para.nMarker;
+    uint64_t nPop              = Para.nPop   ;
+    uint64_t nAllele           = Para.nAllele;
+    uint64_t nSample           = Para.nSample;
+    uint64_t nPloid            = Para.nPloid ;
     FastStructurePrior prior = Para.prior  ;
-    size_t nLoci = nMarker*nSample,nMissing=0,nDevs;
-    size_t nSampling;
-    size_t iMarker,iSample,iPloid,iLoci,iCV,iter=0;
+    uint64_t nLoci = nMarker*nSample,nMissing=0,nDevs;
+    uint64_t nSampling;
+    uint64_t iMarker,iSample,iPloid,iLoci,iCV,iter=0;
     bool isMissing,badMask,allMissing;
-    std::vector<size_t> samplingList(nLoci);
+    std::vector<uint64_t> samplingList(nLoci);
     double LL,tLL,diffLL,tGeno,nu,tDev,t,sumDev;
-    short* bMissing = new short[nLoci];
-    short* ibMissing = new short[nLoci];
+    int16_t* bMissing = new int16_t[nLoci];
+    int16_t* ibMissing = new int16_t[nLoci];
     FastStructure structure;
     FastStructurePData tP;
     FastStructureQData tQ;
@@ -717,7 +717,7 @@ void FastStructure::calcuCV(const short *G,
         }
     }
 
-    nSampling = std::min(size_t(1000),size_t(0.01*(nLoci-nMissing)));
+    nSampling = std::min(uint64_t(1000),uint64_t(0.01*(nLoci-nMissing)));
 
     for(iCV=0;iCV<nCV;++iCV){
         badMask = true;

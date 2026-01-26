@@ -26,12 +26,12 @@ GWASVisualize::GWASVisualize(QWidget *parent)
     QWidget* retainWidget = new QWidget(areaSearchToolBar);
     QFrame* line1 = new QFrame(areaSearchToolBar);
     intervalLenLabel = new QLabel(areaSearchToolBar);
-    posValidator = new QRegExpValidator(QRegExp("[\\d,]*"), this);
+    posValidator = new QRegularExpressionValidator(QRegularExpression("[\\d,]*"), this);
 
     leftChrPosBox->setValidator(posValidator);
     rightChrPosBox->setValidator(posValidator);
 
-    areaSearchToolBarLayout->setMargin(0);
+    areaSearchToolBarLayout->setContentsMargins(0, 0, 0, 0);
     areaSearchToolBarLayout->addWidget(leftMoveBtn);
     areaSearchToolBarLayout->addWidget(rightMoveBtn);
     areaSearchToolBarLayout->addWidget(line1);

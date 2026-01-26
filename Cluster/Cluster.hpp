@@ -1,26 +1,27 @@
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP
 
-template <typename T,typename TVal>
-class TreeNode{
+template <typename T, typename TVal>
+class TreeNode
+{
 private:
     T val;
     TVal tval;
     int n;
-    TreeNode<T,TVal>* left;
-    TreeNode<T,TVal>* right;
+    TreeNode<T, TVal>* left;
+    TreeNode<T, TVal>* right;
 public:
-    explicit TreeNode(const T& inVal,
-                      TreeNode<T,TVal>* inLeft = nullptr,
-                      TreeNode<T,TVal>* inRight = nullptr){
+    explicit TreeNode(const T& inVal, TreeNode<T, TVal>* inLeft = nullptr,
+        TreeNode<T, TVal>* inRight = nullptr)
+    {
         val = inVal;
         left = inLeft;
         right = inRight;
     }
     ~TreeNode()
     {
-        if(left) delete left;
-        if(right) delete right;
+        if (left) delete left;
+        if (right) delete right;
     }
     const T& getValue()
     {
@@ -49,21 +50,21 @@ public:
         n = inNum;
         return true;
     }
-    bool setLChild(TreeNode<T,TVal>* inLeft = nullptr)
+    bool setLChild(TreeNode<T, TVal>* inLeft = nullptr)
     {
         left = inLeft;
         return true;
     }
-    bool setRChild(TreeNode<T,TVal>* inRight = nullptr)
+    bool setRChild(TreeNode<T, TVal>* inRight = nullptr)
     {
         right = inRight;
         return true;
     }
-    TreeNode<T,TVal>* lChild()
+    TreeNode<T, TVal>* lChild()
     {
         return left;
     }
-    TreeNode<T,TVal>* rChild()
+    TreeNode<T, TVal>* rChild()
     {
         return right;
     }

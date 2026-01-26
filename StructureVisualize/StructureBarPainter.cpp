@@ -34,7 +34,7 @@ void StructureBarPainter::loadIndData(const MML::Mat &inData, char **inName)
        inData.getNCol()==0||
        inData.getNRow()==0||
        (!inName)) return;
-    size_t nSample=inData.getNRow(),i;
+    uint64_t nSample=inData.getNRow(),i;
     individualsName.clear();
     if(inName){
         for(i=0;i<nSample;++i){

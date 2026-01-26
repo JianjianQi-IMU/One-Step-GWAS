@@ -83,13 +83,13 @@ void PreStrucVisualizeWidget::createVisualize()
         return;
     }
     char** inName=new char*[reader.sampleN];
-    for(size_t i=0;i<reader.sampleN;++i){
+    for(uint64_t i=0;i<reader.sampleN;++i){
         inName[i]=new char[FD::MAXELEMLEN];
         FD::charCopy(inName[i],reader.getSampleName(i));
     }
     StructureVisualizeWidget* pWidget=new StructureVisualizeWidget(struc,inName);
     pWidget->show();
-    for(size_t i=0;i<reader.sampleN;++i) delete [] inName[i];
+    for(uint64_t i=0;i<reader.sampleN;++i) delete [] inName[i];
     delete [] inName;
     close();
 }
